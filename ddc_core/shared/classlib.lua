@@ -51,7 +51,7 @@ function enew(element, class, ...)
 	
 	-- Add the destruction handler
 	if isElement(element) then 
-		addEventHandler((g_bServer and "onElementDestroy" or "onClientElementDestroy"), element, __removeElementIndex, false, "low-999999")
+		addEventHandler((g_isServer and "onElementDestroy" or "onClientElementDestroy"), element, __removeElementIndex, false, "low-999999")
 	end
 	
 	return element
@@ -336,7 +336,7 @@ oop.initClasses = function()
 	-- this has to match 
 	--	(Server) MTA10_Server\mods\deathmatch\logic\lua\CLuaMain.cpp
 	--	(Client) MTA10\mods\shared_logic\lua\CLuaMain.cpp
-	if g_bServer then	
+	if g_isServer then	
 		oop.prepareClass("ACL")
 		oop.prepareClass("ACLGroup")
 		oop.prepareClass("Account")
