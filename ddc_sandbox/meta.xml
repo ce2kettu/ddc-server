@@ -1,19 +1,20 @@
 <meta>
-	<oop>true</oop>
+    <oop>true</oop>
 
-	<!-- Exported functions -->
-	<export function="setMapData" type="client" />
-	<export function="loadScript" type="client" />
-	<export function="unloadScripts" type="client" />
-	<export function="triggerResourceStart" type="client" />
-	
-	<!-- Shared -->
-	<script type="shared" src="shared/utils.lua" />
-	<script type="shared" src="shared/exports.lua" />
-	
-	<!-- Client -->
-	<script type="client" src="client/init.lua" />
-	<script type="client" src="client/exports.lua" />
-	<script type="client" src="client/Sandbox.lua" />
-	<script type="client" src="client/SandboxHooks.lua" />
+    <!-- Exported functions -->
+    <export function="setMapData" type="client" />
+    <export function="loadScript" type="client" />
+    <export function="toggleSounds" type="client" />
+    <export function="unloadScripts" type="client" />
+    <export function="triggerResourceStart" type="client" />
+
+    <!-- Shared -->
+    <script type="shared" src="shared/utils.lua" />
+    <script type="shared" src="shared/exports.lua" />
+
+    <!-- Client -->
+    <script type="client" src="client/init.lua" />
+    <script type="client" src="client/exports.lua" />
+    <script type="client" src="client/Sandbox.lua" />
+    <script type="client" src="client/SandboxHooks.lua" />
 </meta>
