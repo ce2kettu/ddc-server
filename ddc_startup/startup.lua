@@ -1,5 +1,7 @@
 local resources = {
 	"ddc_core",
+	"ddc_sandbox",
+	"ddc_mapmanager",
 	"ddc_pickups",
 }
 
