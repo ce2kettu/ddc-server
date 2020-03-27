@@ -1,0 +1,28 @@
+<meta>
+	<oop>true</oop>
+	
+	<aclrequest>
+		<right name="general.ModifyOtherObjects" access="true" />
+	</aclrequest>
+		
+	<!-- Exported functions -->
+	<export function="getMaps" type="server" />
+	<export function="sendMapToClient" type="server" />
+	<export function="startMap" type="server" />
+	<export function="stopMap" type="server" />
+	
+	<!-- Shared -->
+	<script type="shared" src="shared/utils.lua" />
+	
+	<!-- Server -->
+    <script type="server" src="server/init.lua" />
+    <script type="server" src="server/exports.lua" />
+    <script type="server" src="server/Maploader.lua" />
+    <script type="server" src="server/MapManager.lua" />
+	
+	<!-- Client -->
+    <script type="client" src="client/init.lua" />
+    <script type="client" src="client/exports.lua" />
+    <script type="client" src="client/Maploader.lua" />
+		
+</meta>
