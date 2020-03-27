@@ -210,7 +210,7 @@ function Sandbox:getMapElement()
 end
 
 function Sandbox:toggleSounds(state)
-	for _, sound in ipairs(Element.getAllByType("sound", self:getMapElement()) do
+	for _, sound in ipairs(Element.getAllByType("sound", self:getMapElement())) do
 		if (state) then
 			for _, sound in ipairs(self.mutedSounds) do
 				local soundElement = sound.element

@@ -4,7 +4,7 @@ local binds = {}
 local xmlFiles = {}
 local loadedDff = {}
 local loadedCol = {}
-local checkArguments = exports.ddc_core:checkArguments
+local checkArguments = function(...) return exports.ddc_core:checkArguments(...) end
 
 SandboxHooks = {}
 
@@ -49,7 +49,7 @@ function _unloadEverything()
 end
 
 function SandboxHooks.addEventHandler(eventName, attachedToElement, handler, ...)
-	if (not checkArguments("suf", eventName, attachedToElement, handler))
+	if (not checkArguments("suf", eventName, attachedToElement, handler)) then
 		return false
 	end
 	
@@ -62,7 +62,7 @@ function SandboxHooks.addEventHandler(eventName, attachedToElement, handler, ...
 end
 
 function SandboxHooks.removeEventHandler(eventName, attachedToElement, handler)
-	if (not checkArguments("suf", eventName, attachedToElement, handler))
+	if (not checkArguments("suf", eventName, attachedToElement, handler)) then
 		return false
 	end
 	
