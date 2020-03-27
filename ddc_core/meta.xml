@@ -1,0 +1,13 @@
+<meta>
+	<info name="startup" author="ce2kettu" type="gamemode" />
+	<min_mta_version server="1.5.7" client="1.5.7" />
+	
+	<oop>true</oop>
+	<download_priority_group>9999</download_priority_group>
+	<sync_map_element_data>false</sync_map_element_data>
+	
+	<aclrequest>
+		<right name="function.kickPlayer" access="true" />
+		<right name="function.startResource" access="true" />
+	</aclrequest>
+</meta>
