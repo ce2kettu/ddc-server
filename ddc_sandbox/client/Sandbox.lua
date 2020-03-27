@@ -7,6 +7,8 @@ function Sandbox:constructor()
 	self.fileHashList = {}
 	self.mutedSounds = {}
 	
+	-- TODO: add reserved binds
+
 	self.disabledFunctions = {
 		"triggerServerEvent", "triggerLatentServerEvent",
 		"createBlip", "createBlipAttachedTo",

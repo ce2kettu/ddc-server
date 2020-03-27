@@ -157,7 +157,7 @@ function SandboxHooks.playSound(filePath, isLooped, isThrottled)
 		return false
 	end
 	
-	local filePath = tostring(g_Sandbox:getDownloadURL())..tostring(g_Sandbox:getResourceName())..'/'..tostring(filePath)
+	local filePath = tostring(g_Sandbox:getDownloadUrl())..tostring(g_Sandbox:getResourceName())..'/'..tostring(filePath)
 	local sound = playSound(filePath, isLooped, isThrottled)
 	
 	if (sound) then
@@ -174,7 +174,7 @@ function SandboxHooks.playSound3D(filePath, x, y, z, ...)
 		return false
 	end
 	
-	local filePath = tostring(g_Sandbox:getDownloadURL())..tostring(g_Sandbox:getResourceName())..'/'..tostring(filePath)
+	local filePath = tostring(g_Sandbox:getDownloadUrl())..tostring(g_Sandbox:getResourceName())..'/'..tostring(filePath)
 	local sound = playSound3D(filePath, x, y, z, ...)
 	
 	if (sound) then
