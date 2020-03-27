@@ -1,3 +1,4 @@
 <meta>
+	<oop>true</oop>
 	<script src="startup.lua" type="server" />
 </meta>
