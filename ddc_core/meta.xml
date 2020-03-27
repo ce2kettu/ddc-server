@@ -10,4 +10,32 @@
 		<right name="function.kickPlayer" access="true" />
 		<right name="function.startResource" access="true" />
 	</aclrequest>
+
+	<!-- Exported functions -->
+	<export function="outputDebug" type="shared" />
+	<export function="getServerInfo" type="shared" />
+	<export function="checkArguments" type="shared" />
+	<export function="table_find" type="shared" />
+
+	<export function="setData" type="shared" />
+	<export function="getPlayerById" type="shared" />
+	
+	<!-- Shared -->
+	<script type="shared" src="shared/constants.lua" />
+	<script type="shared" src="shared/utils.lua" />
+	<script type="shared" src="shared/classlib.lua" />
+	<script type="shared" src="shared/exports.lua" />
+	<script type="shared" src="shared/Autoloader.lua" />
+	<script type="shared" src="shared/Singleton.lua" />
+	<script type="shared" src="init.lua" />
+	
+	<!-- Server -->
+	<script type="server" src="server/Core.lua" />
+	<script type="server" src="server/SyncManager.lua" />
+	<script type="server" src="server/Element.lua" />
+	<script type="server" src="server/PlayerManager.lua" />
+		
+	<!-- Client -->		
+	<script type="client" src="client/Core.lua" />
+	<script type="client" src="client/SyncManager.lua" />
 </meta>
