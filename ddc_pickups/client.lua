@@ -95,7 +95,7 @@ local function onClientRender()
 			visiblePickups[pickup] = nil
 		end
 
-		local colshape = exports.uni:table_find(pickups, pickup)
+		local colshape = exports.ddc_core:table_find(pickups, pickup)
 
 		if (pickup:getDimension() == localPlayer:getDimension()) then
 			pickup:setRotation(0, 0, pickupRotation)
@@ -166,13 +166,13 @@ local function alignVehicle(vehicle)
 end
 
 local function checkVehicleIsHelicopter(vehicle)
-	if(exports.uni:table_find(helicopterIds, tonumber(vehicle:getModel()))) then
+	if(exports.ddc_core:table_find(helicopterIds, tonumber(vehicle:getModel()))) then
 		vehicle:setHelicopterRotorSpeed(0.2)
 	end
 end
 
 local function checkModelIsAirplane()
-	return exports.uni:table_find(helicopterIds, tonumber(vehicle:getModel()))
+	return exports.ddc_core:table_find(helicopterIds, tonumber(vehicle:getModel()))
 end
 
 local function vehicleChanging(vehicle, isClassicChangeZ, ispreviousVehicleHeight)
@@ -241,13 +241,13 @@ local function onPickupHit(element)
 end
 
 local function addVisiblePickup()
-	if (isPickupValid(source:getModel()) and exports.uni:table_find(pickups, source)) then
+	if (isPickupValid(source:getModel()) and exports.ddc_core:table_find(pickups, source)) then
 		visiblePickups[source] = source
 	end
 end
 
 local function removeVisiblePickup()
-	local pickup = exports.uni:table_find(pickups, source)
+	local pickup = exports.ddc_core:table_find(pickups, source)
 
 	if (pickup) then
 		visiblePickups[pickup] = nil
