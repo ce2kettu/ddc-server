@@ -45,6 +45,7 @@ function MapLoader:startMap(room, resourceName)
 	self.loadedMaps[resourceName] = {
 		_inUse = 1,
 		resourceName = mapData.resourceName,
+		hasHunterPickup = mapData.hasHunterPickup,
 		info = mapData.info,
 		settings = mapData.settings,
 		files = mapData.files,
@@ -57,6 +58,7 @@ function MapLoader:startMap(room, resourceName)
 	
 	return {
 		resourceName = mapData.resourceName,
+		hasHunterPickup = self.loadedMaps[resourceName].hasHunterPickup
 		info = self.loadedMaps[resourceName].info or {},
 		settings = self.loadedMaps[resourceName].settings or {},
 		spawnPoints = self.loadedMaps[resourceName].spawnPoints or {}
@@ -105,6 +107,7 @@ function MapLoader:loadMap(resourceName)
 	local startTick = getTickCount()
 	local mapData = {
 		resourceName = resourceName,
+		hasHunterPickup = false,
 		info = {},
 		settings = {},
 		files = {},
@@ -181,9 +184,11 @@ function MapLoader:loadMap(resourceName)
 			elseif (nodeName == "map") then
 				nodeAttributes = node:getAttributes()
 				
-				local mapElements, spawnPoints, mapLoadError = self:loadMapFile(':' .. resourceName .. '/' .. nodeAttributes.src)
+				local mapElements, spawnPoints, hasHunterPickup, mapLoadError = self:loadMapFile(':' .. resourceName .. '/' .. nodeAttributes.src)
 				
 				if (mapElements) then
+					mapData.hasHunterPickup = hasHunterPickup
+
 					for _, elementInfo in ipairs(mapElements) do
 						table_insert(mapData.mapElements, elementInfo)
 					end
@@ -220,12 +225,13 @@ function MapLoader:loadMapFile(mapFile)
 	local xml = XML.load(mapFile)
 	
 	if (not xml) then
-		return nil, nil, "Unable to load map file('"..mapFile.."')"
+		return nil, nil, false, "Unable to load map file('"..mapFile.."')"
 	end
 	
 	local nodeName, subnodeName = false, false
 	local nodeAttributes, subnodeAttributes = false, false
 	local mapElements, spawnPoints = {}, {}
+	local hasHunterPickup = false
 	
 	for _, node in ipairs(xml:getChildren()) do
 		nodeName = node:getName()
@@ -264,9 +270,16 @@ function MapLoader:loadMapFile(mapFile)
 				color = nodeAttributes.color and split(nodeAttributes.color, ',') or false
 			})
 		elseif (nodeName == "racepickup") then
+			local type = nodeAttributes.type
+			local vehicle = tonumber_(nodeAttributes.vehicle) or false
+
+			if (not hasHunterPickup and vehicle == 425 and type == "vehiclechange") then
+				hasHunterPickup = true
+			end
+
 			table_insert(mapElements, {
 				name = "racepickup",
-				type = nodeAttributes.type,
+				type = type,
 				posX = tonumber_(nodeAttributes.posX) or 0,
 				posY = tonumber_(nodeAttributes.posY) or 0,
 				posZ = tonumber_(nodeAttributes.posZ) or 0,
@@ -274,7 +287,7 @@ function MapLoader:loadMapFile(mapFile)
 				rotY = tonumber_(nodeAttributes.rotY) or 0,
 				rotZ = tonumber_(nodeAttributes.rotZ) or 0,
 				alpha = tonumber_(nodeAttributes.alpha) or 255,
-				vehicle = tonumber_(nodeAttributes.vehicle) or false,
+				vehicle = vehicle,
 				respawn = tonumber_(nodeAttributes.respawn) or false
 			})
 		elseif (nodeName == "spawnpoint") then
@@ -342,7 +355,7 @@ function MapLoader:loadMapFile(mapFile)
 
 	xml:unload()
 
-	return mapElements, spawnPoints, nil
+	return mapElements, spawnPoints, hasHunterPickup, nil
 end
 
 function MapLoader:sendMapToClient(element, resourceName)

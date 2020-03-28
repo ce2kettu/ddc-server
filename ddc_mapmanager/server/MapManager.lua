@@ -31,7 +31,7 @@ function MapManager:loadMapList()
 				end
 				
 				table.insert(self.mapList[mapPrefix], {
-					resname = resourceName,
+					resourceName = resourceName,
 					name = mapName,
 					author = mapAuthor
 				})
