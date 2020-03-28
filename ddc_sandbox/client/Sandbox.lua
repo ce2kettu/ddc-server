@@ -7,9 +7,12 @@ function Sandbox:constructor()
 	self.fileHashList = {}
 	self.mutedSounds = {}
 	
-	-- TODO: add reserved binds
-	-- TODO: disable commandHandlers? What is the usage for them?
+	self.reservedBinds = {
+		"f1", "f2", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "f9", "f10", "f11", "f12",
+		"tab", "r", "t", "g", "l", "enter", "b", "m"
+	}
 
+	-- TODO: disable commandHandlers? What is the usage for them?
 	self.disabledDictionary = {
 		"triggerServerEvent", "triggerLatentServerEvent",
 		"createBlip", "createBlipAttachedTo",
@@ -223,6 +226,10 @@ end
 
 function Sandbox:getResourceName()
 	return self.resourceName
+end
+
+function Sandbox:getReservedBinds()
+	return self.reservedBinds
 end
 
 function Sandbox:getDownloadUrl()

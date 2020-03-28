@@ -120,6 +120,10 @@ function SandboxHooks.bindKey(key, keyState, handler, ...)
 	if (type(handler) ~= "function" and type(handler) ~= "string") then
 		return false
 	end
+
+	if (exports.ddc_core:table_find(g_Sandbox:getReservedBinds(), key:lower())) then
+		return false
+	end
 	
 	if (bindKey(key, keyState, handler, ...)) then
 		table.insert(binds, {key, keyState, handler})
@@ -135,6 +139,10 @@ function SandboxHooks.unbindKey(key, keyState, handler)
 	end
 	
 	if (type(handler) ~= "function" and type(handler) ~= "string") then
+		return false
+	end
+
+	if (exports.ddc_core:table_find(g_Sandbox:getReservedBinds(), key:lower())) then
 		return false
 	end
 	
