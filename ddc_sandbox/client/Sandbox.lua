@@ -9,10 +9,10 @@ function Sandbox:constructor()
 	
 	self.reservedBinds = {
 		"f1", "f2", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "f9", "f10", "f11", "f12",
-		"tab", "r", "t", "g", "l", "enter", "m"
+		"tab", "r", "t", "g", "l", "enter", "m",
 
 		-- spectator binds
-		"arrow_l", "arrow_r", "b"
+		"arrow_l", "arrow_r", "b",
 	}
 
 	-- TODO: disable commandHandlers? What is the usage for them?
