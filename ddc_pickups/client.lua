@@ -123,7 +123,7 @@ local function onClientRender()
 
 							if (distance <= 120) then
 								local scale = 1 - distance / 120
-								local pickupText = getVehicleNameFromModel(uColshape:getData("vehicle"))
+								local pickupText = getVehicleNameFromModel(colshape:getData("vehicle"))
 								local textLength = dxGetTextWidth(pickupText, 1 * scale, "default-bold") / 2
 								local ccX, ccY, ccZ = getCameraMatrix()
 
