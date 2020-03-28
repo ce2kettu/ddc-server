@@ -8,23 +8,49 @@ function Sandbox:constructor()
 	self.mutedSounds = {}
 	
 	-- TODO: add reserved binds
+	-- TODO: disable commandHandlers? What is the usage for them?
 
-	self.disabledFunctions = {
+	self.disabledDictionary = {
 		"triggerServerEvent", "triggerLatentServerEvent",
 		"createBlip", "createBlipAttachedTo",
 		"createBrowser", "guiCreateBrowser",
 		"addPedClothes", "removePedClothes",
-		"fileOpen", "fileCreate",
+		"fileOpen", "fileCreate", "fileDelete",
 		"output(.*)",
 		"createRadarArea",
 		"createWeapon", "createSWATRope",
 		"xmlCreateFile",
 		"engineLoadIFP",
+		"setFPSLimit",
 
 		"gui(.*)",
 		
+		-- disable local variables and functions
 		"_unloadEverything",
-		
+		"checkArguments",
+		"loadScript",
+		"unloadScripts",
+		"triggerResourceStart",
+		"toggleSounds",
+		"setMapData",
+		"g_Sandbox",
+		"SandboxHooks",
+		"Sandbox",
+		"events",
+		"commands",
+		"binds",
+		"xmlFiles",
+		"loadedDff",
+		"loadedCol",
+		"checkArguments_",
+
+		-- these might break stuff
+		"call",
+		"exports",
+		"addEvent",
+		"triggerEvent",
+		"fetchRemote",
+
 		"_G", "collectgarbage", "getfenv", "setfenv", "load", "loadstring", "getmetatable", "setmetatable", "raw(.*)", "string.dump", "debug", 
 		"math.randomseed", "newproxy",
 		
@@ -62,7 +88,7 @@ function Sandbox:loadScript(fileContent)
 	
 	local byte = fileContent:byte(1)
 	
-	-- Byte code not supported
+	-- byte code is not supported
 	if (byte == 16 or byte == 22) then
 		return
 	end
@@ -135,9 +161,9 @@ function Sandbox:setupSandbox()
 		__index = function(self, index)
 			local isBlocked = false
 			
-			-- Check for disabled functions
-			for _, functionName in ipairs(g_Sandbox.disabledFunctions) do
-				if (index:find(functionName)) then
+			-- check for disabled keywords
+			for _, keyword in ipairs(g_Sandbox.disabledDictionary) do
+				if (index:find(keyword)) then
 					isBlocked = true
 					break
 				end
@@ -150,7 +176,7 @@ function Sandbox:setupSandbox()
 			if (not isBlocked and _G[index]) then
 				return _G[index]
 			end
-			
+
 			local type_ = type(_G[index]);
 			
 			if (type_ == "function") then
@@ -199,7 +225,7 @@ function Sandbox:getResourceName()
 	return self.resourceName
 end
 
-function Sandbox:getdownloadUrl()
+function Sandbox:getDownloadUrl()
 	return self.downloadUrl
 end
 

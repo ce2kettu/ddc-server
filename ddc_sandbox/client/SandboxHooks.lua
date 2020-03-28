@@ -4,7 +4,7 @@ local binds = {}
 local xmlFiles = {}
 local loadedDff = {}
 local loadedCol = {}
-local checkArguments = function(...) return exports.ddc_core:checkArguments(...) end
+local checkArguments_ = checkArguments
 
 SandboxHooks = {}
 
@@ -49,7 +49,7 @@ function _unloadEverything()
 end
 
 function SandboxHooks.addEventHandler(eventName, attachedToElement, handler, ...)
-	if (not checkArguments("suf", eventName, attachedToElement, handler)) then
+	if (not checkArguments_("suf", eventName, attachedToElement, handler)) then
 		return false
 	end
 	
@@ -62,7 +62,7 @@ function SandboxHooks.addEventHandler(eventName, attachedToElement, handler, ...
 end
 
 function SandboxHooks.removeEventHandler(eventName, attachedToElement, handler)
-	if (not checkArguments("suf", eventName, attachedToElement, handler)) then
+	if (not checkArguments_("suf", eventName, attachedToElement, handler)) then
 		return false
 	end
 	
@@ -81,7 +81,7 @@ function SandboxHooks.removeEventHandler(eventName, attachedToElement, handler)
 end
 
 function SandboxHooks.addCommandHandler(commandName, handler, ...)
-	if (not checkArguments("sf", commandName, handler)) then
+	if (not checkArguments_("sf", commandName, handler)) then
 		return false
 	end
 	
@@ -94,7 +94,7 @@ function SandboxHooks.addCommandHandler(commandName, handler, ...)
 end
 
 function SandboxHooks.removeCommandHandler(commandName, handler)
-	if (not checkArguments("sf", commandName, handler)) then
+	if (not checkArguments_("sf", commandName, handler)) then
 		return false
 	end
 	
@@ -113,7 +113,7 @@ function SandboxHooks.removeCommandHandler(commandName, handler)
 end
 
 function SandboxHooks.bindKey(key, keyState, handler, ...)
-	if (not checkArguments("ss", key, keyState)) then
+	if (not checkArguments_("ss", key, keyState)) then
 		return false
 	end
 	
@@ -130,7 +130,7 @@ function SandboxHooks.bindKey(key, keyState, handler, ...)
 end
 
 function SandboxHooks.unbindKey(key, keyState, handler)
-	if (not checkArguments("ss", key, keyState)) then
+	if (not checkArguments_("ss", key, keyState)) then
 		return false
 	end
 	
@@ -153,7 +153,7 @@ function SandboxHooks.unbindKey(key, keyState, handler)
 end
 
 function SandboxHooks.playSound(filePath, isLooped, isThrottled)
-	if (not checkArguments("s", filePath)) then
+	if (not checkArguments_("s", filePath)) then
 		return false
 	end
 	
@@ -170,7 +170,7 @@ function SandboxHooks.playSound(filePath, isLooped, isThrottled)
 end
 
 function SandboxHooks.playSound3D(filePath, x, y, z, ...)
-	if (not checkArguments("siii", filePath, x, y, z)) then
+	if (not checkArguments_("siii", filePath, x, y, z)) then
 		return false
 	end
 	
@@ -187,7 +187,7 @@ function SandboxHooks.playSound3D(filePath, x, y, z, ...)
 end
 
 function SandboxHooks.createColCircle(x, y, z, radus)
-	if (not checkArguments("iiii", x, y, z, radus)) then
+	if (not checkArguments_("iiii", x, y, z, radus)) then
 		return false
 	end
 	
@@ -204,7 +204,7 @@ function SandboxHooks.createColCircle(x, y, z, radus)
 end
 
 function SandboxHooks.createColCuboid(x, y, z, width, depth, height)
-	if (not checkArguments("iiiiii", x, y, z, width, depth, height)) then
+	if (not checkArguments_("iiiiii", x, y, z, width, depth, height)) then
 		return false
 	end
 	
@@ -221,7 +221,7 @@ function SandboxHooks.createColCuboid(x, y, z, width, depth, height)
 end
 
 function SandboxHooks.createColPolygon(x, y, x2, y2, x3, y3, x4, y4, ...)
-	if (not checkArguments("iiiiiiii", x, y, z, width, depth, height)) then
+	if (not checkArguments_("iiiiiiii", x, y, z, width, depth, height)) then
 		return false
 	end
 	
@@ -238,7 +238,7 @@ function SandboxHooks.createColPolygon(x, y, x2, y2, x3, y3, x4, y4, ...)
 end
 
 function SandboxHooks.createColRectangle(x, y, width, height)
-	if (not checkArguments("iiii", x, y, width, height)) then
+	if (not checkArguments_("iiii", x, y, width, height)) then
 		return false
 	end
 	
@@ -255,7 +255,7 @@ function SandboxHooks.createColRectangle(x, y, width, height)
 end
 
 function SandboxHooks.createColSphere(x, y, z, radus)
-	if (not checkArguments("iiii", x, y, z, radus)) then
+	if (not checkArguments_("iiii", x, y, z, radus)) then
 		return false
 	end
 	
@@ -272,7 +272,7 @@ function SandboxHooks.createColSphere(x, y, z, radus)
 end
 
 function SandboxHooks.createColTube(x, y, z, radus, height)
-	if (not checkArguments("iiiii", x, y, z, radus, height)) then
+	if (not checkArguments_("iiiii", x, y, z, radus, height)) then
 		return false
 	end
 	
@@ -330,7 +330,7 @@ function SandboxHooks.dxCreateTexture(filePath, ...)
 end
 
 function SandboxHooks.dxDrawImage(x, y, width, height, filePath, ...)
-	if (not checkArguments("iiii", x, y, width, height)) then
+	if (not checkArguments_("iiii", x, y, width, height)) then
 		return false
 	end
 	
@@ -344,7 +344,7 @@ function SandboxHooks.dxDrawImage(x, y, width, height, filePath, ...)
 end
 
 function SandboxHooks.dxDrawImageSection(x, y, width, height, u, v, uSze, vSze, filePath, ...)
-	if (not checkArguments("iiiiiiii", x, y, width, height, u, v, uSze, vSze)) then
+	if (not checkArguments_("iiiiiiii", x, y, width, height, u, v, uSze, vSze)) then
 		return false
 	end
 	

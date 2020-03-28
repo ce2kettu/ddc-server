@@ -6,7 +6,6 @@ local function onClientResourceStart()
 	g_Sandbox = new(Sandbox)
 end
 
-
 local function onClientResourceStop()
 	if (CALLED_FROM_SANDBOX) then
 		return
