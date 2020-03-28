@@ -1,0 +1,36 @@
+<meta>
+	<oop>true</oop>
+		
+	<!-- Exported functions -->
+	
+	<!-- Shared -->
+		<script type="shared" src="shared/utils.lua" />
+	
+	<!-- Server -->
+		<script type="server" src="server/RoomManager.lua" />
+		<script type="server" src="server/init.lua" />
+		
+		<!-- Gamemodes -->
+		<script type="server" src="server/gamemodes/Deathmatch.lua" />
+		
+	<!-- Client -->
+		<script type="client" src="client/RoomManager.lua" />
+		
+		<!-- Addons -->
+		<script type="client" src="client/addons/Spectators.lua" />
+		<script type="client" src="client/addons/Waterkiller.lua" />
+		<script type="client" src="client/addons/CarFade.lua" />
+		<script type="client" src="client/addons/CarHide.lua" />
+		
+		<!-- Gamemodes -->		
+		<script type="client" src="client/gamemodes/Lobby.lua" />
+		<script type="client" src="client/gamemodes/Deathmatch.lua" />
+		
+		<script type="client" src="client/client.lua" />	
+		<script type="client" src="client/init.lua" />
+		
+	<!-- Files -->
+		<file src="files/images/bg.jpg" />
+		<file src="files/images/pagination.png" />
+		<file src="files/sounds/lobby.mp3" />
+</meta>
