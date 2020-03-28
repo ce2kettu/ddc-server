@@ -40,7 +40,7 @@ function Autoloader:destroyAllClasses()
     local currentDestructTime = startTime
 	
     for _, className in ipairs(initializedClasses) do
-        if(_G[className] and _G[className].i) then
+        if (_G[className] and _G[className].i) then
             delete(_G[className]:i())
 
 			local currentTick = getTickCount()
@@ -59,7 +59,7 @@ function Autoloader:destroyAllClasses()
 end
 
 function preInitializeClass(className)
-    if(not checkArguments("s", className)) then
+    if (not checkArguments("s", className)) then
         outputDebug("warning", "Bad arguments @preInitializeClass(%s)", type(className))
         return
     end

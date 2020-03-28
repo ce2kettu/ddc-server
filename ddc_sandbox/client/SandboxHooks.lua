@@ -10,33 +10,33 @@ SandboxHooks = {}
 
 function _unloadEverything()
 	-- unload all events
-	for _, tblEventInfo in ipairs(events) do
-		removeEventHandler(unpack(tblEventInfo))
+	for _, eventInfo in ipairs(events) do
+		removeEventHandler(unpack(eventInfo))
 	end
 	
 	-- unload all commands
-	for _, tblCommandInfo in ipairs(commands) do
-		removeCommandHandler(unpack(tblCommandInfo))
+	for _, commandInfo in ipairs(commands) do
+		removeCommandHandler(unpack(commandInfo))
 	end
 	
 	-- unload all binds
-	for _, tblBindInfo in ipairs(binds) do
-		unbindKey(unpack(tblBindInfo))
+	for _, bindInfo in ipairs(binds) do
+		unbindKey(unpack(bindInfo))
 	end
 	
 	-- unload all xml files
-	for _, uXML in ipairs(xmlFiles) do
-		xmlUnloadFile(uXML)
+	for _, xml in ipairs(xmlFiles) do
+		xmlUnloadFile(xml)
 	end
 	
 	-- restore all models
-	for iModelID, _ in pairs(loadedDff) do
-		engineRestoreModel(iModelID)
+	for modelId, _ in pairs(loadedDff) do
+		engineRestoreModel(modelId)
 	end
 	
 	-- restore all collisions
-	for iModelID, _ in pairs(loadedCol) do
-		engineRestoreCOL(iModelID)
+	for modelId, _ in pairs(loadedCol) do
+		engineRestoreCOL(modelId)
 	end
 	
 	-- reset variables
@@ -326,12 +326,12 @@ end
 
 function SandboxHooks.dxCreateTexture(filePath, ...)
 	local filePath = g_Sandbox:getFileHashFromName(filePath) or filePath
-	local uTexture = dxCreateTexture(filePath, ...)
+	local texture = dxCreateTexture(filePath, ...)
 	
-	if(uTexture) then
-		uTexture:setParent(g_Sandbox:getMapElement())
+	if (texture) then
+		texture:setParent(g_Sandbox:getMapElement())
 		
-		return uTexture
+		return texture
 	end
 	
 	return false

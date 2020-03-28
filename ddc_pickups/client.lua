@@ -166,7 +166,7 @@ local function alignVehicle(vehicle)
 end
 
 local function checkVehicleIsHelicopter(vehicle)
-	if(exports.ddc_core:table_find(helicopterIds, tonumber(vehicle:getModel()))) then
+	if (exports.ddc_core:table_find(helicopterIds, tonumber(vehicle:getModel()))) then
 		vehicle:setHelicopterRotorSpeed(0.2)
 	end
 end

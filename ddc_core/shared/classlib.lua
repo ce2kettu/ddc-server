@@ -124,7 +124,7 @@ function delete(self, ...)
 	end
 	callDerivedDestructor(superMultiple(self), self, ...)
 	
-	if(type(self) == "table") then
+	if (type(self) == "table") then
 		for index, _ in pairs(self) do
 			self[index] = nil
 		end

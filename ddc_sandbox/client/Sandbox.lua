@@ -85,7 +85,7 @@ function Sandbox:destructor()
 end
 
 function Sandbox:loadScript(fileContent)
-	if(not fileContent or type(fileContent) ~= "string") then
+	if (not fileContent or type(fileContent) ~= "string") then
 		return
 	end
 	

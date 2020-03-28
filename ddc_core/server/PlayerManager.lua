@@ -54,7 +54,7 @@ function PlayerManager:getFreeId()
 end
 
 function PlayerManager:getPlayerById(id)
-	if(not checkArguments("i", id)) then
+	if (not checkArguments("i", id)) then
 		outputDebug("warning", "Bad argument @ PlayerManager.getPlayerById(%s)", type(id))
 		return false
 	end
