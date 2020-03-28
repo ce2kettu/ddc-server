@@ -5,8 +5,8 @@ function MapLoader:constructor()
 	self.downloadList = {}
 	self.mapCache = {}
 	self.fileHashList = {}
-	self.downloadUrl = "http://51.38.176.58:22222/"
-	self.hasMapLoaded = false
+	self.downloadUrl = (exports.ddc_core:getServerInfo().isLocal and "http://192.168.0.164/") or "http://ddc.community:20081/"
+	self._hasMapLoaded = false
 	self._onClientReceiveRequestedFile = function(...) self:onClientReceiveRequestedFile(...) end
 	
     self.lodModels = {
@@ -164,14 +164,11 @@ function MapLoader:constructor()
 	Engine.setAsynchronousLoading(true, true)
 end
 
-
 function MapLoader:destructor()
 	self:onClientReceiveMapUnloadRequest()
 	
 	Engine.setAsynchronousLoading(false, false)
 end
-
--- *************************************************************************************** --
 
 function MapLoader:onClientReceiveMapData(tblMapData)
 	-- unload loaded map first
@@ -190,10 +187,8 @@ function MapLoader:onClientReceiveMapData(tblMapData)
 	-- load map elements
 	self:loadMapElements(tblMapData.mapElements)
 		
-	self.hasMapLoaded = true
+	self._hasMapLoaded = true
 end
-
--- *************************************************************************************** --
 
 function MapLoader:fetchNextFile()
 	if (#self.downloadList == 0) then
@@ -234,14 +229,13 @@ function MapLoader:fetchNextFile()
 	fetchRemote(downloadUrl, self._onClientReceiveRequestedFile)
 end
 
--- *************************************************************************************** --
-
-function MapLoader:onClientReceiveRequestedFile(responseData, errorCode)	
+function MapLoader:onClientReceiveRequestedFile(responseData, errorCode)
+	-- TODO: error handling
 	local fileInfo = self.downloadList[1]
 	local shouldCacheFile = (fileInfo.cache or fileInfo.type == "script") or fileInfo.type == "file"
 	
 	if (shouldCacheFile) then
-		local fileName = "cache/" .. fileInfo.checksum
+		local fileName = "cache/"..fileInfo.checksum
 		local fileExtension = fileInfo.src:match("%.([0-9a-zA-Z]+)")
 		
 		-- delete previous file
@@ -279,8 +273,6 @@ function MapLoader:onClientReceiveRequestedFile(responseData, errorCode)
 	self:fetchNextFile()
 end
 
--- *************************************************************************************** --
-
 function MapLoader:onClientReceiveMapUnloadRequest()	
 	-- there was no map loaded
 	if (not self:hasMapLoaded()) then
@@ -298,7 +290,7 @@ function MapLoader:onClientReceiveMapUnloadRequest()
 		element:destroy()
 	end
 	
-	self.hasMapLoaded = false
+	self._hasMapLoaded = false
 	self.downloadList = {}
 	self.mapCache = {}
 	self.fileHashList = {}
@@ -331,7 +323,6 @@ function MapLoader:checkCachedFiles(fileList, scriptList)
 			
 			local fileContent = file:read(file:getSize())
 			file:close()
-			
 			exports.ddc_sandbox:loadScript(fileContent)
 		end
 	end
@@ -545,7 +536,7 @@ function MapLoader:loadMapElements(tblElementList)
 end
 
 function MapLoader:hasMapLoaded()
-	return self.hasMapLoaded
+	return self._hasMapLoaded
 end
 
 function MapLoader:getMapElement()

@@ -1,4 +1,4 @@
-local tonumber_ = tonumber_
+local tonumber_ = tonumber
 local table_insert = table.insert
 
 MapLoader = {}
@@ -196,7 +196,7 @@ function MapLoader:loadMap(resourceName)
 					errorMessage = mapLoadError
 				end
 			else
-				exports.ddc_core:outputDebug("debug", "[MapLoader] Unknown node name(%s) found in %s!", nodeName, resourceName)
+				exports.ddc_core:outputDebug("debug", "[MapLoader] Unknown node name (%s) found in %s!", nodeName, resourceName)
 			end
 		end
 	end
