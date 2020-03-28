@@ -16,6 +16,7 @@
 	<export function="getServerInfo" type="shared" />
 	<export function="checkArguments" type="shared" />
 	<export function="table_find" type="shared" />
+	<export function="var_dump" type="shared" />
 
 	<export function="setData" type="shared" />
 	<export function="getPlayerById" type="shared" />
