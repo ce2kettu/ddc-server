@@ -1,0 +1,49 @@
+<meta>
+	<!-- Files -->
+		<!-- Fonts -->
+		<file src="files/fonts/font_icon_light.otf" />
+		<file src="files/fonts/font_icon_regular.otf" />
+		<file src="files/fonts/font_icon_solid.otf" />
+		<file src="files/fonts/font_opensans_bold.ttf" />
+		<file src="files/fonts/font_opensans_regular.ttf" />
+		<file src="files/fonts/font_opensans_semibold.ttf" />
+		
+		<!-- Images -->
+		<file src="files/images/flags.png" />
+
+		<file src="files/images/logo.png" />
+		
+		<file src="files/images/emotes/4head.png" />
+		<file src="files/images/emotes/biblethump.png" />
+		<file src="files/images/emotes/cmonBruh.png" />
+		<file src="files/images/emotes/fire.png" />
+		<file src="files/images/emotes/gaminaKappa.png" />
+		<file src="files/images/emotes/illuminati.png" />
+		<file src="files/images/emotes/Jebaited.png" />
+		<file src="files/images/emotes/kappa.png" />
+		<file src="files/images/emotes/kappaPride.png" />
+		<file src="files/images/emotes/LUL.png" />
+		<file src="files/images/emotes/OhMyDog.png" />
+		<file src="files/images/emotes/pogchamp.png" />
+		<file src="files/images/emotes/residentSleeper.png" />
+		<file src="files/images/emotes/summit.png" />
+		<file src="files/images/emotes/SwiftRage.png" />
+		<file src="files/images/emotes/takenrg.png" />
+		<file src="files/images/emotes/trihard.png" />
+		<file src="files/images/emotes/WutFace.png" />
+		
+		<!-- Cursors -->
+		<file src="files/images/cursors/closedhand.png" />
+		<file src="files/images/cursors/default.png" />
+		<file src="files/images/cursors/ibeam.png" />
+		<file src="files/images/cursors/move.png" />
+		<file src="files/images/cursors/notallowed.png" />
+		<file src="files/images/cursors/pointinghand.png" />
+		<file src="files/images/cursors/resizeeastwest.png" />
+		<file src="files/images/cursors/resizenortheastsouthwest.png" />
+		<file src="files/images/cursors/resizenorthsouth.png" />
+		<file src="files/images/cursors/resizenorthwestsoutheast.png" />
+
+		<!-- Sounds -->
+		<file src="files/sounds/notification.mp3" />
+</meta>
