@@ -5,6 +5,7 @@ local pickups = {}
 local helicopterIds = { 417, 425, 447, 465, 469, 487, 488, 497, 501, 548, 563 }
 local airplaneIds = { 592, 577, 511, 512, 593, 520, 553, 476, 519, 460, 513, 539 }
 local useClassicChangeZ = true
+local math_atan2 = math.atan2
 
 local function isPickupValid(pickupId)
 	for _, id in pairs(pickupIds) do
@@ -16,10 +17,6 @@ local function isPickupValid(pickupId)
 	return false
 end
 
-local function directionToRotation2D(a, b)
-	return rem(math.atan2(b, a) * (360 / 6.28) - 90, 360)
-end
-
 local function rem(a, b)
 	local result = a - b * math.floor(a / b)
 
@@ -28,6 +25,10 @@ local function rem(a, b)
 	end
 
 	return result
+end
+
+local function directionToRotation2D(a, b)
+	return rem(math_atan2(b, a) * (360 / 6.28) - 90, 360)
 end
 
 local function unloadPickups()
@@ -156,7 +157,7 @@ local function alignVehicle(vehicle)
 	local matrix, rotZ = vehicle:getMatrix(), nil
 	local forward, upward, velocity = matrix:getForward(), matrix:getUp(), Vector3(vehicle:getVelocity())
 
-	if (velocity:getLength() > 0.05 and Up.z < 0.001) then
+	if (velocity:getLength() > 0.05 and upward.z < 0.001) then
 		rotZ = directionToRotation2D(velocity.x, velocity.y)
 	else
 		rotZ = directionToRotation2D(forward.x, forward.y)
@@ -171,8 +172,8 @@ local function checkVehicleIsHelicopter(vehicle)
 	end
 end
 
-local function checkModelIsAirplane()
-	return exports.ddc_core:table_find(helicopterIds, tonumber(vehicle:getModel()))
+local function checkModelIsAirplane(model)
+	return exports.ddc_core:table_find(airplaneIds, model)
 end
 
 local function vehicleChanging(vehicle, isClassicChangeZ, ispreviousVehicleHeight)
