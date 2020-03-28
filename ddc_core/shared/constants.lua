@@ -1,5 +1,7 @@
 g_isServer = (triggerClientEvent ~= nil)
 g_isClient = (not g_isServer)
+g_isDevelopmentMode = true
+g_isLocalServer = true
 
 g_serverName = "mgm"
 g_serverFPSLimit = 51
