@@ -22,3 +22,21 @@ function outputDebug(debugLevel, message, ...)
 	
 	outputDebugString(message, 0, unpack(availableDebugLevels[debugLevel]))
 end
+
+function getServerInfo()
+	return {
+		name = g_strServerName,
+		isDev = g_isDevelopmentMode,
+		isLocal = g_isLocalServer,
+		version = g_strServerVersion,
+		color = g_strServerColor
+	}
+end
+
+function setData(element, ...)	
+	return SyncManager:i():setData(element, ...)
+end
+
+function getPlayerById(id)
+	return PlayerManager:getPlayerById(id)
+end
