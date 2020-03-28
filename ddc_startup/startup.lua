@@ -1,8 +1,10 @@
 local resources = {
 	"ddc_core",
-	"ddc_sandbox",
 	"ddc_mapmanager",
+	"ddc_sandbox",
 	"ddc_pickups",
+	"ddc_ui",
+	"ddc_rooms",
 }
 
 -- Starts all resource dependencies
