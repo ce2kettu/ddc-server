@@ -27,7 +27,7 @@ function getServerInfo()
 	return {
 		name = g_strServerName,
 		isDev = g_isDevelopmentMode,
-		isLocal = g_isLocalServer,
+		downloadUrl = g_downloadUrl,
 		version = g_strServerVersion,
 		color = g_strServerColor
 	}

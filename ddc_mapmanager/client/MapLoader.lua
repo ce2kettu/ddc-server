@@ -5,7 +5,7 @@ function MapLoader:constructor()
 	self.downloadList = {}
 	self.mapCache = {}
 	self.fileHashList = {}
-	self.downloadUrl = (exports.ddc_core:getServerInfo().isLocal and "http://192.168.0.164/") or "http://ddc.community:20081/"
+	self.downloadUrl = exports.ddc_core:getServerInfo().downloadUrl
 	self._hasMapLoaded = false
 	self._onClientReceiveRequestedFile = function(...) self:onClientReceiveRequestedFile(...) end
 	
