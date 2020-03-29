@@ -237,7 +237,7 @@ function Sandbox:getFileHashFromName(fileName)
 	end
 	
 	if (self.fileHashList[fileName]) then
-		return ":ddc_mapmanager/cache/" .. self.fileHashList[fileName]
+		return ":ddc_mapmanager/cache/"..self.fileHashList[fileName]
 	end
 	
 	return false
