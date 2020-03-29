@@ -362,7 +362,8 @@ end
 function MapLoader:checkShaderFile(fileContent, fileName)
 	local path = fileName:match("(.*%/).*") or ""
 	
-	for includeFileName in fileContent:gmatch("#include ['\"]([%w.-/_]+)['\"]") do
+	-- e.g. '#include "mta-helper.fx"', magic characters escaped
+	for includeFileName in fileContent:gmatch("#include ['\"]([%w%.%-/_]+)['\"]") do
 		local fileName = self.fileHashList[path..includeFileName]
 		
 		if (fileName) then
