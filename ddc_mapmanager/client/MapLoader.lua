@@ -232,6 +232,7 @@ end
 function MapLoader:onClientReceiveRequestedFile(responseData, errorCode)
 	-- no errors occurred during fetching
 	if (errorCode == 0) then
+		outputChatBox("List length: "..#self.downloadList.." and "..type(self.downloadList[1]))
 		local fileInfo = self.downloadList[1]
 		local shouldCacheFile = (fileInfo.cache or fileInfo.type == "script") or fileInfo.type == "file"
 		

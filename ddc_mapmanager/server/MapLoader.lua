@@ -335,19 +335,23 @@ function MapLoader:loadMapFile(mapFile)
 				posZ = tonumber_(nodeAttributes.posZ) or 0
 			})
 		elseif (nodeName == "pickup") then
-			table_insert(mapElements, {
-				name = "pickup",
-				type = tonumber_(nodeAttributes.type),
-				posX = tonumber_(nodeAttributes.posX) or 0,
-				posY = tonumber_(nodeAttributes.posY) or 0,
-				posZ = tonumber_(nodeAttributes.posZ) or 0,
-				rotX = tonumber_(nodeAttributes.rotX) or 0,
-				rotY = tonumber_(nodeAttributes.rotY) or 0,
-				rotZ = tonumber_(nodeAttributes.rotZ) or 0,
-				amount = tonumber_(nodeAttributes.amount) or 100,
-				respawn = tonumber_(nodeAttributes.respawn) or 30000,
-				alpha = tonumber_(nodeAttributes.alpha) or 255
-			})
+			local type = tonumber_(nodeAttributes.type)
+
+			if (type) then
+				table_insert(mapElements, {
+					name = "pickup",
+					type = type,
+					posX = tonumber_(nodeAttributes.posX) or 0,
+					posY = tonumber_(nodeAttributes.posY) or 0,
+					posZ = tonumber_(nodeAttributes.posZ) or 0,
+					rotX = tonumber_(nodeAttributes.rotX) or 0,
+					rotY = tonumber_(nodeAttributes.rotY) or 0,
+					rotZ = tonumber_(nodeAttributes.rotZ) or 0,
+					amount = tonumber_(nodeAttributes.amount) or 100,
+					respawn = tonumber_(nodeAttributes.respawn) or 30000,
+					alpha = tonumber_(nodeAttributes.alpha) or 255
+				})
+			end
 		else
 			exports.ddc_core:outputDebug("debug", "[MapLoader] Invalid node name (%s) found in %s!", nodeName, mapFile)
 		end

@@ -13,7 +13,7 @@ function Sandbox:constructor()
 		"tab",
 		
 		-- gameplay
-		"r", "enter",
+		"r", "enter", "space",
 
 		-- chat
 		"t", "g", "l",
