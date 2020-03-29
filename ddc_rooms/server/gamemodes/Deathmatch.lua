@@ -332,8 +332,8 @@ function Deathmatch:spawnPlayer(player)
 		self.currentSpawnIndex = 1
 	end
 		
-	local vehicle = createVehicle(spawnInfo.vehicle, spawnInfo.posX, spawnInfo.posY, spawnInfo.posZ, spawnInfo.rotX, spawnInfo.rotY, spawnInfo.rotZ)
-	
+	local vehicle = createVehicle(spawnInfo[1], spawnInfo[2], spawnInfo[3], spawnInfo[4], spawnInfo[5], spawnInfo[6], spawnInfo[7])
+
 	if (vehicle) then
 		local r, g, b = 255, 123, 161		
 		
@@ -352,7 +352,7 @@ function Deathmatch:spawnPlayer(player)
 		player:fadeCamera(true)
 		player:setCameraTarget(player)
 		
-		player:spawn(spawnInfo.posX, spawnInfo.posY, spawnInfo.posZ, 0, 188, 0, self:getRoomElement():getDimension())
+		player:spawn(spawnInfo[2], spawnInfo[3], spawnInfo[4], 0, 188, 0, self:getRoomElement():getDimension())
 		player:warpIntoVehicle(vehicle)
 	end
 end

@@ -35,7 +35,7 @@ end
 
 function getFileChecksum(fileName)
 	-- invalid argument was provided or the given file does not exist
-	if (type(fileName) ~= "string" or not fileExists(fileName)) then
+	if (type(fileName) ~= "string" or not File.exists(fileName)) then
 		return false
 	end
 	

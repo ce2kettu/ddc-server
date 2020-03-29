@@ -7,7 +7,9 @@ function MapLoader:constructor()
 	self.fileHashList = {}
 	self.downloadUrl = exports.ddc_core:getServerInfo().downloadUrl
 	self._hasMapLoaded = false
-	self._onClientReceiveRequestedFile = function(...) self:onClientReceiveRequestedFile(...) end
+	self._onClientReceiveRequestedFile = bind(self.onClientReceiveRequestedFile, self)
+	self._onClientReceiveMapData = bind(self.onClientReceiveMapData, self)
+	self._onClientReceiveMapUnloadRequest = bind(self.onClientReceiveMapUnloadRequest, self)
 	
     self.lodModels = {
         [8476] = 8905; [9476] = 9263; [4339] = 4472; [8654] = 8751; [7465] = 7795; [8465] = 8744; [11114] = 11052; [13872] = 13884; [6999] = 7120;
@@ -157,9 +159,9 @@ function MapLoader:constructor()
 	addEvent("onClientReceiveRequestedFile", true)
 	addEvent("onClientReceiveMapUnloadRequest", true)
 	
-	addEventHandler("onClientReceiveMapData", resourceRoot, function(...) self:onClientReceiveMapData(...) end)
+	addEventHandler("onClientReceiveMapData", resourceRoot, self._onClientReceiveMapData)
 	addEventHandler("onClientReceiveRequestedFile", resourceRoot, self._onClientReceiveRequestedFile)
-	addEventHandler("onClientReceiveMapUnloadRequest", resourceRoot, function() self:onClientReceiveMapUnloadRequest() end)
+	addEventHandler("onClientReceiveMapUnloadRequest", resourceRoot, self._onClientReceiveMapUnloadRequest)
 	
 	Engine.setAsynchronousLoading(true, true)
 end
@@ -226,10 +228,10 @@ function MapLoader:fetchNextFile()
 		return
 	end
 
-	outputChatBox("downloading: "..fileInfo.src)
 	
 	local downloadUrl = self.downloadUrl..self.mapCache.resourceName..'/'..fileInfo.src
 	
+	outputChatBox("downloading: "..fileInfo.src.." len: "..#self.downloadList)
 	fetchRemote(downloadUrl, self._onClientReceiveRequestedFile)
 end
 
@@ -245,15 +247,15 @@ function MapLoader:onClientReceiveRequestedFile(responseData, errorCode)
 			local fileExtension = fileInfo.src:match("%.([0-9a-zA-Z]+)")
 			
 			-- delete previous file
-			if (fileExists(fileName)) then
+			if (File.exists(fileName)) then
 				-- notify the server about the activity
-				if (not fileDelete(fileName)) then
+				if (not File.delete(fileName)) then
 					triggerServerEvent("onPlayerCheat", root, 1, {filename = fileName})
 					return
 				end
 			end
 			
-			local file = fileCreate(fileName)
+			local file = File(fileName)
 			
 			if (file) then
 				local responseData = responseData
@@ -346,7 +348,7 @@ function MapLoader:checkFile(fileName, realFileName)
 
 	local fileExtension = fileName:match("%.([0-9a-zA-Z]+)")
 	local filePath = "cache/"..fileName
-	local file = fileExists(filePath) and File(filePath) or false
+	local file = File.exists(filePath) and File(filePath) or false
 	
 	if (file) then
 		local fileContent = file:read(file:getSize())
@@ -419,122 +421,127 @@ function MapLoader:loadMapElements(elementList)
 	local useLODs = self.mapCache.settings.useLODs == "true"
 	
 	for _, element in ipairs(elementList) do
-
-		if (element.name == "object") then
-			local object = createObject(element.model, element.posX, element.posY, element.posZ, element.rotX, element.rotY, element.rotZ)
-			local object2 = false
+		if (element[1] == "object") then
+			local model = element[2]
+			local object = createObject(model, element[3], element[4], element[5], element[6], element[7], element[8])
+			local lodObject = false
 			
-			if (useLODs and self.lodModels[element.model]) then
-				object2 = createObject(self.lodModels[element.model], element.posX, element.posY, element.posZ, element.rotX, element.rotY, element.rotZ, true)
+			if (useLODs and self.lodModels[model]) then
+				lodObject = createObject(self.lodModels[model], element[3], element[4], element[5], element[6], element[7], element[8], true)
 			end
 			
 			if (object) then
-				if (engineGetModelLODDistance(element.model) ~= 300) then						
-					engineSetModelLODDistance(element.model, 300)
+				if (engineGetModelLODDistance(model) ~= 300) then						
+					engineSetModelLODDistance(model, 300)
 				end
 				
 				object:setParent(self.objectRootElement)
 				
-				-- LOD object
-				if (object2) then
-					object2:setParent(self.objectRootElement)
-					object:setLowLOD(object2)
+				if (lodObject) then
+					lodObject:setParent(self.objectRootElement)
+					object:setLowLOD(lodObject)
 				end
 				
-				if (not element.doublesided) then
+				if (not element[9]) then
 					object:setDoubleSided(false)
 					
-					if (object2) then
-						object2:setDoubleSided(false)
+					if (lodObject) then
+						lodObject:setDoubleSided(false)
 					end
 				end
 				
-				if (not element.collisions) then
+				if (not element[10]) then
 					object:setCollisionsEnabled(false)
 					
-					if (object2) then
-						object2:setCollisionsEnabled(false)
+					if (lodObject) then
+						lodObject:setCollisionsEnabled(false)
 					end
 				end
 		
-				if (element.scale ~= 1) then
-					object:setScale(element.scale)
+				local scale = element[11]
+				if (scale ~= 1) then
+					object:setScale(scale)
 					
-					if (object2) then
-						object2:setScale(element.scale)
+					if (lodObject) then
+						lodObject:setScale(scale)
 					end
 				end
-				
-				if (not element.breakable) then
+
+				if (not element[12]) then
 					object:setBreakable(false)
 					
-					if (object2) then
-						object2:setBreakable(false)
+					if (lodObject) then
+						lodObject:setBreakable(false)
 					end
 				end
-				
-				if (element.alpha ~= 255) then
-					object:setAlpha(element.alpha)
+
+				local alpha = element[13]
+				if (alpha ~= 255) then
+					object:setAlpha(alpha)
 					
-					
-					if (object2) then
-						object:setAlpha(element.alpha)
+					if (lodObject) then
+						object:setAlpha(alpha)
 					end
 				end
 			end
-		elseif (element.name == "vehicle") then
-			local vehicle = createVehicle(element.model, element.posX, element.posY, element.posZ, element.rotX, element.rotY, element.rotZ)
+		elseif (element[1] == "vehicle") then
+			local vehicle = createVehicle(element[2], element[3], element[4], element[5], element[6], element[7], element[8])
 			
 			if (vehicle) then
 				vehicle:setParent(self.objectRootElement)
 				
-				if (element.paintjob) then
-					vehicle:setPaintjob(element.paintjob)
+				local alpha = element[9]
+				if (alpha ~= 255) then
+					vehicle:setAlpha(alpha)
 				end
-				
-				if (element.alpha ~= 255) then
-					vehicle:setAlpha(element.alpha)
+
+				local paintJob = element[10]
+				if (paintJob) then
+					vehicle:setPaintjob(paintJob)
 				end
-				
-				if (element.upgrades) then
-					for i, upgradeId in ipairs(element.upgrades) do
+
+				local upgrades = element[12]
+				if (upgrades) then
+					for i, upgradeId in ipairs(upgrades) do
 						vehicle:addUpgrade(upgradeId)
 					end
 				end
 				
-				if (element.color) then
-					vehicle:setColor(unpack(element.color))
+				local color = element[13]
+				if (color) then
+					vehicle:setColor(unpack(color))
 				end
 			end
 
-		elseif (element.name == "racepickup") then
-			exports.ddc_pickups:createPickup(element.type, element.posX, element.posY, element.posZ, element.vehicle)
+		elseif (element[1] == "racepickup") then
+			exports.ddc_pickups:createPickup(element[2], element[3], element[4], element[5], element[10])
 
-		elseif (element.name == "marker") then
+		elseif (element[1] == "marker") then
 			local r, g, b, a = 255, 255, 255, 255
-			
-			if (element.color) then
-				r, g, b, a = unpack(element.color) 
+				
+			local color = element[10]
+			if (color) then
+				r, g, b, a = unpack(color) 
 			end
 
-			local marker = createMarker(element.posX, element.posY, element.posZ, element.type, element.size, r, g, b, a)
+			local marker = createMarker(element[3], element[4], element[5], element[2], element[9], r, g, b, a)
 
 			if (marker) then
 				marker:setParent(self.objectRootElement)
 			end
 
-		elseif (element.name == "ped") then
-			local ped = createPed(element.model, element.posX, element.posY, element.posZ, element.rot)
+		elseif (element[1] == "ped") then
+			local ped = createPed(element[2], element[3], element[4], element[5], element[6])
 
 			if (ped) then
 				ped:setParent(self.objectRootElement)
 			end
 
-		elseif (element.name == "removeWorldObject") then
-			removeWorldModel(element.model, element.radius, element.posX, element.posY, element.posZ)
+		elseif (element[1] == "removeWorldObject") then
+			removeWorldModel(element[2], element[4], element[5], element[6], element[7])
 
-		elseif (element.name == "pickup") then
-			local pickup = createPickup(element.posX, element.posY, element.posZ, element.type, element.amount, element.respawn)
+		elseif (element[1] == "pickup") then
+			local pickup = createPickup(element[3], element[4], element[5], element[2], element[9], element[10])
 			
 			if (pickup) then
 				pickup:setParent(self.objectRootElement)
