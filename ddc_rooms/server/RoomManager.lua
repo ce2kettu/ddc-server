@@ -1,9 +1,9 @@
 RoomManager = {}
 
 function RoomManager:constructor()
-	self._onElementDestroy = function() self:onElementDestroy() end
-	self._onPlayerQuit = function() self:onPlayerLeave(source) end
-	self._onPlayerRequestRoomJoin = function(...) self:onPlayerRequestRoomJoin(...) end
+	self._onElementDestroy = bind(self.onElementDestroy, self)
+	self._onPlayerQuit = bind(self.onPlayerLeave, self)
+	self._onPlayerRequestRoomJoin = bind(self.onPlayerRequestRoomJoin, self)
 	
 	self.roomInstances = {}
 	self.defaultRooms = {

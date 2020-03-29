@@ -4,9 +4,9 @@ function RoomManager:constructor()
 	self.currentGamemodeClassName = false
 	self.gamemodeInstance = false
 	
-	self._onClientGamemodeSwitch = function(...) self:onClientGamemodeSwitch(...) end
-	self._cnClientPlayerJoinRoom = function(...) self:onClientPlayerJoinRoom(...) end
-	self._onClientPlayerLeaveRoom = function(...) self:onClientPlayerLeaveRoom(...) end
+	self._onClientGamemodeSwitch = bind(self.onClientGamemodeSwitch, self)
+	self._cnClientPlayerJoinRoom = bind(self.onClientPlayerJoinRoom, self)
+	self._onClientPlayerLeaveRoom = bind(self.onClientPlayerLeaveRoom, self)
 	
 	addEvent("onClientGamemodeSwitch", true)
 	addEvent("onClientPlayerJoinRoom", true)

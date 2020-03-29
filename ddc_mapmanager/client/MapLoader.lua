@@ -215,6 +215,7 @@ function MapLoader:fetchNextFile()
 
 	if (fileInfo.cache == "false") then
 		-- send request to server
+		outputChatBox("script requested no cache")
 		triggerServerEvent("onPlayerRequestMapFile", resourceRoot, fileInfo)
 		return
 	end

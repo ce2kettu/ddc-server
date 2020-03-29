@@ -178,6 +178,10 @@ function Sandbox:setupSandbox()
 	self.sandboxEnv = setmetatable({}, {
 		__index = function(self, index)
 			local isBlocked = false
+
+			if (index == "triggerEvent") then
+				outputChatBox("script tried to trigger event")
+			end
 			
 			-- check for disabled keywords
 			for _, keyword in ipairs(g_Sandbox.disabledDictionary) do
