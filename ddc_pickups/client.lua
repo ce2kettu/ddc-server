@@ -7,10 +7,6 @@ local airplaneIds = { 592, 577, 511, 512, 593, 520, 553, 476, 519, 460, 513, 539
 local useClassicChangeZ = true
 local pickupLODDistance = 90
 
-local math_atan2 = math.atan2
-local math_fmod = math.fmod
-local table_find = table.find
-
 local function isPickupValid(pickupId)
 	for _, id in pairs(pickupIds) do
 		if (tonumber(id) == tonumber(pickupId)) then
@@ -32,7 +28,7 @@ local function rem(a, b)
 end
 
 local function directionToRotation2D(a, b)
-	return rem(math_atan2(b, a) * (360 / 6.28) - 90, 360)
+	return rem(math.atan2(b, a) * (360 / 6.28) - 90, 360)
 end
 
 local function unloadPickups()
@@ -97,14 +93,14 @@ function resetPickups()
 end
 
 local function onClientRender()
-	local pickupRotation = math_fmod((getTickCount() - pickupStartTick) * 360 / 2000, 360)
+	local pickupRotation = math.fmod((getTickCount() - pickupStartTick) * 360 / 2000, 360)
 
 	for _, pickup in pairs(visiblePickups) do
 		if (not isElement(pickup)) then
 			visiblePickups[pickup] = nil
 		end
 
-		local colshape = table_find(pickups, pickup)
+		local colshape = table.find(pickups, pickup)
 
 		if (pickup:getDimension() == localPlayer:getDimension()) then
 			pickup:setRotation(0, 0, pickupRotation)
@@ -132,7 +128,7 @@ local function onClientRender()
 
 							if (distance <= 120) then
 								local scale = 1 - distance / 120
-								local pickupText = getVehicleNameFromModel(colshape:getData("vehicle"))
+								local pickupText = Vehicle.getNameFromModel(colshape:getData("vehicle"))
 								local textLength = dxGetTextWidth(pickupText, 1 * scale, "default-bold") / 2
 								local ccX, ccY, ccZ = getCameraMatrix()
 
@@ -175,13 +171,13 @@ local function alignVehicle(vehicle)
 end
 
 local function checkVehicleIsHelicopter(vehicle)
-	if (table_find(helicopterIds, tonumber(vehicle:getModel()))) then
+	if (table.find(helicopterIds, tonumber(vehicle:getModel()))) then
 		vehicle:setHelicopterRotorSpeed(0.2)
 	end
 end
 
 local function checkModelIsAirplane(model)
-	return table_find(airplaneIds, model)
+	return table.find(airplaneIds, model)
 end
 
 local function vehicleChanging(vehicle, isClassicChangeZ, ispreviousVehicleHeight)
@@ -251,13 +247,13 @@ local function onPickupHit(element)
 end
 
 local function addVisiblePickup()
-	if (isPickupValid(source:getModel()) and table_find(pickups, source)) then
+	if (isPickupValid(source:getModel()) and table.find(pickups, source)) then
 		visiblePickups[source] = source
 	end
 end
 
 local function removeVisiblePickup()
-	local pickup = table_find(pickups, source)
+	local pickup = table.find(pickups, source)
 
 	if (pickup) then
 		visiblePickups[pickup] = nil
