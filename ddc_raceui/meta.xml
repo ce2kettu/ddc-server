@@ -1,0 +1,22 @@
+<meta>
+    <oop>true</oop>
+
+	<!-- Exported functions -->
+    <export function="createCountdown" type="client" />
+    <export function="destroyCountdown" type="client" />
+
+	<!-- Client -->
+	<script type="shared" src="utils.lua" />
+	<script type="client" src="countdown.lua" />
+	<script type="client" src="exports.lua" />
+
+
+	<!-- Files -->
+    <file src="assets/images/countdown/cd0.png" />
+    <file src="assets/images/countdown/cd1.png" />
+    <file src="assets/images/countdown/cd2.png" />
+    <file src="assets/images/countdown/cd3.png" />
+
+    <file src="assets/sounds/cd.wav" />
+    <file src="assets/sounds/cd0.wav" />
+</meta>
