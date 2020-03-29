@@ -171,7 +171,7 @@ function MapLoader:destructor()
 end
 
 function MapLoader:onClientReceiveMapData(tblMapData)
-	-- unload loaded map first
+	-- unload loaded map frst
 	self:onClientReceiveMapUnloadRequest()
 	
 	self.mapCache = tblMapData
@@ -201,7 +201,7 @@ function MapLoader:fetchNextFile()
 			return
 		end
 
-		-- trigger onClientResourceStart event on map scripts
+		-- trgger onClientResourceStart event on map scripts
 		if (self.mapCache.scripts and #self.mapCache.scripts >= 1) then
 			exports.ddc_sandbox:triggerResourceStart()
 		end
@@ -230,41 +230,43 @@ function MapLoader:fetchNextFile()
 end
 
 function MapLoader:onClientReceiveRequestedFile(responseData, errorCode)
-	-- TODO: error handling
-	local fileInfo = self.downloadList[1]
-	local shouldCacheFile = (fileInfo.cache or fileInfo.type == "script") or fileInfo.type == "file"
-	
-	if (shouldCacheFile) then
-		local fileName = "cache/"..fileInfo.checksum
-		local fileExtension = fileInfo.src:match("%.([0-9a-zA-Z]+)")
+	-- no errors occurred during fetching
+	if (errorCode == 0) then
+		local fileInfo = self.downloadList[1]
+		local shouldCacheFile = (fileInfo.cache or fileInfo.type == "script") or fileInfo.type == "file"
 		
-		-- delete previous file
-		if (fileExists(fileName)) then
-			-- notify the server about the activity
-			if (not fileDelete(fileName)) then
-				triggerServerEvent("onPlayerCheat", root, 1, {filename = fileName})
-				return
+		if (shouldCacheFile) then
+			local fileName = "cache/"..fileInfo.checksum
+			local fileExtension = fileInfo.src:match("%.([0-9a-zA-Z]+)")
+			
+			-- delete previous file
+			if (fileExists(fileName)) then
+				-- notify the server about the activity
+				if (not fileDelete(fileName)) then
+					triggerServerEvent("onPlayerCheat", root, 1, {filename = fileName})
+					return
+				end
+			end
+			
+			local file = fileCreate(fileName)
+			
+			if (file) then
+				local responseData = responseData
+				
+				if (fileExtension == "fx") then
+					responseData = self:checkShaderFile(responseData, fileInfo.src)
+				end
+				
+				file:write(responseData)
+				file:flush()
+				file:close()
 			end
 		end
 		
-		local file = fileCreate(fileName)
-		
-		if (file) then
-			local responseData = responseData
-			
-			if (fileExtension == "fx") then
-				responseData = self:checkShaderFile(responseData, fileInfo.src)
-			end
-			
-			file:write(responseData)
-			file:flush()
-			file:close()
+		-- load script files into sandbox
+		if (fileInfo.type == "script") then
+			exports.ddc_sandbox:loadScript(responseData)
 		end
-	end
-	
-	-- load script files into sandbox
-	if (fileInfo.type == "script") then
-		exports.ddc_sandbox:loadScript(responseData)
 	end
 	
 	-- delete current file from download list and fetch next file
@@ -301,7 +303,7 @@ end
 function MapLoader:checkCachedFiles(fileList, scriptList)
 	local fileHashList = {}
 	
-	-- check for files first
+	-- check for files frst
 	for _, fileInfo in ipairs(fileList) do
 		fileHashList[fileInfo.name] = fileInfo.checksum
 		
@@ -357,7 +359,7 @@ function MapLoader:checkFile(fileName, realFileName)
 end
 
 function MapLoader:checkShaderFile(fileContent, fileName)
-	local path = fileName:match("(.*%/).*")
+	local path = fileName:match("(.*%/).*") or ""
 	
 	for includeFileName in fileContent:gmatch("#include ['\"]([%w.-]+)['\"]") do
 		local fileName = self.fileHashList[path..includeFileName]
@@ -374,162 +376,162 @@ function MapLoader:checkShaderFile(fileContent, fileName)
 	return fileContent
 end
 
-function MapLoader:applyMapSettings(tblSettings)
-	if (not tblSettings or type(tblSettings) ~= "table") then
-		exports.ddc_core:outputDebug("error", "MapLoader: Unable to apply map settings, table expected, got %s", type(tblSettings))
+function MapLoader:applyMapSettings(settings)
+	if (not settings or type(settings) ~= "table") then
+		exports.ddc_core:outputDebug("error", "MapLoader: Unable to apply map settings, table expected, got %s", type(settings))
 		return
 	end
 	
-	if (tblSettings.time) then
-		local iHour, iMinute = unpack(split(tblSettings.time, ':'))
+	if (settings.time) then
+		local hour, minute = unpack(split(settings.time, ':'))
 		
-		setTime((iHour or 12), (iMinute or 0))
+		setTime((hour or 12), (minute or 0))
 	end
 	
-	if (tblSettings.waveheight) then
-		setWaveHeight(tblSettings.waveheight)
+	if (settings.waveheght) then
+		setWaveHeght(settings.waveheght)
 	end
 	
-	if (tblSettings.gravity) then
-		setGravity(tblSettings.gravity)
+	if (settings.gravity) then
+		setGravity(settings.gravity)
 	end
 	
-	if (tblSettings.gamespeed) then
-		setGameSpeed(tblSettings.gamespeed)
+	if (settings.gamespeed) then
+		setGameSpeed(settings.gamespeed)
 	end
 	
-	setWeather((tblSettings.weather or 0))
-	setMinuteDuration((tblSettings.locked_time and 1000000 or 1000))
+	setWeather((settings.weather or 0))
+	setMinuteDuration((settings.locked_time and 1000000 or 1000))
 end
 
-function MapLoader:loadMapElements(tblElementList)
-	if (not tblElementList or type(tblElementList) ~= "table") then
-		exports.ddc_core:outputDebug("error", "MapLoader: Unable to load map elements, table expected, got %s", type(tblElementList))
+function MapLoader:loadMapElements(elementList)
+	if (not elementList or type(elementList) ~= "table") then
+		exports.ddc_core:outputDebug("error", "MapLoader: Unable to load map elements, table expected, got %s", type(elementList))
 		return
 	end
 	
-	local bUseLODs = self.mapCache.settings.useLODs == "true"
+	local useLODs = self.mapCache.settings.useLODs == "true"
 	
-	for _, tblElement in ipairs(tblElementList) do
+	for _, element in ipairs(elementList) do
 
-		if (tblElement.name == "object") then
-			local uObject 		= createObject(tblElement.model, tblElement.posX, tblElement.posY, tblElement.posZ, tblElement.rotX, tblElement.rotY, tblElement.rotZ)
-			local uObject2		= false
+		if (element.name == "object") then
+			local object = createObject(element.model, element.posX, element.posY, element.posZ, element.rotX, element.rotY, element.rotZ)
+			local object2 = false
 			
-			if (bUseLODs and self.lodModels[tblElement.model]) then
-				uObject2 = createObject(self.lodModels[tblElement.model], tblElement.posX, tblElement.posY, tblElement.posZ, tblElement.rotX, tblElement.rotY, tblElement.rotZ, true)
+			if (useLODs and self.lodModels[element.model]) then
+				object2 = createObject(self.lodModels[element.model], element.posX, element.posY, element.posZ, element.rotX, element.rotY, element.rotZ, true)
 			end
 			
-			if (uObject) then
-				if (engineGetModelLODDistance(tblElement.model) ~= 300) then						
-					engineSetModelLODDistance(tblElement.model, 300)
+			if (object) then
+				if (engineGetModelLODDistance(element.model) ~= 300) then						
+					engineSetModelLODDistance(element.model, 300)
 				end
 				
-				uObject:setParent(self.objectRootElement)
+				object:setParent(self.objectRootElement)
 				
 				-- LOD object
-				if (uObject2) then
-					uObject2:setParent(self.objectRootElement)
-					uObject:setLowLOD(uObject2)
+				if (object2) then
+					object2:setParent(self.objectRootElement)
+					object:setLowLOD(object2)
 				end
 				
-				if (not tblElement.doublesided) then
-					uObject:setDoubleSided(false)
+				if (not element.doublesided) then
+					object:setDoubleSided(false)
 					
-					if (uObject2) then
-						uObject2:setDoubleSided(false)
+					if (object2) then
+						object2:setDoubleSided(false)
 					end
 				end
 				
-				if (not tblElement.collisions) then
-					uObject:setCollisionsEnabled(false)
+				if (not element.collisions) then
+					object:setCollisionsEnabled(false)
 					
-					if (uObject2) then
-						uObject2:setCollisionsEnabled(false)
+					if (object2) then
+						object2:setCollisionsEnabled(false)
 					end
 				end
 		
-				if (tblElement.scale ~= 1) then
-					uObject:setScale(tblElement.scale)
+				if (element.scale ~= 1) then
+					object:setScale(element.scale)
 					
-					if (uObject2) then
-						uObject2:setScale(tblElement.scale)
+					if (object2) then
+						object2:setScale(element.scale)
 					end
 				end
 				
-				if (not tblElement.breakable) then
-					uObject:setBreakable(false)
+				if (not element.breakable) then
+					object:setBreakable(false)
 					
-					if (uObject2) then
-						uObject2:setBreakable(false)
+					if (object2) then
+						object2:setBreakable(false)
 					end
 				end
 				
-				if (tblElement.alpha ~= 255) then
-					uObject:setAlpha(tblElement.alpha)
+				if (element.alpha ~= 255) then
+					object:setAlpha(element.alpha)
 					
 					
-					if (uObject2) then
-						uObject:setAlpha(tblElement.alpha)
+					if (object2) then
+						object:setAlpha(element.alpha)
 					end
 				end
 			end
-		elseif (tblElement.name == "vehicle") then
-			local uVehicle = createVehicle(tblElement.model, tblElement.posX, tblElement.posY, tblElement.posZ, tblElement.rotX, tblElement.rotY, tblElement.rotZ)
+		elseif (element.name == "vehicle") then
+			local vehicle = createVehicle(element.model, element.posX, element.posY, element.posZ, element.rotX, element.rotY, element.rotZ)
 			
-			if (uVehicle) then
-				uVehicle:setParent(self.objectRootElement)
+			if (vehicle) then
+				vehicle:setParent(self.objectRootElement)
 				
-				if (tblElement.paintjob) then
-					uVehicle:setPaintjob(tblElement.paintjob)
+				if (element.paintjob) then
+					vehicle:setPaintjob(element.paintjob)
 				end
 				
-				if (tblElement.alpha ~= 255) then
-					uVehicle:setAlpha(tblElement.alpha)
+				if (element.alpha ~= 255) then
+					vehicle:setAlpha(element.alpha)
 				end
 				
-				if (tblElement.upgrades) then
-					for i, iUpgradeID in ipairs(tblElement.upgrades) do
-						uVehicle:addUpgrade(iUpgradeID)
+				if (element.upgrades) then
+					for i, upgradeId in ipairs(element.upgrades) do
+						vehicle:addUpgrade(upgradeId)
 					end
 				end
 				
-				if (tblElement.color) then
-					uVehicle:setColor(unpack(tblElement.color))
+				if (element.color) then
+					vehicle:setColor(unpack(element.color))
 				end
 			end
 
-		elseif (tblElement.name == "racepickup") then
-			exports.ddc_pickups:createPickup(tblElement.type, tblElement.posX, tblElement.posY, tblElement.posZ, tblElement.vehicle)
+		elseif (element.name == "racepickup") then
+			exports.ddc_pickups:createPickup(element.type, element.posX, element.posY, element.posZ, element.vehicle)
 
-		elseif (tblElement.name == "marker") then
-			local iR, iG, iB, iA = 255, 255, 255, 255
+		elseif (element.name == "marker") then
+			local r, g, b, a = 255, 255, 255, 255
 			
-			if (tblElement.color) then
-				iR, iG, iB, iA = unpack(tblElement.color) 
+			if (element.color) then
+				r, g, b, a = unpack(element.color) 
 			end
 
-			local uMarker = createMarker(tblElement.posX, tblElement.posY, tblElement.posZ, tblElement.type, tblElement.size, iR, iG, iB, iA)
+			local marker = createMarker(element.posX, element.posY, element.posZ, element.type, element.size, r, g, b, a)
 
-			if (uMarker) then
-				uMarker:setParent(self.objectRootElement)
+			if (marker) then
+				marker:setParent(self.objectRootElement)
 			end
 
-		elseif (tblElement.name == "ped") then
-			local uPed = createPed(tblElement.model, tblElement.posX, tblElement.posY, tblElement.posZ, tblElement.rot)
+		elseif (element.name == "ped") then
+			local ped = createPed(element.model, element.posX, element.posY, element.posZ, element.rot)
 
-			if (uPed) then
-				uPed:setParent(self.objectRootElement)
+			if (ped) then
+				ped:setParent(self.objectRootElement)
 			end
 
-		elseif (tblElement.name == "removeWorldObject") then
-			removeWorldModel(tblElement.model, tblElement.radius, tblElement.posX, tblElement.posY, tblElement.posZ)
+		elseif (element.name == "removeWorldObject") then
+			removeWorldModel(element.model, element.radius, element.posX, element.posY, element.posZ)
 
-		elseif (tblElement.name == "pickup") then
-			local uPickup = createPickup(tblElement.posX, tblElement.posY, tblElement.posZ, tblElement.type, tblElement.amount, tblElement.respawn)
+		elseif (element.name == "pickup") then
+			local pickup = createPickup(element.posX, element.posY, element.posZ, element.type, element.amount, element.respawn)
 			
-			if (uPickup) then
-				uPickup:setParent(self.objectRootElement)
+			if (pickup) then
+				pickup:setParent(self.objectRootElement)
 			end
 		end
 	end

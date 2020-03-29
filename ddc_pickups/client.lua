@@ -60,6 +60,10 @@ local function onResourceStart()
 end
 
 function createPickup(type, posX, posY, posZ, vehicle)
+	if (not pickupIds[type]) then
+		return
+	end
+
 	local pickup = Object(pickupIds[type], posX, posY, posZ)
 	local colshape = ColShape.Sphere(posX, posY, posZ, 3.5)
     local dimension = localPlayer:getDimension()
