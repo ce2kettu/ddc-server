@@ -1,4 +1,4 @@
-local function onPlayerGotNitro()
+local function syncNitro()
 	if (not client) then
 		return
 	end
@@ -10,7 +10,7 @@ local function onPlayerGotNitro()
 	end
 end
 
-local function onPlayerVehicleChange(modelId)
+local function syncVehicleModel(modelId)
 	if (not client) then
 		return
 	end
@@ -20,13 +20,13 @@ local function onPlayerVehicleChange(modelId)
 	if (vehicle and vehicle:getModel() ~= modelId) then
 		vehicle:setModel(modelId)
 
-		client:triggerEvent("onRemoveClientNitro", client)
-		triggerEvent("onPlayerVehicleChange", client, modelId)
+		client:triggerEvent("Race:removeClientNitro", client)
+		triggerEvent("Race:vehicleModelChange", client, modelId)
 	end
 end
 
-addEvent("onPlayerGotNitro", true)
-addEvent("onPlayerVehicleChange", true)
+addEvent("Race:syncNitro", true)
+addEvent("Race:vehicleModelChange", true)
 
-addEventHandler("onPlayerGotNitro", resourceRoot, onPlayerGotNitro)
-addEventHandler("onPlayerVehicleChange", resourceRoot, onPlayerVehicleChange)
+addEventHandler("Race:syncNitro", resourceRoot, syncNitro)
+addEventHandler("Race:vehicleModelChange", resourceRoot, syncVehicleModel)

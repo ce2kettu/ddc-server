@@ -5,7 +5,11 @@ local pickups = {}
 local helicopterIds = { 417, 425, 447, 465, 469, 487, 488, 497, 501, 548, 563 }
 local airplaneIds = { 592, 577, 511, 512, 593, 520, 553, 476, 519, 460, 513, 539 }
 local useClassicChangeZ = true
+local pickupLODDistance = 90
+
 local math_atan2 = math.atan2
+local math_fmod = math.fmod
+local table_find = table.find
 
 local function isPickupValid(pickupId)
 	for _, id in pairs(pickupIds) do
@@ -50,7 +54,7 @@ local function onResourceStart()
 			dff:replace(modelId)
 			
 			-- increase draw distance for pickups
-			Engine.setModelLODDistance(modelId, 60)
+			Engine.setModelLODDistance(modelId, pickupLODDistance)
 		end
 	end
 end
@@ -89,14 +93,14 @@ function resetPickups()
 end
 
 local function onClientRender()
-	local pickupRotation = math.fmod((getTickCount() - pickupStartTick) * 360 / 2000, 360)
+	local pickupRotation = math_fmod((getTickCount() - pickupStartTick) * 360 / 2000, 360)
 
 	for _, pickup in pairs(visiblePickups) do
 		if (not isElement(pickup)) then
 			visiblePickups[pickup] = nil
 		end
 
-		local colshape = exports.ddc_core:table_find(pickups, pickup)
+		local colshape = table_find(pickups, pickup)
 
 		if (pickup:getDimension() == localPlayer:getDimension()) then
 			pickup:setRotation(0, 0, pickupRotation)
@@ -167,13 +171,13 @@ local function alignVehicle(vehicle)
 end
 
 local function checkVehicleIsHelicopter(vehicle)
-	if (exports.ddc_core:table_find(helicopterIds, tonumber(vehicle:getModel()))) then
+	if (table_find(helicopterIds, tonumber(vehicle:getModel()))) then
 		vehicle:setHelicopterRotorSpeed(0.2)
 	end
 end
 
 local function checkModelIsAirplane(model)
-	return exports.ddc_core:table_find(airplaneIds, model)
+	return table_find(airplaneIds, model)
 end
 
 local function vehicleChanging(vehicle, isClassicChangeZ, ispreviousVehicleHeight)
@@ -207,7 +211,7 @@ local function onPickupHit(element)
 	if (elementType == "nitro") then
 		playSoundFrontEnd(46)
 		vehicle:addUpgrade(1010)
-		triggerServerEvent("onPlayerGotNitro", resourceRoot)
+		triggerServerEvent("Race:syncNitro", resourceRoot)
 	elseif (elementType == "repair") then
 		playSoundFrontEnd(46)
 		vehicle:fix()
@@ -235,29 +239,40 @@ local function onPickupHit(element)
             vehicle:setHealth(health)
         end
 		
+		-- TODO: set a timer if players get stuck?
         vehicleChanging(vehicle, useClassicChangeZ, previousVehicleHeight)
-        triggerServerEvent("onPlayerVehicleChange", resourceRoot, newModel)
+        triggerServerEvent("Race:vehicleModelChange", resourceRoot, newModel)
 		playSoundFrontEnd(46)
 	end
 end
 
 local function addVisiblePickup()
-	if (isPickupValid(source:getModel()) and exports.ddc_core:table_find(pickups, source)) then
+	if (isPickupValid(source:getModel()) and table_find(pickups, source)) then
 		visiblePickups[source] = source
 	end
 end
 
 local function removeVisiblePickup()
-	local pickup = exports.ddc_core:table_find(pickups, source)
+	local pickup = table_find(pickups, source)
 
 	if (pickup) then
 		visiblePickups[pickup] = nil
 	end
 end
 
-addEvent("onRemoveClientNitro", true)
+local function checkSpawnedOnPickup()
+	for _, colshape in ipairs(pickups) do
+		if (localPlayer:isWithinColShape(colshape)) then
+			onPickupHit(colshape)
+		end
+	end
+end
 
-addEventHandler("onRemoveClientNitro", root, removeVehicleNitro)
+addEvent("Race:removeClientNitro", true)
+addEvent("Race:checkSpawnedOnPickup", true)
+
+addEventHandler("Race:checkSpawnedOnPickup", localPlayer, checkSpawnedOnPickup)
+addEventHandler("Race:removeClientNitro", localPlayer, removeVehicleNitro)
 addEventHandler("onClientElementStreamIn", root, addVisiblePickup)
 addEventHandler("onClientElementStreamOut", root, removeVisiblePickup)
 addEventHandler("onClientColShapeHit", root, onPickupHit)

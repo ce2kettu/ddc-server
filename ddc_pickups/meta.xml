@@ -4,7 +4,10 @@
 	<!-- Exported functions -->
 	<export function="createPickup" type="client" />
 	<export function="resetPickups" type="client" />
-		
+	
+	<!-- Shared -->
+	<script type="shared" src="utils.lua" />
+
 	<!-- Server -->
 	<script type="server" src="server.lua" />
 		
