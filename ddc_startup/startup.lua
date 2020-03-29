@@ -7,16 +7,35 @@ local resources = {
 	"ddc_rooms",
 }
 
-local resource = false
-
 -- Starts all resource dependencies
 local function resourceSetup()
-    for _, resourceName in ipairs(resources) do
-        resource = Resource.getFromName(resourceName)
+	for _, resourceName in ipairs(resources) do
+        local resource = Resource.getFromName(resourceName)
+
+		if (resource and resource:getState() == "running") then
+			resource:stop()
+		end
+	end
+
+	Timer(function()
+		for _, resourceName in ipairs(resources) do
+			local resource = Resource.getFromName(resourceName)
+
+			if (resource) then
+				resource:start()
+			end
+		end
+	end, 1000, 1)
+end
+addEventHandler("onResourceStart", resourceRoot, resourceSetup, true, "high")
+
+local function onResourceStop()
+	for _, resourceName in ipairs(resources) do
+		local resource = Resource.getFromName(resourceName)
 
 		if (resource) then
-			resource:start()
+			resource:stop()
 		end
 	end
 end
-addEventHandler("onResourceStart", resourceRoot, resourceSetup)
+addEventHandler("onResourceStart", resourceRoot, onResourceStop)
