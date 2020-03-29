@@ -337,7 +337,7 @@ function MapLoader:loadMapFile(mapFile)
 		elseif (nodeName == "pickup") then
 			table_insert(mapElements, {
 				name = "pickup",
-				type = nodeAttributes.type,
+				type = tonumber_(nodeAttributes.type),
 				posX = tonumber_(nodeAttributes.posX) or 0,
 				posY = tonumber_(nodeAttributes.posY) or 0,
 				posZ = tonumber_(nodeAttributes.posZ) or 0,
