@@ -1,5 +1,6 @@
 local events = {}
 local commands = {}
+local timers = {}
 local binds = {}
 local xmlFiles = {}
 local loadedDff = {}
@@ -17,6 +18,13 @@ function _unloadEverything()
 	-- unload all commands
 	for _, commandInfo in ipairs(commands) do
 		removeCommandHandler(unpack(commandInfo))
+	end
+
+	-- destroy all timers
+	for _, timer in ipairs(timers) do
+		if (isTimer(timer)) then
+			killTimer(timer)
+		end
 	end
 	
 	-- unload all binds
@@ -42,10 +50,22 @@ function _unloadEverything()
 	-- reset variables
 	events = {}
 	commands = {}
+	timers = {}
 	binds = {}
 	xmlFiles = {}
 	loadedDff = {}
 	loadedCol = {}
+end
+
+function SandboxHooks.setTimer(...)
+	local timer = setTimer(...)
+
+	if (timer) then
+		table.insert(timers, timer)
+		return
+	end
+
+	return false
 end
 
 function SandboxHooks.addEventHandler(eventName, attachedToElement, handler, ...)
@@ -53,6 +73,8 @@ function SandboxHooks.addEventHandler(eventName, attachedToElement, handler, ...
 		return false
 	end
 	
+	-- TODO: check if eventHandler is already added to prevent errors from being logged
+
 	if (addEventHandler(eventName, attachedToElement, handler, ...)) then
 		table.insert(events, {eventName, attachedToElement, handler})
 		return true
