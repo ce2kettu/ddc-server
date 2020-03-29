@@ -1,7 +1,7 @@
 WaterKiller = {}
 
 function WaterKiller:constructor()
-	self.isEnabled = false
+	self._isEnabled = false
 	self.waterCheckTimer = false
 	self.waterCraftIds = { 539, 460, 417, 447, 472, 473, 493, 595, 484, 430, 453, 452, 446, 454 }
 	
@@ -13,13 +13,13 @@ function WaterKiller:toggle(state)
 		return false
 	end
 	
-	self.isEnabled = state
+	self._isEnabled = state
 	
 	if (state) then
 		self.waterCheckTimer = Timer(self._doPulse, 1000, 0)
 	else
 		if (self.waterCheckTimer and self.waterCheckTimer:isValid()) then
-			killTimer(self.waterCheckTimer)
+			self.waterCheckTimer:destroy()
 		end
 		
 		self.waterCheckTimer = false
@@ -49,5 +49,5 @@ function WaterKiller:doPulse()
 end
 
 function WaterKiller:isEnabled()
-	return self.isEnabled
+	return self._isEnabled
 end

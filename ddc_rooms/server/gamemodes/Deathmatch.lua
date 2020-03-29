@@ -28,24 +28,26 @@ function Deathmatch:constructor(room, mapPrefix, settings)
 	self.playersDead = {}	
 	self.vehicles = {}
 	
-	self._onPlayerMapDownloadComplete = function() self:onPlayerMapDownloadComplete() end
-	self._onPlayerWasted = function(...) self:onPlayerWasted(...) end
-	self._onVehicleStartExit = function(...) self:onVehicleStartExit(...) end
-	self._onPlayerVehicleChange = function(...) self:onPlayerVehicleChange(...) end
-	self._onCountdownCount = function() self:onCountdownCount() end
+	self._onPlayerMapDownloadComplete = bind(self.onPlayerMapDownloadComplete, self)
+	self._onPlayerWasted = bind(self.onPlayerWasted, self)
+	self._onVehicleStartExit = bind(self.onVehicleStartExit, self)
+	self._onPlayerVehicleChange = bind(self.onPlayerVehicleChange, self)
+	self._onCountdownCount = bind(self.onCountdownCount, self)
+	self._killPlayer = bind(self.killPlayer, self)
 	
 	addEvent("onPlayerMapDownloadComplete", true)
+	addEvent("Race:killPlayer", true)
 		
 	addEventHandler("onPlayerMapDownloadComplete", self:getRoomElement(), self._onPlayerMapDownloadComplete)
 	addEventHandler("onPlayerWasted", self:getRoomElement(), self._onPlayerWasted)
 	addEventHandler("onVehicleStartExit", self:getRoomElement(), self._onVehicleStartExit)
 	
-	addEventHandler("onPlayerVehicleChange", self:getRoomElement(), self._onPlayerVehicleChange)
+	addEventHandler("Race:killPlayer", self:getRoomElement(), self._killPlayer)
+	addEventHandler("Race:vehicleModelChange", self:getRoomElement(), self._onPlayerVehicleChange)
 end
 
-
 function Deathmatch:destructor()
-
+	-- TODO: remove event handlers
 end
 
 function Deathmatch:onPlayerJoin(player)
@@ -68,7 +70,7 @@ end
 function Deathmatch:onPlayerLeave(player)
 	local index = self:isPlayerAlive(player)
 	
-	exports.ddc_core:setData(player, "state", false)
+	exports.ddc_core:setData(player, "state", false, true)
 	
 	if (not index) then
 		return
@@ -101,7 +103,7 @@ function Deathmatch:onPlayerMapDownloadComplete()
 		end
 	end
 	
-	exports.ddc_core:setData(client, "state", "ready")
+	exports.ddc_core:setData(client, "state", "ready", true)
 	
 	-- all alive players have downloaded the map, start countdown
 	if (#self.playersDownloading == 0) then
@@ -109,20 +111,26 @@ function Deathmatch:onPlayerMapDownloadComplete()
 	end
 end
 
-function Deathmatch:onPlayerWasted()
-	local index = self:isPlayerAlive(source)
+function Deathmatch:onWasted(player, reason)
+	if (not player) then
+		return
+	end
+
+	local index = self:isPlayerAlive(player)
 	
 	if (not index) then
 		return
 	end
 	
 	table.remove(self.playersAlive, index)
-	table.insert(self.playersDead, source)
+	table.insert(self.playersDead, player)
 	
-	self:removePlayerVehicle(source)
-	source:setPosition(0, 0, 3.5)
+	self:removePlayerVehicle(player)
+	player:setPosition(0, 0, 3.5)
+
+	outputChatBox(player:getName().." #ffffffhas died", self:getRoomElement(), 255, 255, 255, true)
 	
-	exports.ddc_core:setData(source, "state", "dead")
+	exports.ddc_core:setData(player, "state", "dead", true)
 	
 	if (#self:getAlivePlayers() >= 1) then
 		-- TODO: spectating
@@ -130,6 +138,17 @@ function Deathmatch:onPlayerWasted()
 		self:stopMap()
 	end
 end
+
+function Deathmatch:onPlayerWasted()
+	self:onWasted(source)
+end
+
+function Deathmatch:killPlayer(reason)
+	if (client and self:isPlayerInCurrentRoom(client)) then
+		self:onWasted(client, reason)
+	end
+end
+
 
 function Deathmatch:onVehicleStartExit()
 	cancelEvent(true)
@@ -144,7 +163,7 @@ end
 function Deathmatch:startRound()
 	-- unfreeze all players
 	for _, player in ipairs(self:getAlivePlayers()) do
-		exports.ddc_core:setData(player, "state", "alive")
+		exports.ddc_core:setData(player, "state", "alive", true)
 		
 		local vehicle = player:getOccupiedVehicle()
 		
@@ -160,7 +179,7 @@ end
 function Deathmatch:startCountdown()	
 	-- if theres a countdown running, abort it
 	if (self.countdownTimer and self.countdownTimer:isValid()) then
-		killTimer(self.countdownTimer)
+		self.countdownTimer:destroy()
 	end
 	
 	self.currentCountdownTick = 4
@@ -187,18 +206,19 @@ function Deathmatch:onMapLoaded(mapName, mapData)
 	self.spawnpoints = mapData.spawnPoints
 	self.currentSpawnIndex = 1
 	
-	self.currentMapName = mapName
+	self.currentMapName = mapData.info.name or "Unknown"
 	
 	for _, player in ipairs(self:getPlayers()) do
 		table.insert(self.playersAlive, player)
 		table.insert(self.playersDownloading, player)
 		
-		exports.ddc_core:setData(player, "state", "downloading")
+		exports.ddc_core:setData(player, "state", "downloading", true)
 		
 		self:spawnPlayer(player)
 	end
 	
 	self:setRaceState("WaitingForPlayers")
+	self:onMapStarting()
 end
 
 function Deathmatch:startMap(isRedo)
@@ -216,8 +236,10 @@ function Deathmatch:startMap(isRedo)
 	else
 		-- start a random map
 		local index = math.random(1, #maps)
-		mapName = maps[index].resname
+		mapName = maps[index].resourceName
 	end
+
+	-- TODO: check hunter pickup
 	
 	-- repeat until we find a map - giving it max 5 tries to find a map
 	repeat
@@ -225,9 +247,13 @@ function Deathmatch:startMap(isRedo)
 		
 		if (not mapData) then
 			local index = math.random(1, #maps)
-			mapName = maps[index].resname
+			mapName = maps[index].resourceName
 			
 			self:sendMessage("Unable to load map, starting random map!")
+		else
+			if (not mapData.hasHunterPickup) then
+				mapData = nil
+			end
 		end
 		
 		attempts = attempts + 1
@@ -251,7 +277,7 @@ function Deathmatch:stopMap(isRedo, isForced)
 	
 	-- abort countdown if running
 	if (self.countdownTimer and self.countdownTimer:isValid()) then
-		killTimer(self.countdownTimer)
+		self.countdownTimer:destroy()
 	end
 	
 	-- unload the map
@@ -353,6 +379,20 @@ function Deathmatch:removeAllPlayerVehicles()
 	self.vehicles = {}
 end
 
+function Deathmatch:onMapStarting()
+	self:sendMessage("#00d07c[Room] #FFFFFFStarting "..self.currentMapName, 255, 255, 255, true)
+	--self.roomElement:setData("currentMap", self.currentMapName)
+	--self:getToptimes()
+	--self:updateMapLabel()
+    --self:updateRoundTime()
+	--self:getMapInformations()
+	--self:decreaseMapBuyerCooldown()
+	
+	-- if self.nextMapRandom then
+	-- 	self.nextMapRandom = false
+	-- end
+end
+
 function Deathmatch:triggerRoomEvent(eventName, ...)
 	return triggerClientEvent(self:getRoomElement(), eventName, resourceRoot, ...)
 end
@@ -373,6 +413,10 @@ function Deathmatch:isPlayerAlive(player)
 	end
 	
 	return false
+end
+
+function Deathmatch:isPlayerInCurrentRoom(player)
+	return (player and player:getParent() == self:getRoomElement())
 end
 
 function Deathmatch:getAlivePlayers()

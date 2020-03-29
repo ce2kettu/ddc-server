@@ -91,13 +91,10 @@ function RoomManager:onPlayerLeave(player)
 end
 
 function RoomManager:onPlayerRequestRoomJoin(room, password)
-	outputChatBox("onPlayerRequestRoomJoin")
 	-- variable mismatch
 	if (not client or not room or room:getType() ~= "room") then
 		return
 	end
-
-	outputChatBox("here2")
 	
 	-- -- provided password is invalid, reset it
 	-- if (password and type(password) ~= "string") then
@@ -115,16 +112,12 @@ function RoomManager:onPlayerRequestRoomJoin(room, password)
 	-- end
 	
 	local roomInstance = self:getRoomInstance(room)
-
-	outputChatBox("here1")
 	
 	-- there was an error creating the room class, shouldnt really happen at all
 	if (not roomInstance) then
 		-- TODO: Tell the client that there was an internal error
 		return
 	end
-
-	outputChatBox("here?")
 	
 	local gamemode = room:getData("gamemode")
 	

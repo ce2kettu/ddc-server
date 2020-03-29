@@ -1,8 +1,8 @@
 Spectators = {}
 
 function Spectators:constructor()
-	self.isEnabled = false
-	self.checkCurrentCameraTarget = false
+	self._isEnabled = false
+	self.checkCameraTargetTimer = false
 	
 	self._spectateNextPlayer = function() self:spectateNewTarget(1) end
 	self._spectatePreviousPlayer = function() self:spectateNewTarget(-1) end
@@ -14,27 +14,28 @@ function Spectators:toggle(state)
 		return false
 	end
 	
-	self.isEnabled = state
+	self._isEnabled = state
 	
 	if (state) then
 		bindKey("arrow_l", "up", self._spectatePreviousPlayer)
 		bindKey("arrow_r", "up", self._spectateNextPlayer)
 		
-		self.checkCurrentCameraTarget = Timer(self._checkCurrentCameraTarget, 500, 0)
+		self.checkCameraTargetTimer = Timer(self._checkCurrentCameraTarget, 500, 0)
 	else
 		unbindKey("arrow_l", "up", self._spectatePreviousPlayer)
 		unbindKey("arrow_r", "up", self._spectateNextPlayer)
 		
 		-- destroy our timer
-		if (self.checkCurrentCameraTarget and self.checkCurrentCameraTarget:isValid()) then
-			killTimer(self.checkCurrentCameraTarget)
+		if (self.checkCameraTargetTimer and self.checkCameraTargetTimer:isValid()) then
+			self.checkCameraTargetTimer:destroy()
 		end
 		
-		self.checkCurrentCameraTarget = false
+		self.checkCameraTargetTimer = false
 	end
 end
 
-function Spectators:spectateNewTarget(direction)	
+function Spectators:spectateNewTarget(direction)
+	outputChatBox("Spectators:spectateNewTarget")
 	local currentCameraTarget = getCameraTarget()
 	
 	-- ensure that the camera target is a player
@@ -73,6 +74,8 @@ function Spectators:checkCurrentCameraTarget()
 	
 	-- currently spectated player is invalid, spectate another one
 	if (not currentCameraTarget or (currentCameraTarget:getHealth() == 0 or currentCameraTarget:getData("state") ~= "alive")) then
+		outputChatBox("invalid target")
+		outputChatBox(currentCameraTarget:getData("state"))
 		self:spectateNewTarget(1)
 	end
 end
@@ -90,5 +93,5 @@ function Spectators:getSpectateablePlayers()
 end
 
 function Spectators:isEnabled()
-	return self.isEnabled
+	return self._isEnabled
 end

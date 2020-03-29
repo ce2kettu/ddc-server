@@ -3,19 +3,19 @@ local HUNTER_MODEL_ID = 425
 CarHide = {}
 
 function CarHide:constructor()
-	self.isEnabled = false
+	self._isEnabled = false
 end
 
 function CarHide:destructor()
 	if (self.hideTimer and self.hideTimer:isValid()) then
-		self.hideTimer:kill()
+		self.hideTimer:destroy()
 	end
 	
 	self.hideTimer = false
 end
 
 function CarHide:stateChanged(newState)
-	self.isEnabled = not newState
+	self._isEnabled = not newState
 	
 	self:toggle()
 end
@@ -23,15 +23,15 @@ end
 function CarHide:toggle()
     local text = ""
 	
-	self.isEnabled = not self.isEnabled
+	self._isEnabled = not self._isEnabled
 	
-	if (self.isEnabled) then
+	if (self._isEnabled) then
 		text = "Other cars will be invisible for you."
 		
 		self:hideCars()
 	else
 		if (self.hideTimer and self.hideTimer:isValid()) then
-			self.hideTimer:kill()
+			self.hideTimer:destroy()
 		end
 		
 		self.hideTimer = false
@@ -62,7 +62,7 @@ function CarHide:hideCars(target)
     local dimension = localPlayer:getDimension()
     local spectatingPlayer = target or getCameraTarget()
 
-    if (not self.isEnabled) then
+    if (not self._isEnabled) then
         return
     end
 

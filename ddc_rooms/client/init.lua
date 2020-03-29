@@ -13,7 +13,7 @@ local function onClientResourceStop()
 	
 	-- addons
 	delete(g_Spectators)
-	delete(g_Waterkiller)
+	delete(g_WaterKiller)
 	delete(g_CarFade)
 	delete(g_CarHide)
 end

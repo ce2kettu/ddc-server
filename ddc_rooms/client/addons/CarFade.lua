@@ -1,7 +1,7 @@
 CarFade = {}
 
 function CarFade:constructor()
-	self.isEnabled = false
+	self._isEnabled = false
 	self.distanceToFadeIn = 10 -- GTA units
 	
 	self._doCheck = function() self:doCheck() end
@@ -12,7 +12,7 @@ function CarFade:toggle(state)
 		return false
 	end
 	
-	self.isEnabled = state
+	self._isEnabled = state
 	
 	if (state) then
 		addEventHandler("onClientRender", root, self._doCheck)
@@ -70,5 +70,5 @@ function CarFade:getStreamedinPlayers()
 end
 
 function CarFade:isEnabled()
-	return self.isEnabled
+	return self._isEnabled
 end
