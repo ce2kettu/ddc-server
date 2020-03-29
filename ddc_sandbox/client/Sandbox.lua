@@ -232,15 +232,7 @@ function Sandbox:setMapData(resourceName, downloadUrl, fileHashList)
 end
 
 function Sandbox:getFileHashFromName(fileName)
-	if (not fileName or type(fileName) ~= "string") then
-		return false
-	end
-	
-	if (self.fileHashList[fileName]) then
-		return ":ddc_mapmanager/cache/"..self.fileHashList[fileName]
-	end
-	
-	return false
+	return exports.ddc_mapmanager:getFileHashFromName()
 end
 
 function Sandbox:getResourceName()

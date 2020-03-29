@@ -236,8 +236,8 @@ function Deathmatch:startMap(isRedo)
 	else
 		-- start a random map
 		local index = math.random(1, #maps)
-		--mapName = maps[index].resourceName
-		mapName = "$modern-[DM][T]riXvol6-ForTheLoveOfCresheZ"
+		mapName = maps[index].resourceName
+		--mapName = "$modern-[DM][T]riXvol6-ForTheLoveOfCresheZ"
 	end
 
 	-- TODO: check hunter pickup
@@ -333,8 +333,8 @@ function Deathmatch:spawnPlayer(player)
 		self.currentSpawnIndex = 1
 	end
 		
-	local vehicle = createVehicle(spawnInfo[1], spawnInfo[2], spawnInfo[3], spawnInfo[4], spawnInfo[5], spawnInfo[6], spawnInfo[7])
-
+	local vehicle = createVehicle(spawnInfo.vehicle, spawnInfo.posX, spawnInfo.posY, spawnInfo.posZ, spawnInfo.rotX, spawnInfo.rotY, spawnInfo.rotZ)
+	
 	if (vehicle) then
 		local r, g, b = 255, 123, 161		
 		
@@ -353,7 +353,7 @@ function Deathmatch:spawnPlayer(player)
 		player:fadeCamera(true)
 		player:setCameraTarget(player)
 		
-		player:spawn(spawnInfo[2], spawnInfo[3], spawnInfo[4], 0, 188, 0, self:getRoomElement():getDimension())
+		player:spawn(spawnInfo.posX, spawnInfo.posY, spawnInfo.posZ, 0, 188, 0, self:getRoomElement():getDimension())
 		player:warpIntoVehicle(vehicle)
 	end
 end

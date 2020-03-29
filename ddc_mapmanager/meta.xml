@@ -10,6 +10,7 @@
 	<export function="sendMapToClient" type="server" />
 	<export function="startMap" type="server" />
 	<export function="stopMap" type="server" />
+	<export function="getFileHashFromName" type="client" />
 	
 	<!-- Shared -->
 	<script type="shared" src="shared/utils.lua" />
