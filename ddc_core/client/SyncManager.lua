@@ -37,13 +37,13 @@ function SyncManager:setData(element, field, value, shouldSync)
 	end
 end
 
-function SyncManager:onClientReceiveInitialElementSync(tblSyncFields)
+function SyncManager:onClientReceiveInitialElementSync(syncFields)
 	if (not checkArguments("t", fields)) then
 		return
 	end
 	
 	-- set all element datas
-	for element, fields in pairs(tblSyncFields) do
+	for element, fields in pairs(syncFields) do
 		if (element and isElement(element)) then
 			for field, value in pairs(fields) do
 				self:setData(element, field, value, false)

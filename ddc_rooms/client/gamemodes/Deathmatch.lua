@@ -12,7 +12,7 @@ function Deathmatch:constructor()
 
 	self._suicide = bind(self.suicide, self)
 
-	bindKey("space", "down", self._suicide)
+	bindKey("enter", "down", self._suicide)
 	
 	outputChatBox("Client-sided Deathmatch constructor")
 end
@@ -26,7 +26,7 @@ function Deathmatch:destructor()
 	g_CarFade:toggle(false)
 	--g_Spectators:toggle(false)
 
-	unbindKey("space", "down", self._suicide)
+	unbindKey("enter", "down", self._suicide)
 
 	outputChatBox("Client-sided Deathmatch destructor")
 end
