@@ -417,6 +417,8 @@ function MapLoader:loadMapElements(elementList)
 		exports.ddc_core:outputDebug("error", "MapLoader: Unable to load map elements, table expected, got %s", type(elementList))
 		return
 	end
+
+	local start = getTickCount()
 	
 	local useLODs = self.mapCache.settings.useLODs == "true"
 	
@@ -548,6 +550,8 @@ function MapLoader:loadMapElements(elementList)
 			end
 		end
 	end
+
+	outputChatBox("Map loaded in: "..(getTickCount() - start).."ms")
 	
 	self.objectRootElement:setDimension(localPlayer:getDimension())
 end

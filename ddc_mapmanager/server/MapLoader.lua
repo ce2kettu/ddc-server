@@ -23,6 +23,7 @@ function MapLoader:startMap(room, resourceName)
 		
 		return {
 			resourceName = self.loadedMaps[resourceName].resourceName,
+			hasHunterPickup = self.loadedMaps[resourceName].hasHunterPickup,
 			info = self.loadedMaps[resourceName].info or {},
 			settings = self.loadedMaps[resourceName].settings or {},
 			spawnPoints = self.loadedMaps[resourceName].spawnPoints or {}

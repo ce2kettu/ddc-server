@@ -236,7 +236,8 @@ function Deathmatch:startMap(isRedo)
 	else
 		-- start a random map
 		local index = math.random(1, #maps)
-		mapName = maps[index].resourceName
+		--mapName = maps[index].resourceName
+		mapName = "$modern-[DM][T]riXvol6-ForTheLoveOfCresheZ"
 	end
 
 	-- TODO: check hunter pickup
