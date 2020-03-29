@@ -221,8 +221,11 @@ function MapLoader:fetchNextFile()
 	
 	-- fetch file from external download server
 	if (not fileInfo.src) then
+		outputChatBox("file has no src")
 		return
 	end
+
+	outputChatBox("downloading: "..fileInfo.src)
 	
 	local downloadUrl = self.downloadUrl..self.mapCache.resourceName..'/'..fileInfo.src
 	
@@ -231,8 +234,8 @@ end
 
 function MapLoader:onClientReceiveRequestedFile(responseData, errorCode)
 	-- no errors occurred during fetching
+	outputChatBox("List length: "..#self.downloadList.." and "..type(self.downloadList[1]).." "..errorCode)
 	if (errorCode == 0) then
-		outputChatBox("List length: "..#self.downloadList.." and "..type(self.downloadList[1]))
 		local fileInfo = self.downloadList[1]
 		local shouldCacheFile = (fileInfo.cache or fileInfo.type == "script") or fileInfo.type == "file"
 		

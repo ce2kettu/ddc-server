@@ -57,6 +57,7 @@ function _unloadEverything()
 	loadedCol = {}
 end
 
+-- can be replaced with getTimers()
 function SandboxHooks.setTimer(...)
 	local timer = setTimer(...)
 
@@ -66,6 +67,11 @@ function SandboxHooks.setTimer(...)
 	end
 
 	return false
+end
+
+function SandboxHooks.setElementData(element, key, value)
+	-- don't sync data
+	setElementData(element, key, value, false)
 end
 
 function SandboxHooks.addEventHandler(eventName, attachedToElement, handler, ...)
