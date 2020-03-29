@@ -58,7 +58,7 @@ function MapLoader:startMap(room, resourceName)
 	
 	return {
 		resourceName = mapData.resourceName,
-		hasHunterPickup = self.loadedMaps[resourceName].hasHunterPickup
+		hasHunterPickup = self.loadedMaps[resourceName].hasHunterPickup,
 		info = self.loadedMaps[resourceName].info or {},
 		settings = self.loadedMaps[resourceName].settings or {},
 		spawnPoints = self.loadedMaps[resourceName].spawnPoints or {}
@@ -349,7 +349,7 @@ function MapLoader:loadMapFile(mapFile)
 				alpha = tonumber_(nodeAttributes.alpha) or 255
 			})
 		else
-			outputDebugString("Invalid node: "..nodeName)
+			exports.ddc_core:outputDebug("debug", "[MapLoader] Invalid node name (%s) found in %s!", nodeName, mapFile)
 		end
 	end
 

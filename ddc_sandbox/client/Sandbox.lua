@@ -8,8 +8,18 @@ function Sandbox:constructor()
 	self.mutedSounds = {}
 	
 	self.reservedBinds = {
+		-- common binds
 		"f1", "f2", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "f9", "f10", "f11", "f12",
-		"tab", "r", "t", "g", "l", "enter", "m",
+		"tab",
+		
+		-- gameplay
+		"r", "enter",
+
+		-- chat
+		"t", "g", "l",
+		
+		-- music
+		--"m",
 
 		-- spectator binds
 		"arrow_l", "arrow_r", "b",
@@ -154,6 +164,8 @@ function Sandbox:unloadScripts()
 	setWorldSpecialPropertyEnabled("snipermoon", false)
 	setWorldSpecialPropertyEnabled("extraairresistance", true)
 	setWorldSpecialPropertyEnabled("underworldwarp", true)
+
+	collectgarbage()
 end
 
 function Sandbox:triggerResourceStart()

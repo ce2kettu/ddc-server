@@ -294,6 +294,8 @@ function MapLoader:onClientReceiveMapUnloadRequest()
 	self.downloadList = {}
 	self.mapCache = {}
 	self.fileHashList = {}
+
+	collectgarbage()
 end
 
 function MapLoader:checkCachedFiles(fileList, scriptList)
@@ -355,10 +357,10 @@ function MapLoader:checkFile(fileName, realFileName)
 end
 
 function MapLoader:checkShaderFile(fileContent, fileName)
-	local strPath = fileName:match("(.*%/).*")
+	local path = fileName:match("(.*%/).*")
 	
 	for includeFileName in fileContent:gmatch("#include ['\"]([%w.-]+)['\"]") do
-		local fileName = self.fileHashList[strPath..includeFileName]
+		local fileName = self.fileHashList[path..includeFileName]
 		
 		if (fileName) then
 			-- escape non alphabetical chars
