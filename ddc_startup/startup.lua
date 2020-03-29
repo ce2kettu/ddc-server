@@ -5,6 +5,7 @@ local resources = {
 	"ddc_pickups",
 	"ddc_ui",
 	"ddc_rooms",
+	"ddc_anticheat",
 }
 
 -- Starts all resource dependencies
