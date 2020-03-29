@@ -263,6 +263,7 @@ function Deathmatch:startMap(isRedo)
 	if (not mapData) then
 		self:stopMap()
 		
+		-- TODO: kick players to lobby
 		self:sendMessage("Critical error occured - please inform a developer!")
 		return
 	end

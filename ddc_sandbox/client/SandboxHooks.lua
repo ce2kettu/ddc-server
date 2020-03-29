@@ -298,7 +298,7 @@ end
 
 function SandboxHooks.dxCreateFont(filePath, ...)
 	local filePath = g_Sandbox:getFileHashFromName(filePath)
-	local font = (filePath and dxCreateFont(filePath, ...) or false)
+	local font = filePath and dxCreateFont(filePath, ...) or false
 	
 	if (font) then
 		font:setParent(g_Sandbox:getMapElement())
@@ -325,9 +325,10 @@ function SandboxHooks.dxCreateShader(filePath, ...)
 end
 
 function SandboxHooks.dxCreateTexture(filePath, ...)
-	local filePath = g_Sandbox:getFileHashFromName(filePath) or filePath
-	local texture = dxCreateTexture(filePath, ...)
-	
+	local filePath = g_Sandbox:getFileHashFromName(filePath)
+
+	local texture = filePath and dxCreateTexture(filePath, ...) or false
+		
 	if (texture) then
 		texture:setParent(g_Sandbox:getMapElement())
 		
@@ -403,6 +404,10 @@ function SandboxHooks.engineLoadCOL(filePath)
 end
 
 function SandboxHooks.engineReplaceCOL(col, modelId)
+	if (not col or type(col) ~= "userdata") then
+		return false
+	end
+
 	if (engineReplaceCOL(col, modelId)) then
 		loadedCol[modelId] = true
 		
@@ -426,6 +431,10 @@ function SandboxHooks.engineLoadDFF(filePath)
 end
 
 function SandboxHooks.engineReplaceModel(dff, modelId, useAlpha)
+	if (not dff or type(dff) ~= "userdata") then
+		return false
+	end
+
 	if (engineReplaceModel(dff, modelId, useAlpha)) then
 		loadedDff[modelId] = true
 		
@@ -446,6 +455,14 @@ function SandboxHooks.engineLoadTXD(filePath, ...)
 	end
 	
 	return false
+end
+
+function SandboxHooks.engineImportTXD(txd, modelId)
+	if (not txd or type(txd) ~= "userdata") then
+		return false
+	end
+
+	return engineImportTXD(txd, modelId)
 end
 
 function SandboxHooks.createMarker(...)
