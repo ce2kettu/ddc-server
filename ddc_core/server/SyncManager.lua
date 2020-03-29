@@ -4,7 +4,7 @@ preInitializeClass("SyncManager")
 function SyncManager:constructor()
 	self.storedElementData = {}
 	self.allowedClientSyncFields = {
-		player = {"mapDownloading"},
+		player = { "mapDownloading" },
 	}
 	
 	-- these fields are only sent to the player whos value been changed
@@ -14,7 +14,7 @@ function SyncManager:constructor()
 	
 	-- these fields are synced to all players
 	self.globalSyncFields = {
-		player = { "id" },
+		player = { "id", "state" },
 		room = { "name", "description", "icon", "gamemode" }
 	}
 	
@@ -45,25 +45,25 @@ function SyncManager:setData(element, field, value, shouldSync)
 		self.storedElementData[element][field] = value
 		
 		-- private player sync fields
-		local strElementType = element:getType()
+		local elementType = element:getType()
 		
-		if (strElementType == "player" and table.find(self.playerSyncFields, field)) then
+		if (elementType == "player" and table.find(self.playerSyncFields, field)) then
 			triggerClientEvent(element, "onClientReceiveElementSync", resourceRoot, element, field, (value or false))
 			return
 		end
 		
 		-- global sync fields
-		if (self.globalSyncFields[strElementType] and table.find(self.globalSyncFields[strElementType], field)) then
+		if (self.globalSyncFields[elementType] and table.find(self.globalSyncFields[elementType], field)) then
 			triggerClientEvent("onClientReceiveElementSync", resourceRoot, element, field, (value or false))
 			return
 		end
 		
 		-- send element to players parent which will always be a room
-		local uElementParent = element:getParent()
+		local elementParent = element:getParent()
 		
 		-- do not send element data to EVERYONE on the server
-		if (uElementParent ~= root) then
-			triggerClientEvent(uElementParent:getChildren("player"), "onClientReceiveElementSync", resourceRoot, element, field, value or false)
+		if (elementParent ~= root) then
+			triggerClientEvent(elementParent:getChildren("player"), "onClientReceiveElementSync", resourceRoot, element, field, value or false)
 		end
 	end
 end

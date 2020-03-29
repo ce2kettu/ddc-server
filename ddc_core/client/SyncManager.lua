@@ -52,12 +52,7 @@ function SyncManager:onClientReceiveInitialElementSync(tblSyncFields)
 	end
 end
 
-function SyncManager:onClientReceiveElementSync(element, field, value)
-	-- Todo: Resolve this issue - most likely an MTA bug
-	if (type(element) == "userdata" and not isElement(element)) then
-		error("SyncManager.onClientReceiveElementSync: custom elements are not supported for some reason!")
-	end
-	
+function SyncManager:onClientReceiveElementSync(element, field, value)	
 	-- data sent from the server is invalid (element might've been destroyed)
 	if (not checkArguments("us", element, field) or not isElement(element)) then
 		outputDebug("warning", "Bad argument @ SyncManager.onClientReceiveElementSync(%s, %s)", type(element), type(field))		
