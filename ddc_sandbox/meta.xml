@@ -1,6 +1,4 @@
 <meta>
-    <oop>true</oop>
-
     <!-- Exported functions -->
     <export function="setMapData" type="client" />
     <export function="loadScript" type="client" />
