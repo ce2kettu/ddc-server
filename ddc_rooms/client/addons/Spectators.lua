@@ -35,7 +35,7 @@ function Spectators:toggle(state)
 end
 
 function Spectators:spectateNewTarget(direction)
-	outputChatBox("Spectators:spectateNewTarget")
+	outputChatBox("checking spec target")
 	local currentCameraTarget = getCameraTarget()
 	
 	-- ensure that the camera target is a player
@@ -74,8 +74,6 @@ function Spectators:checkCurrentCameraTarget()
 	
 	-- currently spectated player is invalid, spectate another one
 	if (not currentCameraTarget or (currentCameraTarget:getHealth() == 0 or currentCameraTarget:getData("state") ~= "alive")) then
-		outputChatBox("invalid target")
-		outputChatBox(currentCameraTarget:getData("state"))
 		self:spectateNewTarget(1)
 	end
 end
@@ -90,6 +88,58 @@ function Spectators:getSpectateablePlayers()
 	end
 	
 	return spectateablePlayers
+end
+
+function Spectators:spectateRandomTarget(ignoredPlayer)
+	local players = self:getSpectateablePlayers()
+
+	if (#players > 0) then
+		local target = players[math.random(1, #players)]
+		local tries = 0
+		local found = false
+
+		if (target and target ~= ignoredPlayer) then
+			found = true
+		end
+
+		while (not target or target == ignoredPlayer and tries <= 5 and not found) do
+			target = players[math.random(1, #players)]
+
+			if (target and target ~= ignoredPlayer) then
+				found = true
+				break
+			end
+
+			tries = tries + 1
+		end
+
+		if (found) then
+			exports.ddc_core:setData(localPlayer, "cameraTarget", target, true)
+			setCameraTarget(target)
+		else
+			self:noTargetFound()
+		end
+	else
+		self:noTargetFound()
+	end
+end
+
+function Spectators:checkIsTargetValid()
+	local element = getCameraTarget()
+	
+	if (not element or element:getData("state") ~= "alive" and element:getData("state") ~= "ready") then
+		self:spectateRandomTarget()
+	end
+end
+
+function Spectators:noTargetFound()
+	exports.ddc_core:setData(localPlayer, "cameraTarget", "none", true)
+	setCameraMatrix(getCameraMatrix())
+end
+
+function Spectators:setTarget(target)
+	exports.ddc_core:setData(localPlayer, "cameraTarget", target, true)
+	setCameraTarget(target)
 end
 
 function Spectators:isEnabled()

@@ -9,6 +9,7 @@ function Deathmatch:constructor(room, mapPrefix, settings)
 	
 	-- current / nextmap resource names
 	self.currentMapName = false
+	self.currentMapResource = false
 	self.nextMapName = false
 	
 	-- countdown releated stuff
@@ -36,14 +37,14 @@ function Deathmatch:constructor(room, mapPrefix, settings)
 	self._killPlayer = bind(self.killPlayer, self)
 	
 	addEvent("onPlayerMapDownloadComplete", true)
-	addEvent("Race:killPlayer", true)
+	addEvent("Race:onPlayerRequestDeath", true)
 		
 	addEventHandler("onPlayerMapDownloadComplete", self:getRoomElement(), self._onPlayerMapDownloadComplete)
 	addEventHandler("onPlayerWasted", self:getRoomElement(), self._onPlayerWasted)
 	addEventHandler("onVehicleStartExit", self:getRoomElement(), self._onVehicleStartExit)
 	
-	addEventHandler("Race:killPlayer", self:getRoomElement(), self._killPlayer)
-	addEventHandler("Race:vehicleModelChange", self:getRoomElement(), self._onPlayerVehicleChange)
+	addEventHandler("Race:onPlayerRequestDeath", self:getRoomElement(), self._killPlayer)
+	addEventHandler("Race:onVehicleModelChange", self:getRoomElement(), self._onPlayerVehicleChange)
 end
 
 function Deathmatch:destructor()
@@ -57,13 +58,22 @@ function Deathmatch:onPlayerJoin(player)
 	player:setStat(230, 1000)	
 	
 	player:setDimension(self:getRoomElement():getDimension())
+
+	player:setNametagShowing(false)
+
+	player:spawn(0, 0, 0)
+	player:setFrozen(true)
+	player:setHealth(100)
+
+	exports.ddc_core:setData(player, "state", "waiting", true)
+
+	-- TODO: bind b for admins
 	
 	if (self:getRaceState() == "none") then
 		self:startMap()
-	elseif (self.currentMapName) then
-		exports.ddc_mapmanager:sendMapToClient(player, self.currentMapName)
-		
-		-- TODO spectating
+	elseif (self.currentMapResource) then
+		exports.ddc_mapmanager:sendMapToClient(player, self.currentMapResource)
+		triggerClientEvent(player, "Race:onClientPlayerStartSpectate", player)
 	end
 end
 
@@ -127,6 +137,9 @@ function Deathmatch:onWasted(player, reason)
 	
 	self:removePlayerVehicle(player)
 	player:setPosition(0, 0, 3.5)
+	player:setFrozen(true)
+
+	triggerClientEvent(player, "Race:onClientPlayerWasted", player)
 
 	outputChatBox(player:getName().." #ffffffhas died", self:getRoomElement(), 255, 255, 255, true)
 	
@@ -134,6 +147,14 @@ function Deathmatch:onWasted(player, reason)
 	
 	if (#self:getAlivePlayers() >= 1) then
 		-- TODO: spectating
+		triggerClientEvent(player, "Race:onClientPlayerStartSpectate", player)
+
+		-- move spectators to another player
+		for _, spectator in ipairs(self:getPlayers()) do
+			if (spectator:getData("cameraTarget") == player) then
+				triggerClientEvent(spectator, "Race:spectateRandomTarget", resourceRoot)
+			end
+		end
 	else
 		self:stopMap()
 	end
@@ -149,7 +170,6 @@ function Deathmatch:killPlayer(reason)
 	end
 end
 
-
 function Deathmatch:onVehicleStartExit()
 	cancelEvent(true)
 end
@@ -161,6 +181,8 @@ function Deathmatch:onPlayerVehicleChange(modelId)
 end
 
 function Deathmatch:startRound()
+	self:triggerRoomEvent("Race:onClientRoundStart")
+
 	-- unfreeze all players
 	for _, player in ipairs(self:getAlivePlayers()) do
 		exports.ddc_core:setData(player, "state", "alive", true)
@@ -206,6 +228,7 @@ function Deathmatch:onMapLoaded(mapName, mapData)
 	self.spawnpoints = mapData.spawnPoints
 	self.currentSpawnIndex = 1
 	
+	self.currentMapResource = mapData.resourceName
 	self.currentMapName = mapData.info.name or "Unknown"
 	
 	for _, player in ipairs(self:getPlayers()) do
@@ -283,11 +306,12 @@ function Deathmatch:stopMap(isRedo, isForced)
 	end
 	
 	-- unload the map
-	exports.ddc_mapmanager:stopMap(self:getRoomElement(), self.currentMapName)
+	exports.ddc_mapmanager:stopMap(self:getRoomElement(), self.currentMapResource)
 	
 	-- reset all variables
 	if (not isRedo) then
 		self.currentMapName = false
+		self.currentMapResource = false
 	end
 	
 	-- countdown releated stuff
@@ -311,6 +335,8 @@ function Deathmatch:stopMap(isRedo, isForced)
 	self:removeAllPlayerVehicles()
 	
 	self:setRaceState("none")
+
+	self:triggerRoomEvent("Race:onClientPlayerStopSpectate")
 	
 	-- are there players left ? if so, start map
 	if (#self:getPlayers() >= 1) then
@@ -372,7 +398,7 @@ end
 
 
 function Deathmatch:removeAllPlayerVehicles()
-	for player, vehicle in pairs(self.vehicles) do
+	for _, vehicle in ipairs(self.vehicles) do
 		if (vehicle and isElement(vehicle)) then
 			vehicle:destroy()
 		end
