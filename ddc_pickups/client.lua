@@ -241,7 +241,7 @@ local function onPickupHit(element)
 		
 		-- TODO: set a timer if players get stuck?
         vehicleChanging(vehicle, useClassicChangeZ, previousVehicleHeight)
-        triggerServerEvent("Race:vehicleModelChange", resourceRoot, newModel)
+        triggerServerEvent("Race:onVehicleModelChange", resourceRoot, newModel)
 		playSoundFrontEnd(46)
 	end
 end
@@ -261,18 +261,18 @@ local function removeVisiblePickup()
 end
 
 local function checkSpawnedOnPickup()
-	for _, colshape in ipairs(pickups) do
+	for colshape, _ in pairs(pickups) do
 		if (localPlayer:isWithinColShape(colshape)) then
 			onPickupHit(colshape)
 		end
 	end
 end
 
-addEvent("Race:removeClientNitro", true)
+addEvent("Race:removeClientPlayerNitro", true)
 addEvent("Race:checkSpawnedOnPickup", true)
 
 addEventHandler("Race:checkSpawnedOnPickup", localPlayer, checkSpawnedOnPickup)
-addEventHandler("Race:removeClientNitro", localPlayer, removeVehicleNitro)
+addEventHandler("Race:removeClientPlayerNitro", localPlayer, removeVehicleNitro)
 addEventHandler("onClientElementStreamIn", root, addVisiblePickup)
 addEventHandler("onClientElementStreamOut", root, removeVisiblePickup)
 addEventHandler("onClientColShapeHit", root, onPickupHit)
