@@ -40,11 +40,11 @@ function RoomManager:onClientGamemodeSwitch(gamemodeClassName)
 		end
 	elseif (self:getGamemodeInstance()) then
 		-- player switched to a new gamemode
-		delete(self:getGamemodeInstance())
+		deleteClass(self:getGamemodeInstance())
 	end
 	
 	-- create gamemode instance and set variables
-	self.gamemodeInstance = new(_G[gamemodeClassName])
+	self.gamemodeInstance = newClass(_G[gamemodeClassName])
 	self.currentGamemodeClassName = gamemodeClassName
 end
 

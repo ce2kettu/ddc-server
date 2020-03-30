@@ -12,6 +12,7 @@
 
     <!-- Shared -->
     <script type="shared" src="shared/utils.lua" />
+    <script type="shared" src="shared/classlib.lua" />
 
     <!-- Server -->
     <script type="server" src="server/init.lua" />

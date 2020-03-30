@@ -1,21 +1,21 @@
 local function onClientResourceStart()
-	g_RoomManager = new(RoomManager)
-	
-	-- addons
-	g_Spectators = new(Spectators)
-	g_WaterKiller = new(WaterKiller)
-	g_CarFade = new(CarFade)
-	g_CarHide = new(CarHide)
+    g_RoomManager = newClass(RoomManager)
+
+    -- addons
+    g_Spectators = newClass(Spectators)
+    g_WaterKiller = newClass(WaterKiller)
+    g_CarFade = newClass(CarFade)
+    g_CarHide = newClass(CarHide)
 end
 
 local function onClientResourceStop()
-	delete(g_RoomManager)
-	
-	-- addons
-	delete(g_Spectators)
-	delete(g_WaterKiller)
-	delete(g_CarFade)
-	delete(g_CarHide)
+    deleteClass(g_RoomManager)
+
+    -- addons
+    deleteClass(g_Spectators)
+    deleteClass(g_WaterKiller)
+    deleteClass(g_CarFade)
+    deleteClass(g_CarHide)
 end
 
 addEventHandler("onClientResourceStart", resourceRoot, onClientResourceStart)

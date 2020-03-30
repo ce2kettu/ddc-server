@@ -4,7 +4,7 @@
     <export function="destroyCountdown" type="client" />
 
     <!-- Client -->
-    <script type="shared" src="utils.lua" />
+    <script type="shared" src="classlib.lua" />
     <script type="client" src="countdown.lua" />
     <script type="client" src="exports.lua" />
 

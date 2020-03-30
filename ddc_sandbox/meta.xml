@@ -8,6 +8,7 @@
 
     <!-- Shared -->
     <script type="shared" src="shared/utils.lua" />
+    <script type="shared" src="shared/classlib.lua" />
     <script type="shared" src="shared/exports.lua" />
 
     <!-- Client -->

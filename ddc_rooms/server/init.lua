@@ -1,10 +1,10 @@
 local function onResourceStart()
-	g_RoomManager = new(RoomManager)
+	g_RoomManager = newClass(RoomManager)
 end
 
 
 local function onResourceStop()
-	delete(g_RoomManager)
+	deleteClass(g_RoomManager)
 end
 
 addEventHandler("onResourceStart", resourceRoot, onResourceStart)

@@ -3,7 +3,7 @@ local function onClientResourceStart()
         return
     end
 
-    g_Sandbox = new(Sandbox)
+    g_Sandbox = newClass(Sandbox)
 end
 
 local function onClientResourceStop()
@@ -11,7 +11,7 @@ local function onClientResourceStop()
         return
     end
 
-    delete(g_Sandbox)
+    deleteClass(g_Sandbox)
 end
 
 addEventHandler("onClientResourceStart", resourceRoot, onClientResourceStart)

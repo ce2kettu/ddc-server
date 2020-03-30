@@ -59,7 +59,7 @@ function RoomManager:addRoom(roomInfo)
 	-- add destroy handle to kick players back to lobby
 	addEventHandler("onElementDestroy", room, self._onElementDestroy)
 
-	self.roomInstances[room] = new(_G[gamemodeClassName], room, roomInfo.mapPrefix, (roomInfo.settings or {}))
+	self.roomInstances[room] = newClass(_G[gamemodeClassName], room, roomInfo.mapPrefix, (roomInfo.settings or {}))
 	
 	-- apply element data
 	for _, field in ipairs({"name", "description", "password", "icon", "gamemode", "settings"}) do
@@ -165,7 +165,7 @@ function RoomManager:onElementDestroy()
 	end
 	
 	-- destroy class object
-	delete(roomInstance)
+	deleteClass(roomInstance)
 end
 
 function RoomManager:getRoomInstance(value)
