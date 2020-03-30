@@ -23,7 +23,7 @@ end
 function RoomManager:onClientGamemodeSwitch(gamemodeClassName)
 	local gamemodeClassName = gamemodeClassName
 	
-	-- there was no classname provided, lets asume he got kicked / joined the Lobby
+	-- there was no classname provided, lets assume he got kicked / joined the Lobby
 	if (not gamemodeClassName) then
 		gamemodeClassName = "Lobby"
 	end

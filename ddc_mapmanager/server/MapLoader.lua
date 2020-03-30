@@ -148,6 +148,7 @@ function MapLoader:loadMap(resourceName)
 				local fileChecksum = getFileChecksum(':' .. resourceName .. '/' .. nodeAttributes.src)
 				
 				if (fileChecksum) then
+					-- TODO: remove
 					-- server-sided scripts
 					if (nodeAttributes.type == "server" or nodeAttributes.type == "shared") then
 						table_insert(mapData.scripts.server, nodeAttributes.src)
@@ -403,7 +404,6 @@ function MapLoader:sendMapToClient(element, resourceName)
 	mapData.spawnPoints = nil
 	mapData.scripts = mapData.scripts.client or {}
 	
-	outputChatBox(getTickCount())
 	triggerClientEvent(element, "onClientReceiveMapData", resourceRoot, mapData)
 end
 

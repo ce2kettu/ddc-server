@@ -174,8 +174,6 @@ function MapLoader:destructor()
 end
 
 function MapLoader:onClientReceiveMapData(mapData)
-	triggerServerEvent()
-	outputChatBox("received: "..getTickCount())
 	-- unload loaded map frst
 	self:onClientReceiveMapUnloadRequest()
 	
@@ -218,16 +216,16 @@ function MapLoader:fetchNextFile()
 	
 	local fileInfo = self.downloadList[1]
 
-	if (fileInfo.cache == "false") then
-		-- send request to server
-		outputChatBox("script requested no cache")
-		triggerServerEvent("onPlayerRequestMapFile", resourceRoot, fileInfo)
-		return
-	end
+	-- TODO: remove
+	-- if (fileInfo.cache == "false") then
+	-- 	-- send request to server
+	-- 	outputChatBox("script requested no cache")
+	-- 	triggerServerEvent("onPlayerRequestMapFile", resourceRoot, fileInfo)
+	-- 	return
+	-- end
 	
 	-- fetch file from external download server
 	if (not fileInfo.src) then
-		outputChatBox("file has no src")
 		return
 	end
 

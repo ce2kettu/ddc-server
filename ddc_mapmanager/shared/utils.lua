@@ -73,11 +73,13 @@ function bind(func, ...)
 		end 
 end
 
-function table.copy(tab, recursive)
-    local ret = {}
-    for key, value in pairs(tab) do
+function table.copy(tbl, recursive)
+	local ret = {}
+	
+    for key, value in pairs(tbl) do
         if (type(value) == "table") and recursive then ret[key] = table.copy(value)
         else ret[key] = value end
-    end
+	end
+	
     return ret
 end

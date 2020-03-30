@@ -39,7 +39,7 @@ function Autoloader:destroyAllClasses()
     local startTime = getTickCount()
     local currentDestructTime = startTime
 	
-    for _, className in ipairs(initializedClasses) do
+    for _, className in pairs(initializedClasses) do
         if (_G[className] and _G[className].i) then
             delete(_G[className]:i())
 

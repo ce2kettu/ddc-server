@@ -120,7 +120,7 @@ function render()
     local temp = Element.getAllByType("room")
     rooms = {}
 
-    for _, uRoom in pairs(temp) do
+    for _, uRoom in ipairs(temp) do
         table.insert(rooms, {
             element = uRoom,
             name = uRoom:getData("name"),
@@ -170,7 +170,7 @@ function structureRooms()
     local currentX = math.floor(startX)
     local currentY = math.floor(startY)
 
-    for _, room in pairs(page) do
+    for _, room in ipairs(page) do
         -- mouse hover stuff
         room.active = mouseCheck(currentX, currentY - ROOM_HEIGHT / 2, ROOM_WIDTH, ROOM_HEIGHT)
 
@@ -374,7 +374,7 @@ function keyHandler(key, press)
             currentX = currentX + imageSize + ICON_MARGIN_SMALL * 2
         end
 
-        for _, room in pairs(rooms) do
+        for _, room in ipairs(rooms) do
             if room.active then
                 showCursor(false)
                 removeEventHandler("onClientRender", root, render)

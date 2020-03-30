@@ -4,7 +4,7 @@ preInitializeClass("SyncManager")
 function SyncManager:constructor()
 	self.storedElementData = {}
 	self.allowedClientSyncFields = {
-		player = { "mapDownloading" },
+		player = { "mapDownloading", "cameraTarget" },
 	}
 	
 	-- these fields are only sent to the player whos value been changed
