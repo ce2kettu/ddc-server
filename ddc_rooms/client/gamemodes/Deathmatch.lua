@@ -10,6 +10,7 @@ function Deathmatch:constructor()
 	localPlayer:setCanBeKnockedOffBike(false)
 	setAmbientSoundEnabled("general", false)
 	toggleControl("enter_exit", false)
+	setBlurLevel(0)
 	
 	g_WaterKiller:toggle(true)
 	g_CarFade:toggle(true)
@@ -38,6 +39,7 @@ function Deathmatch:destructor()
 	
 	g_WaterKiller:toggle(false)
 	g_CarFade:toggle(false)
+	setBlurLevel(0)
 	--g_Spectators:toggle(false)
 
 	unbindKey("enter", "down", self._requestSuicide)
