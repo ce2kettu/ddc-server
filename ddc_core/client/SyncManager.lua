@@ -38,7 +38,7 @@ function SyncManager:setData(element, field, value, shouldSync)
 end
 
 function SyncManager:onClientReceiveInitialElementSync(syncFields)
-	if (not checkArguments("t", fields)) then
+	if (not checkArguments("t", syncFields)) then
 		return
 	end
 	
