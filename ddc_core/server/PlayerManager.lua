@@ -37,7 +37,7 @@ end
 function PlayerManager:assignId(player)
 	local id = self:getFreeId()
 
-	player:setData("id", id, true)
+	setData(player, "id", id, true)
 	self.idList[id] = player
 end
 
