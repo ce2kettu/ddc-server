@@ -204,7 +204,7 @@ function Sandbox:setupSandbox()
 			if (type_ == "function") then
 				return function() end
 			elseif (type_ == "string") then
-				return '';
+				return "";
 			elseif (type_ == "number") then
 				return 0;
 			elseif (type_ == "boolean" or type_ == "userdata") then
@@ -256,7 +256,7 @@ function Sandbox:getMapElement()
 end
 
 function Sandbox:toggleSounds(state)
-	for _, sound in ipairs(Element.getAllByType("sound", self:getMapElement())) do
+	for _, sound in ipairs(getElementsByType("sound", self:getMapElement())) do
 		if (state) then
 			for _, sound in ipairs(self.mutedSounds) do
 				local soundElement = sound.element

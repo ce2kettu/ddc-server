@@ -117,7 +117,7 @@ function render()
     dxDrawText("", screenX / 2 - websiteTextWidth / 2 - websiteIconWidth / 2 - ICON_MARGIN_LARGE / 2, screenY - WEBSITE_MARGIN_BOTTOM + 3 * relY, screenX, screenY, UNISON_PINK, 1, FONT_ICON_REGULAR)
     dxDrawText("visit unisonchampionships.com", screenX / 2 - websiteTextWidth / 2 + websiteIconWidth / 2 + ICON_MARGIN_LARGE / 2, screenY - WEBSITE_MARGIN_BOTTOM, screenX, screenY, COLOR_WHITE, 1, FONT_SEMIBOLD)
 
-    local temp = Element.getAllByType("room")
+    local temp = getElementsByType("room")
     rooms = {}
 
     for _, uRoom in ipairs(temp) do

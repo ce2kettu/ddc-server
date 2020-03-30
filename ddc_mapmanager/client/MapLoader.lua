@@ -1,17 +1,17 @@
 MapLoader = {}
 
 function MapLoader:constructor()
-	self.objectRootElement = Element("maproot")
-	self.downloadList = {}
-	self.mapCache = {}
-	self.fileHashList = {}
-	self.clientCachePath = "cache/"
-	self.downloadUrl = exports.ddc_core:getServerInfo().downloadUrl
-	self._hasMapLoaded = false
-	self._onClientReceiveRequestedFile = bind(self.onClientReceiveRequestedFile, self)
-	self._onClientReceiveMapData = bind(self.onClientReceiveMapData, self)
-	self._onClientReceiveMapUnloadRequest = bind(self.onClientReceiveMapUnloadRequest, self)
-	
+    self.objectRootElement = createElement("maproot")
+    self.downloadList = {}
+    self.mapCache = {}
+    self.fileHashList = {}
+    self.clientCachePath = "cache/"
+    self.downloadUrl = exports.ddc_core:getServerInfo().downloadUrl
+    self._hasMapLoaded = false
+    self._onClientReceiveRequestedFile = bind(self.onClientReceiveRequestedFile, self)
+    self._onClientReceiveMapData = bind(self.onClientReceiveMapData, self)
+    self._onClientReceiveMapUnloadRequest = bind(self.onClientReceiveMapUnloadRequest, self)
+
     self.lodModels = {
         [8476] = 8905; [9476] = 9263; [4339] = 4472; [8654] = 8751; [7465] = 7795; [8465] = 8744; [11114] = 11052; [13872] = 13884; [6999] = 7120;
         [7999] = 8098; [6959] = 7343; [9733] = 9644; [10927] = 11356; [10759] = 10804; [8445] = 8478; [7445] = 7761; [10928] = 11065; [9266] = 9475; [13676] = 13870;
@@ -155,422 +155,422 @@ function MapLoader:constructor()
         [10387] = 10329; [6229] = 6246; [5707] = 5905; [13685] = 13858; [5297] = 5320; [4163] = 4164; [10968] = 11199; [13734] = 13768; [3707] = 3708; [6189] = 6191;
         [9718] = 9778; [4865] = 4936; [9608] = 9657; [6944] = 7111; [17697] = 17768;
     }
-	
-	addEvent("onClientReceiveMapData", true)
-	addEvent("onClientReceiveRequestedFile", true)
-	addEvent("onClientReceiveMapUnloadRequest", true)
-	
-	addEventHandler("onClientReceiveMapData", resourceRoot, self._onClientReceiveMapData)
-	addEventHandler("onClientReceiveRequestedFile", resourceRoot, self._onClientReceiveRequestedFile)
-	addEventHandler("onClientReceiveMapUnloadRequest", resourceRoot, self._onClientReceiveMapUnloadRequest)
-	
-	Engine.setAsynchronousLoading(true, true)
+
+    addEvent("onClientReceiveMapData", true)
+    addEvent("onClientReceiveRequestedFile", true)
+    addEvent("onClientReceiveMapUnloadRequest", true)
+
+    addEventHandler("onClientReceiveMapData", resourceRoot, self._onClientReceiveMapData)
+    addEventHandler("onClientReceiveRequestedFile", resourceRoot, self._onClientReceiveRequestedFile)
+    addEventHandler("onClientReceiveMapUnloadRequest", resourceRoot, self._onClientReceiveMapUnloadRequest)
+
+    engineSetAsynchronousLoading(true, true)
 end
 
 function MapLoader:destructor()
-	self:onClientReceiveMapUnloadRequest()
-	
-	Engine.setAsynchronousLoading(false, false)
+    self:onClientReceiveMapUnloadRequest()
+
+    engineSetAsynchronousLoading(false, false)
 end
 
 function MapLoader:onClientReceiveMapData(mapData)
-	-- unload loaded map frst
-	self:onClientReceiveMapUnloadRequest()
-	
-	self.mapCache = mapData
+    -- unload loaded map frst
+    self:onClientReceiveMapUnloadRequest()
 
-	exports.ddc_core:setData(localPlayer, "mapDownloading", true, true)
-		
-	-- check cached files and start download afterwards if needed
-	self:checkCachedFiles(mapData.files or {}, mapData.scripts or {})
-	
-	-- apply map settings
-	self:applyMapSettings(mapData.settings)
-	
-	-- load map elements
-	self:loadMapElements(mapData.mapElements)
-		
-	self._hasMapLoaded = true
+    self.mapCache = mapData
+
+    exports.ddc_core:setData(localPlayer, "mapDownloading", true, true)
+
+    -- check cached files and start download afterwards if needed
+    self:checkCachedFiles(mapData.files or {}, mapData.scripts or {})
+
+    -- apply map settings
+    self:applyMapSettings(mapData.settings)
+
+    -- load map elements
+    self:loadMapElements(mapData.mapElements)
+
+    self._hasMapLoaded = true
 end
 
 function MapLoader:fetchNextFile()
-	if (#self.downloadList == 0) then
-		-- download completed
-		exports.ddc_core:setData(localPlayer, "mapDownloading", false, true)
-		
-		local room = localPlayer:getParent()
+    if (#self.downloadList == 0) then
+        -- download completed
+        exports.ddc_core:setData(localPlayer, "mapDownloading", false, true)
 
-		if (not room or room:getType() ~= "room") then
-			return
-		end
+        local room = getElementParent(localPlayer)
 
-		-- trgger onClientResourceStart event on map scripts
-		if (self.mapCache.scripts and #self.mapCache.scripts >= 1) then
-			exports.ddc_sandbox:triggerResourceStart()
-		end
+        if (not room or getElementType(room) ~= "room") then
+            return
+        end
 
-		triggerServerEvent("onPlayerMapDownloadComplete", localPlayer)
+        -- trgger onClientResourceStart event on map scripts
+        if (self.mapCache.scripts and #self.mapCache.scripts >= 1) then
+            exports.ddc_sandbox:triggerResourceStart()
+        end
 
-		return
-	end
-	
-	local fileInfo = self.downloadList[1]
+        triggerServerEvent("onPlayerMapDownloadComplete", localPlayer)
+        return
+    end
 
-	-- TODO: remove
-	-- if (fileInfo.cache == "false") then
-	-- 	-- send request to server
-	-- 	outputChatBox("script requested no cache")
-	-- 	triggerServerEvent("onPlayerRequestMapFile", resourceRoot, fileInfo)
-	-- 	return
-	-- end
-	
-	-- fetch file from external download server
-	if (not fileInfo.src) then
-		return
-	end
+    local fileInfo = self.downloadList[1]
 
-	outputChatBox("downloading: "..fileInfo.src)
-	
-	local downloadUrl = self.downloadUrl..self.mapCache.resourceName..'/'..fileInfo.src
-	
-	fetchRemote(downloadUrl, self._onClientReceiveRequestedFile)
+    -- TODO: remove
+    -- if (fileInfo.cache == "false") then
+    -- 	-- send request to server
+    -- 	outputChatBox("script requested no cache")
+    -- 	triggerServerEvent("onPlayerRequestMapFile", resourceRoot, fileInfo)
+    -- 	return
+    -- end
+
+    -- fetch file from external download server
+    if (not fileInfo.src) then
+        return
+    end
+
+    outputChatBox("downloading: "..fileInfo.src)
+
+    local downloadUrl = self.downloadUrl..self.mapCache.resourceName.."/"..fileInfo.src
+
+    fetchRemote(downloadUrl, self._onClientReceiveRequestedFile)
 end
 
 function MapLoader:onClientReceiveRequestedFile(responseData, errorCode)
-	-- no errors occurred during fetching
-	outputChatBox("List length: "..#self.downloadList.." and "..type(self.downloadList[1]).." "..errorCode)
-	if (errorCode == 0) then
-		local fileInfo = self.downloadList[1]
-		local shouldCacheFile = (fileInfo.cache or fileInfo.type == "script") or fileInfo.type == "file"
-		
-		if (shouldCacheFile) then
-			local fileName = self:getClientCachePath()..fileInfo.checksum
-			local fileExtension = fileInfo.src:match("%.([0-9a-zA-Z]+)")
-			
-			-- delete previous file
-			if (fileExists(fileName)) then
-				-- notify the server about the activity
-				if (not fileDelete(fileName)) then
-					triggerServerEvent("onPlayerCheat", root, 1, {filename = fileName})
-					return
-				end
-			end
-			
-			local file = File(fileName)
-			
-			if (file) then
-				local responseData = responseData
-				
-				if (fileExtension == "fx") then
-					responseData = self:checkShaderFile(responseData, fileInfo.src)
-				end
-				
-				file:write(responseData)
-				file:flush()
-				file:close()
-			end
-		end
-		
-		-- load script files into sandbox
-		if (fileInfo.type == "script") then
-			exports.ddc_sandbox:loadScript(responseData)
-		end
-	end
-	
-	-- delete current file from download list and fetch next file
-	table.remove(self.downloadList, 1)
-	
-	self:fetchNextFile()
+    -- no errors occurred during fetching
+    outputChatBox("List length: "..#self.downloadList.." and "..type(self.downloadList[1]).." "..errorCode)
+    if (errorCode == 0) then
+        local fileInfo = self.downloadList[1]
+        local shouldCacheFile = (fileInfo.cache or fileInfo.type == "script") or fileInfo.type == "file"
+
+        if (shouldCacheFile) then
+            local fileName = self:getClientCachePath()..fileInfo.checksum
+            local fileExtension = fileInfo.src:match("%.([0-9a-zA-Z]+)")
+
+            -- delete previous file
+            if (fileExists(fileName)) then
+                -- notify the server about the activity
+                if (not fileDelete(fileName)) then
+                    triggerServerEvent("onPlayerCheat", root, 1, {filename = fileName})
+                    return
+                end
+            end
+
+            local file = fileCreate(fileName)
+
+            if (file) then
+                local responseData = responseData
+
+                if (fileExtension == "fx") then
+                    responseData = self:checkShaderFile(responseData, fileInfo.src)
+                end
+
+                fileWrite(file, responseData)
+                fileFlush(file)
+                fileClose(file)
+            end
+        end
+
+        -- load script files into sandbox
+        if (fileInfo.type == "script") then
+            exports.ddc_sandbox:loadScript(responseData)
+        end
+    end
+
+    -- delete current file from download list and fetch next file
+    table.remove(self.downloadList, 1)
+
+    self:fetchNextFile()
 end
 
-function MapLoader:onClientReceiveMapUnloadRequest()	
-	-- there was no map loaded
-	if (not self:hasMapLoaded()) then
-		return
-	end
-	
-	-- unload loaded scripts
-	exports.ddc_sandbox:unloadScripts()
+function MapLoader:onClientReceiveMapUnloadRequest()
+    -- there was no map loaded
+    if (not self:hasMapLoaded()) then
+        return
+    end
 
-	-- unload pickups
-	exports.ddc_pickups:resetPickups()
-	
-	-- remove all map elements
-	for _, element in ipairs(self:getMapElement():getChildren()) do
-		element:destroy()
-	end
-	
-	self._hasMapLoaded = false
-	self.downloadList = {}
-	self.mapCache = {}
-	self.fileHashList = {}
+    -- unload loaded scripts
+    exports.ddc_sandbox:unloadScripts()
 
-	collectgarbage()
+    -- unload pickups
+    exports.ddc_pickups:resetPickups()
+
+    -- remove all map elements
+    for _, element in ipairs(getElementChildren(self:getMapElement())) do
+        destroyElement(element)
+    end
+
+    self._hasMapLoaded = false
+    self.downloadList = {}
+    self.mapCache = {}
+    self.fileHashList = {}
+
+    collectgarbage()
 end
 
 function MapLoader:checkCachedFiles(fileList, scriptList)
-	local fileHashList = {}
-	
-	-- check for files frst
-	for _, fileInfo in ipairs(fileList) do
-		fileHashList[fileInfo.name] = fileInfo.checksum
-		
-		if (not self:checkFile(fileInfo.checksum, fileInfo.name)) then
-			table.insert(self.downloadList, {src = fileInfo.name, checksum = fileInfo.checksum, type = "file"})
-		end
-	end
-	
-	-- send hash lish to sandbox
-	if (#scriptList >= 1) then
-		self.fileHashList = fileHashList
-		exports.ddc_sandbox:setMapData(self.mapCache.resourceName, self.downloadUrl, fileHashList)
-	end
-	
-	-- then for scripts
-	for _, scriptInfo in ipairs(scriptList) do
-		if (not self:checkFile(scriptInfo.checksum)) then
-			table.insert(self.downloadList, {src = scriptInfo.name, checksum = scriptInfo.checksum, type = "script", cache = scriptInfo.cache})
-		else
-			local file = File("cache/"..scriptInfo.checksum)
-			
-			local fileContent = file:read(file:getSize())
-			file:close()
-			exports.ddc_sandbox:loadScript(fileContent)
-		end
-	end
-	
-	self:fetchNextFile()
+    local fileHashList = {}
+
+    -- check for files frst
+    for _, fileInfo in ipairs(fileList) do
+        fileHashList[fileInfo.name] = fileInfo.checksum
+
+        if (not self:checkFile(fileInfo.checksum, fileInfo.name)) then
+            table.insert(self.downloadList, {src = fileInfo.name, checksum = fileInfo.checksum, type = "file"})
+        end
+    end
+
+    -- send hash lish to sandbox
+    if (#scriptList >= 1) then
+        self.fileHashList = fileHashList
+        exports.ddc_sandbox:setMapData(self.mapCache.resourceName, self.downloadUrl, fileHashList)
+    end
+
+    -- then for scripts
+    for _, scriptInfo in ipairs(scriptList) do
+        if (not self:checkFile(scriptInfo.checksum)) then
+            table.insert(self.downloadList, {src = scriptInfo.name, checksum = scriptInfo.checksum, type = "script", cache = scriptInfo.cache})
+        else
+            local file = fileCreate("cache/"..scriptInfo.checksum)
+
+            if (file) then
+                local fileContent = fileRead(file, fileGetSize(file))
+                fileClose(file)
+                exports.ddc_sandbox:loadScript(fileContent)
+            end
+        end
+    end
+
+    self:fetchNextFile()
 end
 
 function MapLoader:checkFile(fileName, realFileName)
-	if (not fileName or type(fileName) ~= "string") then
-		return false
+    if (not fileName or type(fileName) ~= "string") then
+        return false
     end
 
-	local fileExtension = fileName:match("%.([0-9a-zA-Z]+)")
-	local filePath = "cache/"..fileName
-	local file = fileExists(filePath) and File(filePath) or false
-	
-	if (file) then
-		local fileContent = file:read(file:getSize())
-		file:close()
-		
-		-- TODO: check shader server-sided?
-		if (fileExtension == "fx") then
-			return true
-		end
-		
-		return md5(fileContent) == fileName
-	end
-	
-	return false
+    local fileExtension = fileName:match("%.([0-9a-zA-Z]+)")
+    local filePath = "cache/"..fileName
+    local file = fileExists(filePath) and fileCreate(filePath) or false
+
+    if (file) then
+        local fileContent = fileRead(file, fileGetSize(file))
+        fileClose(file)
+
+        -- TODO: check shader server-sided?
+        if (fileExtension == "fx") then
+            return true
+        end
+
+        return md5(fileContent) == fileName
+    end
+
+    return false
 end
 
 function MapLoader:checkShaderFile(fileContent, fileName)
-	local path = fileName:match("(.*%/).*") or ""
-	
-	-- e.g. '#include "mta-helper.fx"', magic characters escaped
-	for includeFileName in fileContent:gmatch("#include ['\"]([%w%.%-/_]+)['\"]") do
-		local fileName = self.fileHashList[path..includeFileName]
-		
-		if (fileName) then
-			-- escape non alphabetical chars
-			includeFileName = includeFileName:gsub("([^%w])", "%%%1")
-			
-			-- replace content
-			fileContent = fileContent:gsub(includeFileName, fileName)
-		end
-	end
-	
-	return fileContent
+    local path = fileName:match("(.*%/).*") or ""
+
+    -- e.g. '#include "mta-helper.fx"', magic characters escaped
+    for includeFileName in fileContent:gmatch("#include ['\"]([%w%.%-/_]+)['\"]") do
+        local fileName = self.fileHashList[path..includeFileName]
+
+        if (fileName) then
+            -- escape non alphabetical chars
+            includeFileName = includeFileName:gsub("([^%w])", "%%%1")
+
+            -- replace content
+            fileContent = fileContent:gsub(includeFileName, fileName)
+        end
+    end
+
+    return fileContent
 end
 
 function MapLoader:applyMapSettings(settings)
-	if (not settings or type(settings) ~= "table") then
-		exports.ddc_core:outputDebug("error", "MapLoader: Unable to apply map settings, table expected, got %s", type(settings))
-		return
-	end
-	
-	if (settings.time) then
-		local hour, minute = unpack(split(settings.time, ':'))
-		
-		setTime((hour or 12), (minute or 0))
-	end
-	
-	if (settings.waveheght) then
-		setWaveHeght(settings.waveheght)
-	end
-	
-	if (settings.gravity) then
-		setGravity(settings.gravity)
-	end
-	
-	if (settings.gamespeed) then
-		setGameSpeed(settings.gamespeed)
-	end
-	
-	setWeather((settings.weather or 0))
-	setMinuteDuration((settings.locked_time and 1000000 or 1000))
+    if (not settings or type(settings) ~= "table") then
+        exports.ddc_core:outputDebug("error", "MapLoader: Unable to apply map settings, table expected, got %s", type(settings))
+        return
+    end
+
+    if (settings.time) then
+        local hour, minute = unpack(split(settings.time, ":"))
+
+        setTime(hour or 12, minute or 0)
+    end
+
+    if (settings.waveheght) then
+        setWaveHeght(settings.waveheght)
+    end
+
+    if (settings.gravity) then
+        setGravity(settings.gravity)
+    end
+
+    if (settings.gamespeed) then
+        setGameSpeed(settings.gamespeed)
+    end
+
+    setWeather(settings.weather or 0)
+    setMinuteDuration(settings.locked_time and 1000000 or 1000)
 end
 
 function MapLoader:loadMapElements(elementList)
-	if (not elementList or type(elementList) ~= "table") then
-		exports.ddc_core:outputDebug("error", "MapLoader: Unable to load map elements, table expected, got %s", type(elementList))
-		return
-	end
+    if (not elementList or type(elementList) ~= "table") then
+        exports.ddc_core:outputDebug("error", "MapLoader: Unable to load map elements, table expected, got %s", type(elementList))
+        return
+    end
 
-	local startTick = getTickCount()
-	local useLODs = self.mapCache.settings.useLODs == "true"
-	
-	for _, element in ipairs(elementList) do
+    local startTick = getTickCount()
+    local useLODs = self.mapCache.settings.useLODs == "true"
 
-		if (element.name == "object") then
-			local object = createObject(element.model, element.posX, element.posY, element.posZ, element.rotX, element.rotY, element.rotZ)
-			local object2 = false
-			
-			if (useLODs and self.lodModels[element.model]) then
-				object2 = createObject(self.lodModels[element.model], element.posX, element.posY, element.posZ, element.rotX, element.rotY, element.rotZ, true)
-			end
-			
-			if (object) then
-				if (engineGetModelLODDistance(element.model) ~= 300) then						
-					engineSetModelLODDistance(element.model, 300)
-				end
-				
-				object:setParent(self.objectRootElement)
-				
-				-- LOD object
-				if (object2) then
-					object2:setParent(self.objectRootElement)
-					object:setLowLOD(object2)
-				end
-				
-				if (not element.doublesided) then
-					object:setDoubleSided(false)
-					
-					if (object2) then
-						object2:setDoubleSided(false)
-					end
-				end
-				
-				if (not element.collisions) then
-					object:setCollisionsEnabled(false)
-					
-					if (object2) then
-						object2:setCollisionsEnabled(false)
-					end
-				end
-		
-				if (element.scale ~= 1) then
-					object:setScale(element.scale)
-					
-					if (object2) then
-						object2:setScale(element.scale)
-					end
-				end
-				
-				if (not element.breakable) then
-					object:setBreakable(false)
-					
-					if (object2) then
-						object2:setBreakable(false)
-					end
-				end
-				
-				if (element.alpha ~= 255) then
-					object:setAlpha(element.alpha)
-					
-					
-					if (object2) then
-						object:setAlpha(element.alpha)
-					end
-				end
-			end
-		elseif (element.name == "vehicle") then
-			local vehicle = createVehicle(element.model, element.posX, element.posY, element.posZ, element.rotX, element.rotY, element.rotZ)
-			
-			if (vehicle) then
-				vehicle:setParent(self.objectRootElement)
-				
-				if (element.paintjob) then
-					vehicle:setPaintjob(element.paintjob)
-				end
-				
-				if (element.alpha ~= 255) then
-					vehicle:setAlpha(element.alpha)
-				end
-				
-				if (element.upgrades) then
-					for i, upgradeId in ipairs(element.upgrades) do
-						vehicle:addUpgrade(upgradeId)
-					end
-				end
-				
-				if (element.color) then
-					vehicle:setColor(unpack(element.color))
-				end
-			end
+    for _, element in ipairs(elementList) do
 
-		elseif (element.name == "racepickup") then
-			exports.ddc_pickups:createPickup(element.type, element.posX, element.posY, element.posZ, element.vehicle)
+        if (element.name == "object") then
+            local object = createObject(element.model, element.posX, element.posY, element.posZ, element.rotX, element.rotY, element.rotZ)
+            local lodObj = false
 
-		elseif (element.name == "marker") then
-			local r, g, b, a = 255, 255, 255, 255
-			
-			if (element.color) then
-				r, g, b, a = unpack(element.color) 
-			end
+            if (useLODs and self.lodModels[element.model]) then
+                lodObj = createObject(self.lodModels[element.model], element.posX, element.posY, element.posZ, element.rotX, element.rotY, element.rotZ, true)
+            end
 
-			local marker = createMarker(element.posX, element.posY, element.posZ, element.type, element.size, r, g, b, a)
+            if (object) then
+                if (engineGetModelLODDistance(element.model) ~= 300) then
+                    engineSetModelLODDistance(element.model, 300)
+                end
 
-			if (marker) then
-				marker:setParent(self.objectRootElement)
-			end
+                setElementParent(object, self.objectRootElement)
 
-		elseif (element.name == "ped") then
-			local ped = createPed(element.model, element.posX, element.posY, element.posZ, element.rot)
+                -- LOD object
+                if (lodObj) then
+                    setElementParent(lodObj, self.objectRootElement)
+                    setLowLODElement(object, lodObj)
+                end
 
-			if (ped) then
-				ped:setParent(self.objectRootElement)
-			end
+                if (not element.doublesided) then
+                    setElementDoubleSided(object, false)
 
-		elseif (element.name == "removeWorldObject") then
-			removeWorldModel(element.model, element.radius, element.posX, element.posY, element.posZ)
+                    if (lodObj) then
+                        setElementDoubleSided(lodObj, false)
+                    end
+                end
 
-		elseif (element.name == "pickup") then
-			local pickup = createPickup(element.posX, element.posY, element.posZ, element.type, element.amount, element.respawn)
-			
-			if (pickup) then
-				pickup:setParent(self.objectRootElement)
-			end
-		end
-	end
+                if (not element.collisions) then
+                    setElementCollisionsEnabled(object, false)
 
-	exports.ddc_core:outputDebug("debug", "Loaded map %s in %dms!", self.mapCache.resourceName, getTickCount() - startTick)
-	
-	self.objectRootElement:setDimension(localPlayer:getDimension())
+                    if (lodObj) then
+                        setElementCollisionsEnabled(lodObj, false)
+                    end
+                end
+
+                if (element.scale ~= 1) then
+                    setObjectScale(object, element.scale)
+
+                    if (lodObj) then
+                        setObjectScale(lodObj, element.scale)
+                    end
+                end
+
+                if (not element.breakable) then
+                    setObjectBreakable(object, false)
+
+                    if (lodObj) then
+                        setObjectBreakable(lodObj, false)
+                    end
+                end
+
+                if (element.alpha ~= 255) then
+                    setElementAlpha(object, element.alpha)
+
+                    if (lodObj) then
+                        setElementAlpha(lodObj, element.alpha)
+                    end
+                end
+            end
+        elseif (element.name == "vehicle") then
+            local vehicle = createVehicle(element.model, element.posX, element.posY, element.posZ, element.rotX, element.rotY, element.rotZ)
+
+            if (vehicle) then
+                setElementParent(vehicle, self.objectRootElement)
+
+                if (element.paintjob) then
+                    setVehiclePaintjob(vehicle, element.paintjob)
+                end
+
+                if (element.alpha ~= 255) then
+                    setElementAlpha(vehicle, element.alpha)
+                end
+
+                if (element.upgrades) then
+                    for _, upgradeId in ipairs(element.upgrades) do
+                        addVehicleUpgrade(vehicle, upgradeId)
+                    end
+                end
+
+                if (element.color) then
+                    setVehicleColor(vehicle, unpack(element.color))
+                end
+            end
+
+        elseif (element.name == "racepickup") then
+            exports.ddc_pickups:createPickup(element.type, element.posX, element.posY, element.posZ, element.vehicle)
+
+        elseif (element.name == "marker") then
+            local r, g, b, a = 255, 255, 255, 255
+
+            if (element.color) then
+                r, g, b, a = unpack(element.color)
+            end
+
+            local marker = createMarker(element.posX, element.posY, element.posZ, element.type, element.size, r, g, b, a)
+
+            if (marker) then
+                setElementParent(marker, self.objectRootElement)
+            end
+
+        elseif (element.name == "ped") then
+            local ped = createPed(element.model, element.posX, element.posY, element.posZ, element.rot)
+
+            if (ped) then
+                setElementParent(ped, self.objectRootElement)
+            end
+
+        elseif (element.name == "removeWorldObject") then
+            removeWorldModel(element.model, element.radius, element.posX, element.posY, element.posZ)
+
+        elseif (element.name == "pickup") then
+            local pickup = createPickup(element.posX, element.posY, element.posZ, element.type, element.amount, element.respawn)
+
+            if (pickup) then
+                setElementParent(pickup, self.objectRootElement)
+            end
+        end
+    end
+
+    exports.ddc_core:outputDebug("debug", "Loaded map %s in %dms!", self.mapCache.resourceName, getTickCount() - startTick)
+
+    setElementDimension(self.objectRootElement, getElementDimension(localPlayer))
 end
 
 function MapLoader:getFileHashFromName(fileName)
-	if (not fileName or type(fileName) ~= "string") then
-		return false
-	end
-	
-	if (self.fileHashList[fileName]) then
-		return ":ddc_mapmanager/"..self:getClientCachePath()..self.fileHashList[fileName]
-	end
-	
-	return false
+    if (not fileName or type(fileName) ~= "string") then
+        return false
+    end
+
+    if (self.fileHashList[fileName]) then
+        return ":ddc_mapmanager/"..self:getClientCachePath()..self.fileHashList[fileName]
+    end
+
+    return false
 end
 
 function MapLoader:hasMapLoaded()
-	return self._hasMapLoaded
+    return self._hasMapLoaded
 end
 
 function MapLoader:getMapElement()
-	return self.objectRootElement
+    return self.objectRootElement
 end
 
 function MapLoader:getClientCachePath()
-	return self.clientCachePath
+    return self.clientCachePath
 end

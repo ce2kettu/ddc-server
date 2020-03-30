@@ -7,36 +7,36 @@ local availableDebugLevels = {
 }
 
 function outputDebug(debugLevel, message, ...)
-	-- no available debug level provided
-	if (not debugLevel or not availableDebugLevels[debugLevel]) then
-		return
-	end
-	
-	-- format the message when there's an argument
-	if (#{...} >= 1) then
-		message = message:format(...)
-	end
-	
-	-- suffix type
-	message = (g_isServer and "[S]" or "[C]") .. ' ' .. message
-	
-	outputDebugString(message, 0, unpack(availableDebugLevels[debugLevel]))
+    -- no available debug level provided
+    if (not debugLevel or not availableDebugLevels[debugLevel]) then
+        return
+    end
+
+    -- format the message when there's an argument
+    if (#{...} >= 1) then
+        message = message:format(...)
+    end
+
+    -- suffix type
+    message = (g_isServer and "[S]" or "[C]").." "..message
+
+    outputDebugString(message, 0, unpack(availableDebugLevels[debugLevel]))
 end
 
 function getServerInfo()
-	return {
-		name = g_strServerName,
-		isDev = g_isDevelopmentMode,
-		downloadUrl = g_downloadUrl,
-		version = g_strServerVersion,
-		color = g_strServerColor
-	}
+    return {
+        name = g_serverName,
+        isDev = g_isDevelopmentMode,
+        downloadUrl = g_downloadUrl,
+        version = g_serverVersion,
+        color = g_serverColor
+    }
 end
 
-function setData(element, ...)	
-	return SyncManager:i():setData(element, ...)
+function setData(element, ...)
+    return SyncManager:i():setData(element, ...)
 end
 
 function getPlayerById(id)
-	return PlayerManager:getPlayerById(id)
+    return PlayerManager:getPlayerById(id)
 end

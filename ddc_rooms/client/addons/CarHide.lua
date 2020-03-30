@@ -47,7 +47,7 @@ end
 function CarHide:restoreHiddenPlayers()
     local dimension = localPlayer:getDimension()
     
-	for _, player in ipairs(Element.getAllByType("player")) do
+	for _, player in ipairs(getElementsByType("player")) do
 		if (isElement(player)) then
 			if player:getOccupiedVehicle() then
 				player:getOccupiedVehicle():setDimension(dimension)

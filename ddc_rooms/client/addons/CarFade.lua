@@ -58,7 +58,7 @@ end
 
 function CarFade:getStreamedinPlayers()
 	local players = {}
-	local roomPlayers = Element.getAllByType("player", localPlayer:getParent(), true)
+	local roomPlayers = getElementsByType("player", localPlayer:getParent(), true)
 	
 	for _, player in ipairs(roomPlayers) do
 		if (player ~= localPlayer and player:getHealth() >= 1 and player:getData("state") == "alive") then

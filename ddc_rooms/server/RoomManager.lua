@@ -110,7 +110,7 @@ function RoomManager:onPlayerRequestRoomJoin(room, password)
 	-- outputChatBox("ehre3")
 	
 	-- -- provided password is invalid
-	-- if (strHashedPassword and strHashedPassword ~= md5((password or '?'))) then
+	-- if (strHashedPassword and strHashedPassword ~= md5((password or "?"))) then
 	-- 	-- TODO: Tell the client that the provided password is incorrect
 	-- 	return
 	-- end
