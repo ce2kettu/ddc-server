@@ -90,14 +90,14 @@ local function onClientRender()
                             local distance = getDistanceBetweenPoints3D(vehiclePosX, vehiclePosY, vehiclePosZ + hz + 0.1, pickupPosX, pickupPosY, pickupPosZ, hz + 0.5)
 
                             if (distance <= 120) then
-                                local scale = 1 - distance / 120
+                                local scale = (1 - distance / 120) * 1.5
                                 local pickupText = getVehicleNameFromModel(getElementData(colshape, "vehicle"))
                                 local textLength = dxGetTextWidth(pickupText, 1 * scale, "default-bold") / 2
                                 local ccX, ccY, ccZ = getCameraMatrix()
 
                                 if (isLineOfSightClear(ccX, ccY, ccZ, pickupPosX, pickupPosY, pickupPosZ, true, false, false, true, false)) then
-                                    dxDrawText(pickupText, x - textLength - 1, y - 1, x + textLength, 27, tocolor(0, 0, 0, 255), 1.5 * scale, "default-bold", "center", "top",false, false, true, true)
-                                    dxDrawText(pickupText, x - textLength, y, x + textLength, 27, tocolor(255, 255, 255, 255), 1.5 * scale, "default-bold", "center", "top", false, false, true, true)
+                                    dxDrawText(pickupText, x - textLength - 1, y - 1, x + textLength, 27, tocolor(0, 0, 0, 255), scale, "default", "center", "top",false, false, true, true)
+                                    dxDrawText(pickupText, x - textLength, y, x + textLength, 27, tocolor(255, 255, 255, 255), scale, "default", "center", "top", false, false, true, true)
                                 end
                             end
                         end
