@@ -1,9 +1,9 @@
 local function onClientResourceStart()
-	g_MapLoader = new(MapLoader)
+    g_MapLoader = newClass(MapLoader)
 end
 
 local function onClientResourceStop()
-	delete(g_MapLoader)
+    deleteClass(g_MapLoader)
 end
 
 addEventHandler("onClientResourceStart", resourceRoot, onClientResourceStart)

@@ -1,6 +1,4 @@
 <meta>
-    <oop>true</oop>
-
     <!-- Exported functions -->
     <export function="setMapData" type="client" />
     <export function="loadScript" type="client" />
@@ -10,6 +8,7 @@
 
     <!-- Shared -->
     <script type="shared" src="shared/utils.lua" />
+    <script type="shared" src="shared/classlib.lua" />
     <script type="shared" src="shared/exports.lua" />
 
     <!-- Client -->

@@ -27,35 +27,35 @@ function Autoloader:initAllClasses()
 
     initializedClasses = loadedClasses
 
-	local currentTick = getTickCount()
-	local elapsedTime = currentTick - loadTime
-	local classesLoaded = #loadedClasses
-    local suffix = (classesLoaded == 0 or classesLoaded >= 2) and "es" or ''
+    local currentTick = getTickCount()
+    local elapsedTime = currentTick - loadTime
+    local classesLoaded = #loadedClasses
+    local suffix = (classesLoaded == 0 or classesLoaded >= 2) and "es" or ""
 
-	outputDebug("debug", "Successfully loaded %d class%s in %dms!", classesLoaded, suffix, elapsedTime)
+    outputDebug("debug", "Successfully loaded %d class%s in %dms!", classesLoaded, suffix, elapsedTime)
 end
 
 function Autoloader:destroyAllClasses()
     local startTime = getTickCount()
     local currentDestructTime = startTime
-	
+
     for _, className in pairs(initializedClasses) do
         if (_G[className] and _G[className].i) then
             delete(_G[className]:i())
 
-			local currentTick = getTickCount()
-			local elapsedTime = (currentTick - currentDestructTime)
-			currentDestructTime = currentTick
+            local currentTick = getTickCount()
+            local elapsedTime = currentTick - currentDestructTime
+            currentDestructTime = currentTick
 
-			outputDebug("debug", "Unloaded class '%s' in %dms!", className, elapsedTime)
+            outputDebug("debug", "Unloaded class '%s' in %dms!", className, elapsedTime)
         end
     end
 
-	local elapsedTime = getTickCount() - startTime
+    local elapsedTime = getTickCount() - startTime
     local totalInstances = #initializedClasses
-    local suffix = (totalInstances == 0 or totalInstances >= 2) and "es" or ''
+    local suffix = (totalInstances == 0 or totalInstances >= 2) and "es" or ""
 
-	outputDebug("debug", "Unloaded %d class%s in %dms!", totalInstances, suffix, elapsedTime)
+    outputDebug("debug", "Unloaded %d class%s in %dms!", totalInstances, suffix, elapsedTime)
 end
 
 function preInitializeClass(className)
@@ -63,14 +63,14 @@ function preInitializeClass(className)
         outputDebug("warning", "Bad arguments @preInitializeClass(%s)", type(className))
         return
     end
-	
-	if (initializedClasses[className]) then
-		return
-	end
-	
-	local newClass = rawget(_G, className)
-	
+
+    if (initializedClasses[className]) then
+        return
+    end
+
+    local newClass = rawget(_G, className)
+
     if (type(newClass) == "table") then
-		initializedClasses[className] = newClass
+        initializedClasses[className] = newClass
     end
 end

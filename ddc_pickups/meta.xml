@@ -1,24 +1,22 @@
-<meta>	
-	<oop>true</oop>
-		
-	<!-- Exported functions -->
-	<export function="createPickup" type="client" />
-	<export function="resetPickups" type="client" />
-	
-	<!-- Shared -->
-	<script type="shared" src="utils.lua" />
+<meta>
+    <!-- Exported functions -->
+    <export function="createPickup" type="client" />
+    <export function="resetPickups" type="client" />
 
-	<!-- Server -->
-	<script type="server" src="server.lua" />
-		
-	<!-- Client -->
-	<script type="client" src="client.lua" />
-		
-	<!-- Files -->
-	<file src="files/vehiclechange.txd" />
-	<file src="files/vehiclechange.dff" />
-	<file src="files/repair.txd" />
-	<file src="files/repair.dff" />
-	<file src="files/nitro.txd" />
-	<file src="files/nitro.dff" />
+    <!-- Shared -->
+    <script type="shared" src="utils.lua" />
+
+    <!-- Server -->
+    <script type="server" src="server.lua" />
+
+    <!-- Client -->
+    <script type="client" src="client.lua" />
+
+    <!-- Files -->
+    <file src="files/vehiclechange.txd" />
+    <file src="files/vehiclechange.dff" />
+    <file src="files/repair.txd" />
+    <file src="files/repair.dff" />
+    <file src="files/nitro.txd" />
+    <file src="files/nitro.dff" />
 </meta>

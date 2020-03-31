@@ -1,5 +1,4 @@
 <meta>
-	<oop>true</oop>
-	<download_priority_group>9999</download_priority_group>
-	<script src="startup.lua" type="server" />
+    <download_priority_group>9999</download_priority_group>
+    <script src="startup.lua" type="server" />
 </meta>
