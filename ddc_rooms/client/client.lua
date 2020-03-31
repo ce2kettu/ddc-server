@@ -58,25 +58,25 @@ showCursor(true)
 
 function main()
     FONT_ICON_REGULAR = dxCreateFont(":ddc_ui/files/fonts/font_icon_regular.otf", FONT_SIZE_ICONS, false, "cleartype_natural")
-	FONT_ICON_SMALL = dxCreateFont(":ddc_ui/files/fonts/font_icon_regular.otf", FONT_SIZE_SMALL, false, "cleartype_natural")
-	FONT_ICON_LARGE = dxCreateFont(":ddc_ui/files/fonts/font_icon_light.otf", FONT_SIZE_LARGE, false, "cleartype_natural")
+    FONT_ICON_SMALL = dxCreateFont(":ddc_ui/files/fonts/font_icon_regular.otf", FONT_SIZE_SMALL, false, "cleartype_natural")
+    FONT_ICON_LARGE = dxCreateFont(":ddc_ui/files/fonts/font_icon_light.otf", FONT_SIZE_LARGE, false, "cleartype_natural")
     FONT_SEMIBOLD = dxCreateFont(":ddc_ui/files/fonts/font_opensans_semibold.ttf", FONT_SIZE_DEFAULT, false, "cleartype_natural")
     FONT_SMALL = dxCreateFont(":ddc_ui/files/fonts/font_opensans_regular.ttf", FONT_SIZE_SMALLISH, false, "cleartype_natural")
-	FONT_REGULAR = dxCreateFont(":ddc_ui/files/fonts/font_opensans_regular.ttf", FONT_SIZE_SMALL, false, "cleartype_natural")
-	FONT_BOLD = dxCreateFont(":ddc_ui/files/fonts/font_opensans_bold.ttf", FONT_SIZE_DEFAULT, false, "cleartype_natural")
+    FONT_REGULAR = dxCreateFont(":ddc_ui/files/fonts/font_opensans_regular.ttf", FONT_SIZE_SMALL, false, "cleartype_natural")
+    FONT_BOLD = dxCreateFont(":ddc_ui/files/fonts/font_opensans_bold.ttf", FONT_SIZE_DEFAULT, false, "cleartype_natural")
 
-	-- g_uBackgroundMusic = playSound("files/sounds/lobby.mp3", true)
-	-- setSoundVolume(g_uBackgroundMusic, 0.5)
+    -- g_uBackgroundMusic = playSound("files/sounds/lobby.mp3", true)
+    -- setSoundVolume(g_uBackgroundMusic, 0.5)
 
-	addEventHandler("onClientRender", root, render)
-	addEventHandler("onClientKey", root, keyHandler)
+    addEventHandler("onClientRender", root, render)
+    addEventHandler("onClientKey", root, keyHandler)
 end
 addEventHandler("onClientResourceStart", resourceRoot, main)
 
 function destroy()
     if (g_uBackgroundMusic and isElement(g_uBackgroundMusic))then
-		stopSound(g_uBackgroundMusic)
-	end
+        stopSound(g_uBackgroundMusic)
+    end
 
     removeEventHandler("onClientRender", root, render)
     removeEventHandler("onClientKey", root, keyHandler)
@@ -84,11 +84,11 @@ end
 addEventHandler("onClientResourceStop", resourceRoot, destroy)
 
 function render()
-	dxSetBlendMode("modulate_add")
+    dxSetBlendMode("modulate_add")
 
-	local iCursorX, iCursorY 	= getCursorPosition()
-	local iScreenX, iScreenY 	= getScreenFromWorldPosition(cameraPosition[4], cameraPosition[5], cameraPosition[6])
-	local iParallexFactor 		= 30
+    local iCursorX, iCursorY 	= getCursorPosition()
+    local iScreenX, iScreenY 	= getScreenFromWorldPosition(cameraPosition[4], cameraPosition[5], cameraPosition[6])
+    local iParallexFactor 		= 30
 
     if iScreenX and iScreenY then
         iCursorX = ((iCursorX - 0.5) * iParallexFactor) * 2
@@ -103,9 +103,9 @@ function render()
 
     -- background
     dxDrawImage(0, 0, screenX, screenY, "files/images/bg.jpg", 0, 0, 0, BACKGROUND_WHITE)
-	
+
     -- logo
-	local logoWidth = math.floor(195 * relY)
+    local logoWidth = math.floor(195 * relY)
     local logoHeight = math.round(49 / 195 * logoWidth)
 
     dxDrawImage(math.floor(screenX / 2 - logoWidth / 2), LOGO_MARGIN_TOP, logoWidth, logoHeight, ":ddc_ui/files/images/logo.png", 0, 0, 0, COLOR_WHITE, false)
@@ -123,17 +123,17 @@ function render()
     for _, uRoom in ipairs(temp) do
         table.insert(rooms, {
             element = uRoom,
-            name = uRoom:getData("name"),
-            description = uRoom:getData("description"),
-            icon = uRoom:getData("icon"),
-            password = uRoom:getData("password")
+            name = getElementData(uRoom, "name"),
+            description = getElementData(uRoom, "description"),
+            icon = getElementData(uRoom, "icon"),
+            password = getElementData(uRoom, "password")
         })
     end
 
     paginationHandler()
     structureRooms()
 
-	dxSetBlendMode("blend")
+    dxSetBlendMode("blend")
 end
 
 function paginationHandler()
@@ -287,7 +287,7 @@ function structureRooms()
 
         -- room title
         roomTitlePosStart = currentY - ROOM_HEIGHT / 2 + ROOM_HEIGHT - dxGetFontHeight(1, FONT_SEMIBOLD) - ROOM_PADDING + 6 * relY
-		dxDrawText(textOverflow(room.name, 1, FONT_SEMIBOLD, ROOM_WIDTH - dxGetTextWidth("", 1, FONT_ICON_REGULAR), true, ROOM_PADDING * 2.5), currentX + ROOM_PADDING - 1 * relY, room.active and roomTitlePosY or roomTitlePosStart, currentX + ROOM_WIDTH, currentY - ROOM_HEIGHT / 2 + ROOM_HEIGHT, accentColor, 1, FONT_SEMIBOLD)
+        dxDrawText(textOverflow(room.name, 1, FONT_SEMIBOLD, ROOM_WIDTH - dxGetTextWidth("", 1, FONT_ICON_REGULAR), true, ROOM_PADDING * 2.5), currentX + ROOM_PADDING - 1 * relY, room.active and roomTitlePosY or roomTitlePosStart, currentX + ROOM_WIDTH, currentY - ROOM_HEIGHT / 2 + ROOM_HEIGHT, accentColor, 1, FONT_SEMIBOLD)
 
         -- arrow icon
         roomArrowPosStart = currentY - ROOM_HEIGHT / 2 + ROOM_HEIGHT - dxGetFontHeight(1, FONT_SEMIBOLD) - ROOM_PADDING + 8 * relY
@@ -299,8 +299,8 @@ end
 
 function roomAnimationTransformIn()
     local now = getTickCount()
-	local elapsedTime = now - animTransformStartTime
-	local duration = animTransformEndTime - animTransformStartTime
+    local elapsedTime = now - animTransformStartTime
+    local duration = animTransformEndTime - animTransformStartTime
     local progress = elapsedTime / duration
     local s1, s2, s3 = 16, 16, 16
     local e1, e2, e3 = 255, 255, 255
@@ -320,14 +320,14 @@ function roomAnimationTransformIn()
 
     if progress >= 1 then
         removeEventHandler("onClientRender", root, roomAnimationTransformIn)
-		isAnimating = false
-	end
+        isAnimating = false
+    end
 end
 
 function roomAnimationTransformOut()
     local now = getTickCount()
-	local elapsedTime = now - animTransformStartTime
-	local duration = animTransformEndTime - animTransformStartTime
+    local elapsedTime = now - animTransformStartTime
+    local duration = animTransformEndTime - animTransformStartTime
     local progress = elapsedTime / duration
     local s1, s2, s3 = 255, 255, 255
     local e1, e2, e3 = 16, 16, 16
@@ -338,9 +338,9 @@ function roomAnimationTransformOut()
     --roomIconPosY = interpolateBetween(roomIconPosEnd, 0, 0, roomIconPosStart, 0, 0, progress, ANIMATION_EASING_TYPE)
 
     if progress >= 1 then
-		isAnimating = false
+        isAnimating = false
         removeEventHandler("onClientRender", root, roomAnimationTransformOut)
-	end
+    end
 end
 
 function roomHoverIn(room)
@@ -379,7 +379,6 @@ function keyHandler(key, press)
                 showCursor(false)
                 removeEventHandler("onClientRender", root, render)
                 triggerServerEvent("onPlayerRequestRoomJoin", root, room.element)
-                outputChatBox("clicked")
             end
         end
     end
@@ -389,40 +388,40 @@ function mouseCheck(posX, posY, width, height)
     if not isCursorShowing() then return false end
 
     local mouseX, mouseY = getCursorPosition()
-	mouseX = mouseX * screenX
-	mouseY = mouseY * screenY
+    mouseX = mouseX * screenX
+    mouseY = mouseY * screenY
 
-	if mouseX < posX or mouseX > posX + width then return false end
-	if mouseY < posY or mouseY > posY + height then return false end
+    if mouseX < posX or mouseX > posX + width then return false end
+    if mouseY < posY or mouseY > posY + height then return false end
 
-	return true
+    return true
 end
 
 function textFit(text, size, font, width, padding)
-	local fontSize = size
-	padding = padding or 10
-	width = width - padding
+    local fontSize = size
+    padding = padding or 10
+    width = width - padding
 
-	while dxGetTextWidth(text, fontSize, font, true) > width do
-		fontSize = fontSize - 0.1
-	end
+    while dxGetTextWidth(text, fontSize, font, true) > width do
+        fontSize = fontSize - 0.1
+    end
 
-	return fontSize
+    return fontSize
 end
 
 function textOverflow(text, size, font, width, ellipsis, padding)
     local ellipsis = ellipsis or false
     local padding = padding or 0
 
-	while dxGetTextWidth(text, size, font, true) > width - padding do
-		if ellipsis then
-			text = text:sub(1, text:len()-4).."..."
-		else
-			text = text:sub(1, text:len()-1)
-		end
-	end
+    while dxGetTextWidth(text, size, font, true) > width - padding do
+        if ellipsis then
+            text = text:sub(1, text:len()-4).."..."
+        else
+            text = text:sub(1, text:len()-1)
+        end
+    end
 
-	return text
+    return text
 end
 
 function math.round(n)
