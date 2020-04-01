@@ -27,7 +27,7 @@ function DxNotification:new(type, title, description, duration)
     self._type = type or "info"
     self._duration = duration or 5000
     self._hasTitle = false
-    
+
     if (title and title ~= "") then
         self._title = title
         self._hasTitle = true
@@ -127,7 +127,7 @@ function DxNotification:dxDraw()
     local detailStartY = startY - 2
     local contentSizeX = detailStartX - RECT_PADDING_H
     local contentSizeY = detailStartY - RECT_PADDING_V
-    
+
     if (self._hasTitle) then
         dxDrawText(self._title, detailStartX, startY, contentSizeX, contentSizeY, self._textColor, 1, font)
         dxDrawText(self._description, detailStartX, startY + DETAIL_MARGIN_TOP, contentSizeX, contentSizeY - DETAIL_MARGIN_TOP, self._textColor, 1, fontDetail)

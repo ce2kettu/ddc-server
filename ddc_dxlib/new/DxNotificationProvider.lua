@@ -131,7 +131,7 @@ local function renderNotifications()
         local item = notifications[i]
 
         -- animate position change in stack
-        if ((item._stackPos and ("#"..len..i) ~= item._stackPos) and not item.ms_bIsAnimating) then
+        if ((item._stackPos and i ~= item._stackPos or item._oldSize ~= len)) then
             item:moveTo(SCREEN_WIDTH - item.width - 16, currentY, ANIMATION_DURATION, "OutQuad")
         end
 
@@ -157,7 +157,8 @@ local function renderNotifications()
         end
 
         item:dxDraw()
-        item._stackPos = "#"..len..i
+        item._stackPos = i
+        item._oldSize = len
         currentY = currentY + item.height + NOTIFICATION_MARGIN_TOP
     end
 
