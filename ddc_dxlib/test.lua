@@ -18,7 +18,7 @@
 -- end
 -- addEventHandler("onClientRender", root, test)
 
-DxRoundedRect:new(200, 100, 300, 30, 15)
+--DxRoundedRect:new(200, 100, 300, 30, 15)
 
 DxNotification:new("warning", "Warning", "This is a warning alert — check it out!", 5000)
 DxNotification:new("success", "Success", "This is a success alert — check it out! What the fuck is wrong with me? I don't know. But today is a good day!", 5000)
@@ -32,11 +32,11 @@ addCommandHandler("notif", function()
     DxNotification:new("info", "", "This is an info alert — check it out! mate you didnt explain him lucian meme?")
 end)
 
-DxRoundedRectDetail:new(200, 200, 300, 30, 15, tocolor(0, 0, 0, 150), "[DM]Vortex_-Vol11-Time_Vortex's",
-    "files/images/current_map.png", 18, 18, tocolor(74, 198, 240, 255))
+-- DxRoundedRectDetail:new(200, 200, 300, 30, 15, tocolor(0, 0, 0, 150), "[DM]Vortex_-Vol11-Time_Vortex's",
+--     "files/images/current_map.png", 18, 18, tocolor(74, 198, 240, 255))
 
-DxRoundedRectDetail:new(200, 250, 300, 30, 15, tocolor(0, 0, 0, 150), "[DM]What the fuck Ludi is a jew",
-    "files/images/next_map.png", 18, 18, tocolor(240, 198, 74, 255))
+-- DxRoundedRectDetail:new(200, 250, 300, 30, 15, tocolor(0, 0, 0, 150), "[DM]What the fuck Ludi is a jew",
+--     "files/images/next_map.png", 18, 18, tocolor(240, 198, 74, 255))
 
 -- local x = 300
 -- for i = 1, 200 do

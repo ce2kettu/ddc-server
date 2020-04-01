@@ -24,15 +24,9 @@ function DxNotification:new(type, title, description, duration)
     self = new(self)
 
     self.type = "dx-notification"
-    self._open = false
-    self._entered = false
-    self._requestedClose = false
-    self._isClosing = false
-
     self._type = type or "info"
     self._duration = duration or 5000
     self._hasTitle = false
-    self.alpha = 255
     
     if (title and title ~= "") then
         self._title = title

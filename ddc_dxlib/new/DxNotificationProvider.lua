@@ -11,8 +11,11 @@ local ANIMATION_DURATION = 300
 
 -- Adds a new notification to the queue to be presented.
 function DxNotificationProvider:enqueueNotification(notification)
-    --local notification = DxNotifications[#DxNotifications]
-    --outputChatBox(notification._description)
+    notification._open = true
+    notification._entered = false
+    notification._requestClose = false
+    notification._isClosing = false
+    notification._isHandled = false
     table.insert(queue, notification)
     self:handleDisplayNotification()
 end
@@ -31,7 +34,7 @@ end
 function DxNotificationProvider:processQueue()
     if (#queue > 0) then
         table.insert(notifications, queue[1])
-        table.remove(queue, #queue)
+        table.remove(queue, 1)
     end
 end
 
@@ -50,11 +53,10 @@ function DxNotificationProvider:handleDismissOldest()
 
             if (not item._entered) then
                 item._requestClose = true
-                return
+                break
             end
 
             item._open = false
-            break
         end
     end
 end
@@ -62,10 +64,16 @@ end
 -- Set the entered state of the notification with the object.
 function DxNotificationProvider:handleEnteredNotification(item)
     item._entered = true
+    item._isHandled = true
 end
 
-function DxNotificationProvider:handleExitedNotification(item)
-    self:removeNotification(item)
+-- When we set open attribute of a notification to false (i.e. after we hide a notification),
+-- it leaves the screen and immediately after leaving animation is done, this method
+-- gets called. We remove the hidden notification from state and then display notifications
+-- waiting in the queue (if any). If after this process the queue is not empty, the
+-- oldest message is dismissed.
+function DxNotificationProvider:handleExitedNotification(notification)
+    self:removeNotification(notification)
     self:processQueue()
 
     if (#queue > 0) then
@@ -74,11 +82,17 @@ function DxNotificationProvider:handleExitedNotification(item)
 end
 
 -- Hide a snackbar after its timeout.
-function DxNotificationProvider:handleCloseNotification(item)
-    if (item._entered) then
-        item._open = false
+function DxNotificationProvider:handleCloseNotification(notification)
+    if (notification._entered) then
+        notification._open = false
     else
-        item._requestClose = true
+        notification._requestClose = true
+    end
+
+    for i, item in ipairs(queue) do
+        if (item == notification) then
+            table.remove(queue, i)
+        end
     end
 end
 
@@ -93,6 +107,7 @@ function DxNotificationProvider:isAnyItemLeaving()
     return false
 end
 
+-- Removes an item from the notification table.
 function DxNotificationProvider:removeNotification(notification)
     for i, item in ipairs(notifications) do
         if (item == notification) then
@@ -109,33 +124,40 @@ local function renderNotifications()
     local currentY = START_Y
     local newTime = getTickCount()
     local deltaTime = newTime - prevTick
+    local len = #notifications
 
-    for i = #notifications, 1, -1 do
+    -- render notifications from the most recent one to oldest
+    for i = len, 1, -1 do
         local item = notifications[i]
 
-        if (not item._entered and not item._requestClose) then
+        -- animate position change in stack
+        if ((item._stackPos and ("#"..len..i) ~= item._stackPos) and not item.ms_bIsAnimating) then
+            item:moveTo(SCREEN_WIDTH - item.width - 16, currentY, ANIMATION_DURATION, "OutQuad")
+        end
+
+        -- open notification
+        if (not item._isHandled) then
             DxNotificationProvider:handleEnteredNotification(item)
+            item.y = currentY
             item.x = SCREEN_WIDTH + 16
-            item:moveTo(SCREEN_WIDTH - item.width - 16, item.y, ANIMATION_DURATION, "OutQuad")
-            item._open = true
+            item:moveTo(SCREEN_WIDTH - item.width - 16, currentY, ANIMATION_DURATION, "OutQuad")
         end
 
         item._duration = item._duration - deltaTime
 
-        if ((item._duration <= 0 or item._requestClose) and not item._isClosing or not item._open) then
+        -- close notification
+        if ((item._duration <= 0 or item._requestClose) and not item._isClosing or (not item._open and not item._isClosing)) then
             DxNotificationProvider:handleCloseNotification(item)
-            item._requestClose = true
             item._isClosing = true
-            item._open = false
-            item:moveTo(SCREEN_WIDTH + 16, item.y, ANIMATION_DURATION, "OutQuad")
+            item:moveTo(SCREEN_WIDTH + 16, currentY, ANIMATION_DURATION, "OutQuad")
 
             setTimer(function()
                 DxNotificationProvider:handleExitedNotification(item)
             end, ANIMATION_DURATION, 1)
         end
 
-        item.y = currentY
         item:dxDraw()
+        item._stackPos = "#"..len..i
         currentY = currentY + item.height + NOTIFICATION_MARGIN_TOP
     end
 

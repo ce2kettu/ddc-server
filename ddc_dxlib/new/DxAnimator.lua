@@ -1,6 +1,30 @@
 DxAnimator = {}
 DxAnimations = {}
 
+-- local animations = {}
+-- local tickCount = getTickCount()
+
+-- local function renderAnimations()
+--     local tick = getTickCount()
+-- 	local timeDelta = tick - tickCount
+--     tickCount = tick
+
+--     for k, v in pairs(animations) do
+--         v.x =
+--     end
+
+-- end
+-- addEventHandler("onClientRender", root, renderAnimations)
+
+-- function DxAnimator:addAnim(x, y)
+--     if (not animations[self]) then
+--         animations[self] = {}
+--     end
+
+--     animations[self].x = x
+--     animations[self].y = y
+-- end
+
 function DxAnimator:virtual_destructor()
     DxAnimations[self].moveTo = nil
     self.ms_bIsAnimating = false
@@ -9,10 +33,6 @@ end
 
 function DxAnimator:moveTo(x, y, duration, easingType)
     if (not x or not y) then
-        return false
-    end
-
-    if (self.isMoving) then
         return false
     end
 
@@ -25,16 +45,19 @@ function DxAnimator:moveTo(x, y, duration, easingType)
     end
 
     if (DxAnimations[self].moveTo) then
-        return false
+        removeEventHandler("onClientRender", root, self.ms_eRenderAnimation)
+        DxAnimations[self].moveTo = nil
+        self.ms_bIsAnimating = false
+        --return false
     end
 
     local startX, startY = self.x, self.y
     local iEndX, iEndY = x, y
 
-    if self.m_tblParent then
-        startX, startY = self.ms_iOriginalBaseX, self.ms_iOriginalBaseY
-        iEndX, iEndY = x, y
-    end
+    -- if self.m_tblParent then
+    --     startX, startY = self.ms_iOriginalBaseX, self.ms_iOriginalBaseY
+    --     iEndX, iEndY = x, y
+    -- end
 
     DxAnimations[self].moveTo = {
         iStartTime = currentTime,
@@ -52,6 +75,25 @@ function DxAnimator:moveTo(x, y, duration, easingType)
 
     addEventHandler("onClientRender", root, self.ms_eRenderAnimation)
 end
+
+-- function DxAnimator:updatePos(x, y)
+--     if (DxAnimations[self].moveTo) then
+--         removeEventHandler("onClientRender", root, self.ms_eRenderAnimation)
+--         DxAnimations[self].moveTo = nil
+--         self.ms_bIsAnimating = false
+--         --return false
+--     end
+
+--     DxAnimations[self].moveTo = {
+--         iStartTime = currentTime,
+--         iEndTime = currentTime + duration,
+--         tblStartPos = {x=startX, y=startY},
+--         tblEndPos = {x=iEndX, y=iEndY},
+--         easingType = easingType
+--     }
+
+--     addEventHandler("onClientRender", root, self.ms_eRenderAnimation)
+-- end
 
 -- function DxAnimator:resizeWindow(iWidth, iHeight, duration, easingType, bCentered, bIgnoreMinimums) --bCentered: Should the window scale whilst keeping a central position? (if not, the window will appear to scale from the top-left)
 --     if self.m_strTypeOf ~= "dx-window" then
@@ -159,7 +201,7 @@ function DxAnimator:renderAnimation()
     --     self.m_iBaseX, self.m_iBaseY = x, y
     -- end
 
-    if iProgress > 1 then
+    if iProgress >= 1 then
         DxAnimations[self].moveTo = nil
         self.ms_bIsAnimating = false
         removeEventHandler("onClientRender", root, self.ms_eRenderAnimation)
