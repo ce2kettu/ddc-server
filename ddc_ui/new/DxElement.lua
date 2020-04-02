@@ -55,6 +55,7 @@ function DxElement:destroy(...)
 end
 
 function DxElement:virtual_constructor(x, y, width, height)
+    --self.uid = randomString(6)..getTickCount()
     self.type = "dx-element"
     self.zIndex = #DxElements + 1
     self.alpha = 255

@@ -1,34 +1,101 @@
 DxAnimator = {}
-DxAnimations = {}
 
--- local animations = {}
--- local tickCount = getTickCount()
+local moveAnimations = {}
+local alphaAnimations = {}
+local colorAnimations = {}
+local sizeAnimations = {}
 
--- local function renderAnimations()
---     local tick = getTickCount()
--- 	local timeDelta = tick - tickCount
---     tickCount = tick
+local tickCount = getTickCount()
+local getEasingValue_ = getEasingValue
 
---     for k, v in pairs(animations) do
---         v.x =
---     end
+-- Returns floored animation value interpolated between a and b
+local function getAnimationEasingValue(a, b, progress, easingType)
+    return math.floor((getEasingValue_(progress, easingType) * (b - a) + a))
+end
 
--- end
--- addEventHandler("onClientRender", root, renderAnimations)
+local function updateAnimations()
+    local tick = getTickCount()
+	local timeDelta = tick - tickCount
+    tickCount = tick
 
--- function DxAnimator:addAnim(x, y)
---     if (not animations[self]) then
---         animations[self] = {}
---     end
+    local progress
+    
+    local x, y
+    local width, height
+    local alpha
+    local r, g, b, a
 
---     animations[self].x = x
---     animations[self].y = y
--- end
+    for obj, anim in pairs(moveAnimations) do
+        progress = (tickCount - anim.startTime) / anim.duration
+        x = getAnimationEasingValue(anim.startX, anim.endX, progress, anim.easingType)
+        y = getAnimationEasingValue(anim.startY, anim.endY, progress, anim.easingType)
+        obj.x, obj.y = x, y
 
+        -- stop animation
+        if (progress >= 1) then
+            moveAnimations[obj] = nil
+            obj._isMoveAnimating = false
+        end
+    end
+
+    for obj, anim in pairs(sizeAnimations) do
+        progress = (tickCount - anim.startTime) / anim.duration
+        width = getAnimationEasingValue(anim.startWidth, anim.endWidth, progress, anim.easingType)
+        height = getAnimationEasingValue(anim.startHeight, anim.endHeight, progress, anim.easingType)
+        obj.width, obj.height = width, height
+
+        -- stop animation
+        if (progress >= 1) then
+            sizeAnimations[obj] = nil
+            obj._isSizeAnimating = false
+        end
+    end
+
+    for obj, anim in pairs(alphaAnimations) do
+        progress = (tickCount - anim.startTime) / anim.duration
+        alpha = getAnimationEasingValue(anim.alpha, anim.toAlpha, progress, anim.easingType)
+        obj.alpha = alpha
+
+        -- stop animation
+        if (progress >= 1) then
+            alphaAnimations[obj] = nil
+            obj._isAlphaAnimating = false
+        end
+    end
+
+    for obj, anim in pairs(colorAnimations) do
+        progress = (tickCount - anim.startTime) / anim.duration
+        r = getAnimationEasingValue(anim.startColor.r, anim.endColor[1], progress, anim.easingType)
+        g = getAnimationEasingValue(anim.startColor.g, anim.endColor[2], progress, anim.easingType)
+        b = getAnimationEasingValue(anim.startColor.b, anim.endColor[3], progress, anim.easingType)
+        a = getAnimationEasingValue(anim.startColor.a, anim.endColor[4], progress, anim.easingType)
+        obj[anim.propertyName] = {
+            r = r,
+            g = g,
+            b = b,
+            a = a,
+        }
+
+        -- stop animation
+        if (progress >= 1) then
+            colorAnimations[obj] = nil
+            obj._isColorAnimating = false
+        end
+    end
+end
+addEventHandler("onClientRender", root, updateAnimations)
+
+-- Resets animation variables.
 function DxAnimator:virtual_destructor()
-    DxAnimations[self].moveTo = nil
-    self.ms_bIsAnimating = false
-    removeEventHandler("onClientRender", root, self.ms_eRenderAnimation)
+    moveAnimations[self] = nil
+    alphaAnimations[self] = nil
+    colorAnimations[self] = nil
+    sizeAnimations[self] = nil
+
+    self._isMoveAnimating = false
+    self._isAlphaAnimating = false
+    self._isColorAnimating = false
+    self._isSizeAnimating = false
 end
 
 function DxAnimator:moveTo(x, y, duration, easingType)
@@ -40,213 +107,163 @@ function DxAnimator:moveTo(x, y, duration, easingType)
     local easingType = easingType or "InOutQuad"
     local currentTime = getTickCount()
 
-    if (not DxAnimations[self]) then
-        DxAnimations[self] = {}
+    -- create table entry if it doesn't already exist
+    if (not moveAnimations[self]) then
+        moveAnimations[self] = {}
     end
 
-    if (DxAnimations[self].moveTo) then
-        removeEventHandler("onClientRender", root, self.ms_eRenderAnimation)
-        DxAnimations[self].moveTo = nil
-        self.ms_bIsAnimating = false
-        --return false
-    end
-
-    local startX, startY = self.x, self.y
-    local iEndX, iEndY = x, y
-
-    -- if self.m_tblParent then
-    --     startX, startY = self.ms_iOriginalBaseX, self.ms_iOriginalBaseY
-    --     iEndX, iEndY = x, y
-    -- end
-
-    DxAnimations[self].moveTo = {
-        iStartTime = currentTime,
-        iEndTime = currentTime + duration,
-        tblStartPos = {x=startX, y=startY},
-        tblEndPos = {x=iEndX, y=iEndY},
+    moveAnimations[self] = {
+        startTime = currentTime,
+        duration = duration,
+        startX = self.x,
+        startY = self.y,
+        endX = x,
+        endY = y,
         easingType = easingType
     }
 
-    self.ms_bIsAnimating = true
-
-    if(not self.ms_eRenderAnimation) then
-        self.ms_eRenderAnimation = bind(self.renderAnimation, self)
-    end
-
-    addEventHandler("onClientRender", root, self.ms_eRenderAnimation)
+    -- update state
+    self._isMoveAnimating = true
 end
 
--- function DxAnimator:updatePos(x, y)
---     if (DxAnimations[self].moveTo) then
---         removeEventHandler("onClientRender", root, self.ms_eRenderAnimation)
---         DxAnimations[self].moveTo = nil
---         self.ms_bIsAnimating = false
---         --return false
---     end
-
---     DxAnimations[self].moveTo = {
---         iStartTime = currentTime,
---         iEndTime = currentTime + duration,
---         tblStartPos = {x=startX, y=startY},
---         tblEndPos = {x=iEndX, y=iEndY},
---         easingType = easingType
---     }
-
---     addEventHandler("onClientRender", root, self.ms_eRenderAnimation)
--- end
-
--- function DxAnimator:resizeWindow(iWidth, iHeight, duration, easingType, bCentered, bIgnoreMinimums) --bCentered: Should the window scale whilst keeping a central position? (if not, the window will appear to scale from the top-left)
---     if self.m_strTypeOf ~= "dx-window" then
---         return false
---     end
-
---     if not iWidth or not iHeight then
---         return false
---     end
-
---     local duration = duration or 1000
---     local easingType = easingType or "InOutQuad"
---     local currentTime = getTickCount()
-
---     local iMinPadding = 75
-
---     if not bIgnoreMinimums then --Checks if width/height are below minimum, if so > set minimum. bIgnoreMinimums should be set to false if you want to do an effect such as starting with 0 width & height and then animating to full size, or vice versa.
---         if (iWidth < (dxGetTextWidth(self.m_strTitleBarText, self.m_iTitleBarScale, self.m_fntTitleBar) + self.m_iCloseButtonWidth + iMinPadding) ) then
---             iWidth = dxGetTextWidth(self.m_strTitleBarText, self.m_iTitleBarScale, self.m_fntTitleBar) + self.m_iCloseButtonWidth + iMinPadding
---         end
-
---         if (iHeight < self.m_iTitleBarHeight) then
---             iHeight = self.m_iTitleBarHeight
---         end
---     end
-
---     if not DxAnimations[self] then
---         DxAnimations[self] = {}
---     end
-
---     if DxAnimations[self].resizeWindow then
---         return false
---     end
-
---     DxAnimations[self].resizeWindow = {
---         iStartTime = currentTime,
---         iEndTime = currentTime + duration,
---         tblStartSize = {width=self.m_iWidth, height=self.m_iHeight},
---         tblEndSize = {width=iWidth, height=iHeight},
---         easingType = easingType,
---         bCentered = bCentered
---     }
-
---     self.ms_bIsAnimating = true
-
---     if not self.ms_eRenderResize then
---         self.ms_eRenderResize = bind(DxAnimator.renderResize, self)
---     end
---     addEventHandler("onClientRender", root, self.ms_eRenderResize)
--- end
-
--- function DxAnimator:renderResize()
---     self.ms_bIsAnimating = true
---     local tblAnimData = DxAnimations[self].resizeWindow
---     local iCurrentTick = getTickCount()
---     local iElapsedTime = iCurrentTick - tblAnimData.iStartTime
---     local duration = tblAnimData.iEndTime - tblAnimData.iStartTime
---     local iProgress = iElapsedTime / duration
-
---     local iWidth, iHeight, _ = interpolateBetween(tblAnimData.tblStartSize.width, tblAnimData.tblStartSize.height, 0, tblAnimData.tblEndSize.width, tblAnimData.tblEndSize.height, 0, iProgress, tblAnimData.easingType)
-
---     if self:isOutOfBounds() then
---         self:forceInBounds()
---         DxAnimations[self].renderResize = nil
---         self.ms_bIsAnimating = false
---         removeEventHandler("onClientRender", root, self.ms_eRenderResize)
---         return true
---     end
-
---     self.m_iWidth, self.m_iHeight = iWidth, iHeight
-
---     if iProgress > 1 then
---         DxAnimations[self].resizeWindow = nil
---         self.ms_bIsAnimating = false
---         removeEventHandler("onClientRender", root, self.ms_eRenderResize)
---     end
-
--- end
-
-
-function DxAnimator:renderAnimation()
-    self.ms_bIsAnimating = true --Make sure this is set to true during animation (otherwise multitple animations would conflict when they ended)
-
-    local tblAnimData = DxAnimations[self].moveTo
-    local iCurrentTick = getTickCount()
-    local iElapsedTime = iCurrentTick - tblAnimData.iStartTime
-    local duration = tblAnimData.iEndTime - tblAnimData.iStartTime
-    local iProgress = iElapsedTime / duration
-
-    local x, y, _ = interpolateBetween(tblAnimData.tblStartPos.x, tblAnimData.tblStartPos.y, 0, tblAnimData.tblEndPos.x, tblAnimData.tblEndPos.y, 0, iProgress, tblAnimData.easingType)
-
-    self.x, self.y = x, y
-    -- if not self.m_tblParent then
-    --     if self:isOutOfBounds(x, y) then
-    --         self:forceInBounds()
-    --         DxAnimations[self].moveTo = nil
-    --         self.ms_bIsAnimating = false
-    --         removeEventHandler("onClientRender", root, self.ms_eRenderAnimation)
-    --         return true
-    --     end
-    --     self.m_iX, self.m_iY = x, y
-    -- else
-    --     self.ms_iOriginalBaseX, self.ms_iOriginalBaseY = x, y
-    --     x, y = self:calculateRelatives(x, y)
-    --     self.m_iBaseX, self.m_iBaseY = x, y
-    -- end
-
-    if iProgress >= 1 then
-        DxAnimations[self].moveTo = nil
-        self.ms_bIsAnimating = false
-        removeEventHandler("onClientRender", root, self.ms_eRenderAnimation)
+function DxAnimator:alphaTo(alpha, duration, easingType)
+    if (not alpha) then
+        return false
     end
+
+    local duration = duration or 1000
+    local easingType = easingType or "InOutQuad"
+    local currentTime = getTickCount()
+    local alpha = (alpha > 255 and 255) or (alpha < 0 and 0) or alpha
+
+    -- create table entry if it doesn't already exist
+    if (not alphaAnimations[self]) then
+        alphaAnimations[self] = {}
+    end
+
+    alphaAnimations[self] = {
+        startTime = currentTime,
+        duration = duration,
+        alpha = self.alpha,
+        toAlpha = alpha,
+        easingType = easingType
+    }
+
+    -- update state
+    self._isAlphaAnimating = true
 end
 
-
-function DxAnimator:isOutOfBounds(x, y)
-    x, y = x or self.m_iX, y or self.m_iY
-
-    --Make sure the window doesn't go out of the screen on any side.
-    if (x-(self.m_iBorderThickness*2)) <= 0 then
-        return true
+function DxAnimator:colorTo(propertyName, r, g, b, a, duration, easingType)
+    if (type(propertyName) ~= "string" or not self[propertyName]) then
+        return false
     end
 
-    if (y-(self.m_iBorderThickness*2)) <= 0 then
-        return true
+    if (not r or not g or not b) then
+        return false
     end
 
-    if (x + self.m_iWidth + (self.m_iBorderThickness*2)) >= g_vScreenSize.x  then
-        return true
+    local duration = duration or 1000
+    local easingType = easingType or "InOutQuad"
+    local currentTime = getTickCount()
+    local a = (not a and 255) or (a > 255 and 255) or (a < 0 and 0) or a
+    local r = (r > 255 and 255) or (r < 0 and 0) or r
+    local g = (g > 255 and 255) or (g < 0 and 0) or g
+    local b = (b > 255 and 255) or (b < 0 and 0) or b
+
+    -- create table entry if it doesn't already exist
+    if (not colorAnimations[self]) then
+        colorAnimations[self] = {}
     end
 
-    if (y + self.m_iHeight + (self.m_iBorderThickness*2)) >= g_vScreenSize.y then
+    colorAnimations[self] = {
+        startTime = currentTime,
+        duration = duration,
+        propertyName = propertyName,
+        startColor = self[propertyName],
+        endColor = { r, g, b, a },
+        easingType = easingType
+    }
+
+    -- update state
+    self._isColorAnimating = true
+end
+
+function DxAnimator:sizeTo(width, height, duration, easingType)
+    if (not width or not height) then
+        return false
+    end
+
+    local duration = duration or 1000
+    local easingType = easingType or "InOutQuad"
+    local currentTime = getTickCount()
+
+    -- create table entry if it doesn't already exist
+    if (not sizeAnimations[self]) then
+        sizeAnimations[self] = {}
+    end
+
+    sizeAnimations[self] = {
+        startTime = currentTime,
+        duration = duration,
+        startWidth = self.width,
+        startHeight = self.height,
+        endWidth = width,
+        endHeight = height,
+        easingType = easingType
+    }
+
+    -- update state
+    self._isSizeAnimating = true
+end
+
+function DxAnimator:stopMoveAnimation()
+    if (self:isMoveAnimating()) then
+        moveAnimations[self] = nil
         return true
     end
 
     return false
 end
 
-function DxAnimator:forceInBounds()
-    --Make sure the window doesn't go out of the screen on any side.
-    if (self.m_iX+(self.m_iBorderThickness*2)) <= 0 then
-        self.m_iX = self.m_iBorderThickness * 2
+function DxAnimator:stopAlphaAnimation()
+    if (self:isAlphaAnimating()) then
+        alphaAnimations[self] = nil
+        return true
     end
 
-    if (self.m_iY+(self.m_iBorderThickness*2)) <= 0 then
-        self.m_iY = self.m_iBorderThickness * 2
+    return false
+end
+
+function DxAnimator:stopSizeAnimation()
+    if (self:isSizeAnimating()) then
+        sizeAnimations[self] = nil
+        return true
     end
 
-    if (self.m_iX + self.m_iWidth + (self.m_iBorderThickness*2)) >= g_vScreenSize.x  then
-        self.m_iX = self.m_iX - ((self.m_iX + self.m_iWidth + (self.m_iBorderThickness*2)) - g_vScreenSize.x)
+    return false
+end
+
+function DxAnimator:stopColorAnimation()
+    if (self:isColorAnimating()) then
+        colorAnimations[self] = nil
+        return true
     end
 
-    if (self.m_iY + self.m_iHeight + (self.m_iBorderThickness*2)) >= g_vScreenSize.y then
-        self.m_iY = self.m_iY - ((self.m_iY + self.m_iHeight + (self.m_iBorderThickness*2)) - g_vScreenSize.x)
-    end
+    return false
+end
+
+function DxAnimator:isMoveAnimating()
+    return self._isMoveAnimating
+end
+
+function DxAnimator:isAlphaAnimating()
+    return self._isAlphaAnimating
+end
+
+function DxAnimator:isSizeAnimating()
+    return self._isSizeAnimating
+end
+
+function DxAnimator:isColorAnimating()
+    return self._isColorAnimating
 end

@@ -3,6 +3,7 @@
 <!-- Client -->	
     <script type="client" src="classlib.lua" />
     <script type="client" src="new/dx_utils.lua" />
+    <script type="client" src="new/dx_init.lua" />
 
     <script type="client" src="new/DxAnimator.lua" />
     <script type="client" src="new/DxElement.lua" />
