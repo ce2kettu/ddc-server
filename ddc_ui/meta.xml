@@ -37,7 +37,13 @@
 		<file src="files/fonts/font_opensans_semibold.ttf" />
 		
 		<!-- Images -->
-		<file src="files/images/rounded_corner.png" />
+		<file src="files/images/rounded_corner_4px.png" />
+		<file src="files/images/rounded_corner_6px.png" />
+		<file src="files/images/rounded_corner_8px.png" />
+		<file src="files/images/rounded_corner_10px.png" />
+		<file src="files/images/rounded_corner_16px.png" />
+		<file src="files/images/rounded_corner_20px.png" />
+
 		<file src="files/images/current_map.png" />
 		<file src="files/images/next_map.png" />
 

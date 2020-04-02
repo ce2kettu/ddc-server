@@ -12,7 +12,7 @@ local RECT_PADDING_V = REL(8)
 local DETAIL_MARGIN_LEFT = REL(7)
 local DETAIL_MARGIN_TOP = REL(3)
 local MIN_WIDTH = REL(375)
-local CORNER_SIZE = 6
+local CORNER_SIZE = 4
 local ICON_SIZE = FONT_SIZE(24)
 local DESCRIPTION_MAX_LINE_COUNT = 3
 local FONT_DETAIL_HEIGHT = dxGetFontHeight(1, fontDetail)
@@ -93,7 +93,7 @@ function DxNotification:new(type, title, description, duration)
     self._description = description
 
     if (not CORNER_TEXTURE) then
-        CORNER_TEXTURE = dxCreateTexture("files/images/rounded_corner.png", "argb", false, "clamp")
+        CORNER_TEXTURE = dxCreateTexture("files/images/rounded_corner_4px.png", "argb", false, "clamp")
     end
 
     self:createCachedTexture()

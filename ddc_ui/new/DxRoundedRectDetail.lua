@@ -49,7 +49,7 @@ function DxRoundedRectDetail:constructor(x, y, width, height, cornerSize, backgr
     end
 
     if (not CORNER_TEXTURE) then
-        CORNER_TEXTURE = dxCreateTexture("files/images/rounded_corner.png", "argb", false, "clamp")
+        CORNER_TEXTURE = dxCreateTexture("files/images/rounded_corner_20px.png", "argb", false, "clamp")
     end
 
     self._text = text
