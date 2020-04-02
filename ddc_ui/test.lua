@@ -20,6 +20,11 @@
 
 --DxRoundedRect:new(200, 100, 300, 30, 15)
 
+DGS = exports.dgs --get exported functions from dgs
+
+local rndRect = DGS:dgsCreateRoundRect(6, false, tocolor(194, 247, 194, 215))  --Create Rounded Rectangle with 50 pixels radius 
+local image1 = DGS:dgsCreateImage(200,200,400,100,rndRect,false)  --Apply it to the dgs image
+
 DxNotification:new("warning", "Warning", "This is a warning alert — check it out!", 5000)
 DxNotification:new("success", "Success", "This is a success alert — check it out! What the fuck is wrong with me? I don't know. But today is a good day!", 5000)
 DxNotification:new("error", "Error", "This is an error alert — check it out!", 5000)
