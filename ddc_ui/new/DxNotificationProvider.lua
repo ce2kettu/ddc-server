@@ -131,8 +131,9 @@ local function renderNotifications()
         local item = notifications[i]
 
         -- animate position change in stack
-        if ((item._stackPos and i ~= item._stackPos or item._oldSize ~= len)) then
-            item:moveTo(SCREEN_WIDTH - item.width - 16, currentY, ANIMATION_DURATION, "OutQuad")
+        if (item._stackPos and i ~= item._stackPos or item._oldSize ~= len) then
+            local moveX = (item._isClosing) and (SCREEN_WIDTH + 16) or (SCREEN_WIDTH - item.width - 16)
+            item:moveTo(moveX, currentY, ANIMATION_DURATION, "OutQuad")
         end
 
         -- open notification
@@ -164,5 +165,4 @@ local function renderNotifications()
 
     prevTick = newTime
 end
-
 addEventHandler("onClientRender", root, renderNotifications)
