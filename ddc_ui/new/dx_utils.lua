@@ -62,11 +62,11 @@ function textOverflow(text, size, font, width, ellipsis, padding)
     local ellipsis = ellipsis or false
     local padding = padding or 0
 
-    while dxGetTextWidth(text, size, font, true) > width - padding do
+    while (dxGetTextWidth(text, size, font, true) > width - padding) do
         if (ellipsis) then
-            text = text:sub(1, text:len()-4).."..."
+            text = text:sub(1, text:len() - 4).."..."
         else
-            text = text:sub(1, text:len()-1)
+            text = text:sub(1, text:len() - 1)
         end
     end
 

@@ -4,9 +4,11 @@ local queue = {}
 local notifications = {}
 local prevTick = getTickCount()
 local MAX_NOTIFICATIONS_AT_ONCE = 3
-local REL_SIZE = math.floor(SCREEN_HEIGHT / 1080)
-local START_Y = REL_SIZE * 16
-local NOTIFICATION_MARGIN_TOP = REL_SIZE * 10
+local REL_SIZE = SCREEN_HEIGHT / 1080
+local function REL(a) return math.floor(a * REL_SIZE) end
+local START_Y = REL(16)
+local NOTIFICATIONS_MARGIN = REL(16)
+local NOTIFICATION_MARGIN_TOP = REL(10)
 local ANIMATION_DURATION = 300
 
 -- Adds a new notification to the queue to be presented.
@@ -121,7 +123,7 @@ function DxNotificationProvider:removeNotification(notification)
 end
 
 local function renderNotifications()
-    local currentY = START_Y
+    local currentY = NOTIFICATIONS_MARGIN
     local newTime = getTickCount()
     local deltaTime = newTime - prevTick
     local len = #notifications
@@ -132,7 +134,7 @@ local function renderNotifications()
 
         -- animate position change in stack
         if (item._stackPos and i ~= item._stackPos or item._oldSize ~= len) then
-            local moveX = (item._isClosing) and (SCREEN_WIDTH + 16) or (SCREEN_WIDTH - item.width - 16)
+            local moveX = (item._isClosing) and (SCREEN_WIDTH + NOTIFICATIONS_MARGIN) or (SCREEN_WIDTH - item.width - NOTIFICATIONS_MARGIN)
             item:moveTo(moveX, currentY, ANIMATION_DURATION, "OutQuad")
         end
 
@@ -140,8 +142,8 @@ local function renderNotifications()
         if (not item._isHandled) then
             DxNotificationProvider:handleEnteredNotification(item)
             item.y = currentY
-            item.x = SCREEN_WIDTH + 16
-            item:moveTo(SCREEN_WIDTH - item.width - 16, currentY, ANIMATION_DURATION, "OutQuad")
+            item.x = SCREEN_WIDTH + NOTIFICATIONS_MARGIN
+            item:moveTo(SCREEN_WIDTH - item.width - NOTIFICATIONS_MARGIN, currentY, ANIMATION_DURATION, "OutQuad")
         end
 
         item._duration = item._duration - deltaTime
@@ -150,7 +152,7 @@ local function renderNotifications()
         if ((item._duration <= 0 or item._requestClose) and not item._isClosing or (not item._open and not item._isClosing)) then
             DxNotificationProvider:handleCloseNotification(item)
             item._isClosing = true
-            item:moveTo(SCREEN_WIDTH + 16, currentY, ANIMATION_DURATION, "OutQuad")
+            item:moveTo(SCREEN_WIDTH + NOTIFICATIONS_MARGIN, currentY, ANIMATION_DURATION, "OutQuad")
 
             setTimer(function()
                 DxNotificationProvider:handleExitedNotification(item)

@@ -3,20 +3,20 @@ DxNotification = inherit(DxAnimator)
 NOTIFICATION_CURRENT_Y = 0
 
 local CORNER_TEXTURE = false
-local REL_SIZE = math.floor(SCREEN_HEIGHT / 1080)
-local font = dxCreateFont("files/fonts/font_opensans_semibold.ttf", REL_SIZE * 12, false, "cleartype_natural")
-local fontDetail = dxCreateFont("files/fonts/font_opensans_regular.ttf", REL_SIZE * 12, false, "cleartype_natural")
+--local function REL(a) return a * RELATIVE_SCALE end
+local font = dxCreateFont("files/fonts/font_opensans_semibold.ttf", FONT_SIZE(12), false, "cleartype_natural") or "default"
+local fontDetail = dxCreateFont("files/fonts/font_opensans_regular.ttf", FONT_SIZE(12), false, "cleartype_natural") or "default"
 
-local RECT_PADDING_H = REL_SIZE * 16
-local RECT_PADDING_V = REL_SIZE * 8
-local DETAIL_MARGIN_LEFT = REL_SIZE * 7
-local DETAIL_MARGIN_TOP = 22
-local MIN_WIDTH = 375
+local RECT_PADDING_H = REL(16)
+local RECT_PADDING_V = REL(8)
+local DETAIL_MARGIN_LEFT = REL(7)
+local DETAIL_MARGIN_TOP = REL(3)
+local MIN_WIDTH = REL(375)
 local CORNER_SIZE = 6
-local ICON_SIZE = 24
+local ICON_SIZE = FONT_SIZE(24)
 local DESCRIPTION_MAX_LINE_COUNT = 3
 local FONT_DETAIL_HEIGHT = dxGetFontHeight(1, fontDetail)
-local RECT_MARGIN_RIGHT = REL_SIZE * 16
+local RECT_MARGIN_RIGHT = REL(16)
 local RECT_MARGIN_TOP = RECT_MARGIN_RIGHT
 local NOTIFICATION_ALPHA = 215
 
@@ -51,7 +51,9 @@ function DxNotification:new(type, title, description, duration)
         self._textColor = tocolor(13, 60, 97)
     end
 
-    local lineCount = math.ceil(dxGetTextWidth(description, 1, fontDetail) / (MIN_WIDTH - (RECT_PADDING_H * 2) - ICON_SIZE - DETAIL_MARGIN_LEFT))
+    -- MTA doesn't calculate width correctly so we add some offset padding
+    local offset = 0.07425
+    local lineCount = math.ceil((dxGetTextWidth(description, 1, fontDetail) / (MIN_WIDTH - (RECT_PADDING_H * 2) - ICON_SIZE - DETAIL_MARGIN_LEFT) + offset))
     local lineCount = (lineCount > DESCRIPTION_MAX_LINE_COUNT) and DESCRIPTION_MAX_LINE_COUNT or lineCount
     local totalHeight = ((self._hasTitle and (lineCount + 1) or lineCount) * FONT_DETAIL_HEIGHT) + (RECT_PADDING_V * 2)
 
@@ -124,14 +126,14 @@ function DxNotification:dxDraw()
     dxDrawImage(startX, startY, ICON_SIZE, ICON_SIZE, "files/images/notification_"..self._type..".png", 0, 0, 0, self._iconColor)
 
     local detailStartX = startX + ICON_SIZE + DETAIL_MARGIN_LEFT
-    local detailStartY = startY - 2
+    local detailStartY = startY + REL(1)
     local contentSizeX = detailStartX - RECT_PADDING_H
     local contentSizeY = detailStartY - RECT_PADDING_V
 
     if (self._hasTitle) then
-        dxDrawText(self._title, detailStartX, startY, contentSizeX, contentSizeY, self._textColor, 1, font)
-        dxDrawText(self._description, detailStartX, startY + DETAIL_MARGIN_TOP, contentSizeX, contentSizeY - DETAIL_MARGIN_TOP, self._textColor, 1, fontDetail)
+        dxDrawText(self._title, detailStartX, detailStartY, contentSizeX, contentSizeY, self._textColor, 1, font)
+        dxDrawText(self._description, detailStartX, detailStartY + FONT_DETAIL_HEIGHT + DETAIL_MARGIN_TOP, contentSizeX, contentSizeY - FONT_DETAIL_HEIGHT - DETAIL_MARGIN_TOP, self._textColor, 1, fontDetail)
     else
-        dxDrawText(self._description, detailStartX, startY, contentSizeX, contentSizeY, self._textColor, 1, fontDetail)
+        dxDrawText(self._description, detailStartX, detailStartY, contentSizeX, contentSizeY, self._textColor, 1, fontDetail)
     end
 end

@@ -1,3 +1,13 @@
+SCREEN_WIDTH, SCREEN_HEIGHT = guiGetScreenSize()
+--RELATIVE_SCALE = math.min(math.max((SCREEN_WIDTH * 0.5625) / 900, 0.7), 1)
+RELATIVE_SCALE = math.max(SCREEN_HEIGHT / 1080, 0.55)
+RELATIVE_FONT_SCALE = math.max(SCREEN_HEIGHT / 1080, 0.75)
+
+function REL(a) return a * RELATIVE_SCALE end
+function FONT_SIZE(a) return a * RELATIVE_FONT_SCALE end
+
+DxElements = {}
+
 local testValues = {
 	["none"] = true,
 	["no_mem"] = true,

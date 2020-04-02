@@ -1,6 +1,4 @@
 DxElement = inherit(DxAnimator)
-DxElements = {}
-SCREEN_WIDTH, SCREEN_HEIGHT = guiGetScreenSize()
 
 local function onClientRender()
     for k, v in ipairs(DxElements) do

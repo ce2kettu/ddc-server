@@ -1,7 +1,12 @@
 <meta>
 <min_mta_version client="1.3.0-9.04431" />
+    <export function="displayNotification" type="client" />
+
+
+
 <!-- Client -->	
     <script type="client" src="classlib.lua" />
+    <script type="client" src="new/exports.lua" />
     <script type="client" src="new/dx_utils.lua" />
     <script type="client" src="new/dx_init.lua" />
 
