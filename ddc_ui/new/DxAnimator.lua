@@ -8,9 +8,13 @@ local sizeAnimations = {}
 local tickCount = getTickCount()
 local getEasingValue_ = getEasingValue
 
--- Returns floored animation value interpolated between a and b
+-- Returns animation value interpolated between a and b
 local function getAnimationEasingValue(a, b, progress, easingType)
-    return math.floor((getEasingValue_(progress, easingType) * (b - a) + a))
+    if (progress >= 1) then
+        return b
+    else
+        return (getEasingValue_(progress, easingType) * (b - a) + a)
+    end
 end
 
 local function updateAnimations()
