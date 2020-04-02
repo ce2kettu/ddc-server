@@ -96,33 +96,43 @@ function DxNotification:new(type, title, description, duration)
         CORNER_TEXTURE = dxCreateTexture("files/images/rounded_corner.png", "argb", false, "clamp")
     end
 
+    self:createCachedTexture()
+
     DxNotificationProvider:enqueueNotification(self)
 end
 
-function DxNotification:dxDraw()
+function DxNotification:destructor()
+    destroyElement(self.cachedTexture)
+end
+
+function DxNotification:createCachedTexture()
+    self.cachedTexture = dxCreateRenderTarget(self.width, self.height, true)
+
+    dxSetRenderTarget(self.cachedTexture, true)
+
     -- top left corner
-    dxDrawImage(self.x, self.y, CORNER_SIZE, CORNER_SIZE, CORNER_TEXTURE, 0, 0, 0, self._backgroundColor)
+    dxDrawImage(0, 0, CORNER_SIZE, CORNER_SIZE, CORNER_TEXTURE, 0, 0, 0, self._backgroundColor)
 
     -- top right corner
-    dxDrawImage(self.x + self.width - CORNER_SIZE, self.y, CORNER_SIZE, CORNER_SIZE, CORNER_TEXTURE, 90, 0, 0, self._backgroundColor)
+    dxDrawImage(0 + self.width - CORNER_SIZE, 0, CORNER_SIZE, CORNER_SIZE, CORNER_TEXTURE, 90, 0, 0, self._backgroundColor)
 
     -- bottom left corner
-    dxDrawImage(self.x, self.y + self.height - CORNER_SIZE, CORNER_SIZE, CORNER_SIZE, CORNER_TEXTURE, -90, 0, 0, self._backgroundColor)
+    dxDrawImage(0, 0 + self.height - CORNER_SIZE, CORNER_SIZE, CORNER_SIZE, CORNER_TEXTURE, -90, 0, 0, self._backgroundColor)
 
     -- bottom right corner
-    dxDrawImage(self.x + self.width - CORNER_SIZE, self.y + self.height - CORNER_SIZE, CORNER_SIZE, CORNER_SIZE, CORNER_TEXTURE, 180, 0, 0, self._backgroundColor)
+    dxDrawImage(0 + self.width - CORNER_SIZE, 0 + self.height - CORNER_SIZE, CORNER_SIZE, CORNER_SIZE, CORNER_TEXTURE, 180, 0, 0, self._backgroundColor)
 
     -- fill gap between top corners
-    dxDrawRectangle(self.x + CORNER_SIZE, self.y, self.width - 2 * CORNER_SIZE, CORNER_SIZE, self._backgroundColor)
+    dxDrawRectangle(0 + CORNER_SIZE, 0, self.width - 2 * CORNER_SIZE, CORNER_SIZE, self._backgroundColor)
 
     -- fill gap between bottom corners
-    dxDrawRectangle(self.x + CORNER_SIZE, self.y + self.height - CORNER_SIZE, self.width - 2 * CORNER_SIZE, CORNER_SIZE, self._backgroundColor)
+    dxDrawRectangle(0 + CORNER_SIZE, 0 + self.height - CORNER_SIZE, self.width - 2 * CORNER_SIZE, CORNER_SIZE, self._backgroundColor)
 
     -- fill middle
-    dxDrawRectangle(self.x, self.y + CORNER_SIZE, self.width, self.height - CORNER_SIZE * 2, self._backgroundColor)
+    dxDrawRectangle(0, 0 + CORNER_SIZE, self.width, self.height - CORNER_SIZE * 2, self._backgroundColor)
 
-    local startX = self.x + RECT_PADDING_H
-    local startY = self.y + RECT_PADDING_V
+    local startX = 0 + RECT_PADDING_H
+    local startY = 0 + RECT_PADDING_V
     dxDrawImage(startX, startY, ICON_SIZE, ICON_SIZE, "files/images/notification_"..self._type..".png", 0, 0, 0, self._iconColor)
 
     local detailStartX = startX + ICON_SIZE + DETAIL_MARGIN_LEFT
@@ -130,10 +140,59 @@ function DxNotification:dxDraw()
     local contentSizeX = detailStartX - RECT_PADDING_H
     local contentSizeY = detailStartY - RECT_PADDING_V
 
+    dxSetBlendMode("modulate_add")
     if (self._hasTitle) then
         dxDrawText(self._title, detailStartX, detailStartY, contentSizeX, contentSizeY, self._textColor, 1, font)
         dxDrawText(self._description, detailStartX, detailStartY + FONT_DETAIL_HEIGHT + DETAIL_MARGIN_TOP, contentSizeX, contentSizeY - FONT_DETAIL_HEIGHT - DETAIL_MARGIN_TOP, self._textColor, 1, fontDetail)
     else
         dxDrawText(self._description, detailStartX, detailStartY, contentSizeX, contentSizeY, self._textColor, 1, fontDetail)
     end
+    dxSetBlendMode("blend")
+
+    dxSetRenderTarget()
+end
+
+function DxNotification:dxDraw()
+    if (self.cachedTexture) then
+        dxSetBlendMode("add")
+        dxDrawImage(self.x, self.y, self.width, self.height, self.cachedTexture)
+        dxSetBlendMode("blend")
+    end
+
+    -- -- top left corner
+    -- dxDrawImage(self.x, self.y, CORNER_SIZE, CORNER_SIZE, CORNER_TEXTURE, 0, 0, 0, self._backgroundColor)
+
+    -- -- top right corner
+    -- dxDrawImage(self.x + self.width - CORNER_SIZE, self.y, CORNER_SIZE, CORNER_SIZE, CORNER_TEXTURE, 90, 0, 0, self._backgroundColor)
+
+    -- -- bottom left corner
+    -- dxDrawImage(self.x, self.y + self.height - CORNER_SIZE, CORNER_SIZE, CORNER_SIZE, CORNER_TEXTURE, -90, 0, 0, self._backgroundColor)
+
+    -- -- bottom right corner
+    -- dxDrawImage(self.x + self.width - CORNER_SIZE, self.y + self.height - CORNER_SIZE, CORNER_SIZE, CORNER_SIZE, CORNER_TEXTURE, 180, 0, 0, self._backgroundColor)
+
+    -- -- fill gap between top corners
+    -- dxDrawRectangle(self.x + CORNER_SIZE, self.y, self.width - 2 * CORNER_SIZE, CORNER_SIZE, self._backgroundColor)
+
+    -- -- fill gap between bottom corners
+    -- dxDrawRectangle(self.x + CORNER_SIZE, self.y + self.height - CORNER_SIZE, self.width - 2 * CORNER_SIZE, CORNER_SIZE, self._backgroundColor)
+
+    -- -- fill middle
+    -- dxDrawRectangle(self.x, self.y + CORNER_SIZE, self.width, self.height - CORNER_SIZE * 2, self._backgroundColor)
+
+    -- local startX = self.x + RECT_PADDING_H
+    -- local startY = self.y + RECT_PADDING_V
+    -- dxDrawImage(startX, startY, ICON_SIZE, ICON_SIZE, "files/images/notification_"..self._type..".png", 0, 0, 0, self._iconColor)
+
+    -- local detailStartX = startX + ICON_SIZE + DETAIL_MARGIN_LEFT
+    -- local detailStartY = startY + REL(1)
+    -- local contentSizeX = detailStartX - RECT_PADDING_H
+    -- local contentSizeY = detailStartY - RECT_PADDING_V
+
+    -- if (self._hasTitle) then
+    --     dxDrawText(self._title, detailStartX, detailStartY, contentSizeX, contentSizeY, self._textColor, 1, font)
+    --     dxDrawText(self._description, detailStartX, detailStartY + FONT_DETAIL_HEIGHT + DETAIL_MARGIN_TOP, contentSizeX, contentSizeY - FONT_DETAIL_HEIGHT - DETAIL_MARGIN_TOP, self._textColor, 1, fontDetail)
+    -- else
+    --     dxDrawText(self._description, detailStartX, detailStartY, contentSizeX, contentSizeY, self._textColor, 1, fontDetail)
+    -- end
 end

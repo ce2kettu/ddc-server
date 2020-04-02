@@ -187,7 +187,7 @@ function DxElement:click(button, state, x, y)
 	end
 
 	if (button == "left" and state == "up") then
-		-- if(DxInfo.draggingElement == self) then
+		-- if (DxInfo.draggingElement == self) then
 		-- 	DxInfo.draggingElement = false
 		-- end
 		-- self.dragging = false
@@ -203,21 +203,21 @@ function DxElement:click(button, state, x, y)
 	end
 
 	-- if (button == "left" and state == "down") then
-	-- 	if(self:getProperty("click_ordering")) then
+	-- 	if (self:getProperty("click_ordering")) then
 	-- 		self:bringToFront()
 	-- 	end
-	-- 	if(self:hasParent()) then
-	-- 		if(self.parent:getProperty("child_dragging")) then
-	-- 			if(self:getProperty("allow_drag_x") or self:getProperty("allow_drag_y")) then
-	-- 				if(isCursorInBounds(self.x + self.dragArea.x, self.y + self.dragArea.y, self.dragArea.width, self.dragArea.height)) then
+	-- 	if (self:hasParent()) then
+	-- 		if (self.parent:getProperty("child_dragging")) then
+	-- 			if (self:getProperty("allow_drag_x") or self:getProperty("allow_drag_y")) then
+	-- 				if (isCursorInBounds(self.x + self.dragArea.x, self.y + self.dragArea.y, self.dragArea.width, self.dragArea.height)) then
 	-- 					self.dragging = true
 	-- 					DxInfo.draggingElement = self
 	-- 				end
 	-- 			end
 	-- 		end
 	-- 	else
-	-- 		if(self:getProperty("allow_drag_x") or self:getProperty("allow_drag_y")) then
-	-- 			if(isCursorInBounds(self.x + self.dragArea.x, self.y + self.dragArea.y, self.dragArea.width, self.dragArea.height)) then
+	-- 		if (self:getProperty("allow_drag_x") or self:getProperty("allow_drag_y")) then
+	-- 			if (isCursorInBounds(self.x + self.dragArea.x, self.y + self.dragArea.y, self.dragArea.width, self.dragArea.height)) then
 	-- 				self.dragging = true
 	-- 				DxInfo.draggingElement = self
 	-- 			end
@@ -324,19 +324,19 @@ function DxElement:getInheritedBounds()
 		for i,element in ipairs(self:getInheritedChildren()) do
 			local x, y = element.x - self.x, element.y - self.y
 
-			if(x < bounds.min.x) then
+			if (x < bounds.min.x) then
 				bounds.min.x = x
 			end
 
-			if(y < bounds.min.y) then
+			if (y < bounds.min.y) then
 				bounds.min.y = y
 			end
 
-			if((x + element.width) > bounds.max.x) then
+			if ((x + element.width) > bounds.max.x) then
 				bounds.max.x = (x + element.width)
 			end
 
-			if((y + element.height) > bounds.max.y) then
+			if ((y + element.height) > bounds.max.y) then
 				bounds.max.y = (y + element.height)
 			end
 		end
@@ -532,7 +532,7 @@ function DxElement:setPosition(x, y)
 end
 
 function DxElement:isPositionUpdated()
-	if(self.baseX ~= self.previousBaseX) or (self.baseY ~= self.previousBaseY) then
+	if (self.baseX ~= self.previousBaseX) or (self.baseY ~= self.previousBaseY) then
 		return true
 	end
 
@@ -757,7 +757,7 @@ function DxElement:getInheritedBasePosition(parent, baseX, baseY)
 end
 
 function DxElement:getTexture()
-	if(not self.cachedTexture) then
+	if (not self.cachedTexture) then
 		self.cachedTexture = dxCreateRenderTarget(self.width, self.height, true)
 	end
 
@@ -1012,8 +1012,8 @@ function DxElement:updatePreviousDimensions()
 end
 
 function DxElement:drawCanvas()
-	if(self:isCanvasEnabled()) then
-		if(self:isRootElement()) then
+	if (self:isCanvasEnabled()) then
+		if (self:isRootElement()) then
 			dxDrawImage(self.x, self.y, self.canvas.width, self.canvas.height, self:getCanvas())
 		end
 	end
