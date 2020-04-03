@@ -1,14 +1,16 @@
-local pickupIds = { repair = 2222, nitro = 2221, vehiclechange = 2223 }
+local USE_CLASSIC_CHANGE_Z = true
+local PICKUP_LOD_DISTANCE = 90
+local VEHICLE_CHANGE_DELAY_MS = 140
+local PICKUP_IDS = { repair = 2222, nitro = 2221, vehiclechange = 2223 }
+local HELICOPTER_IDS = { 417, 425, 447, 465, 469, 487, 488, 497, 501, 548, 563 }
+local AIRPLANE_IDS = { 592, 577, 511, 512, 593, 520, 553, 476, 519, 460, 513, 539 }
+
 local pickupStartTick = getTickCount()
 local visiblePickups = {}
 local pickups = {}
-local helicopterIds = { 417, 425, 447, 465, 469, 487, 488, 497, 501, 548, 563 }
-local airplaneIds = { 592, 577, 511, 512, 593, 520, 553, 476, 519, 460, 513, 539 }
-local useClassicChangeZ = true
-local pickupLODDistance = 90
 
 local function isPickupValid(pickupId)
-    for _, id in pairs(pickupIds) do
+    for _, id in pairs(PICKUP_IDS) do
         if (tonumber(id) == tonumber(pickupId)) then
             return true
         end
@@ -32,7 +34,7 @@ local function directionToRotation2D(a, b)
 end
 
 local function unloadPickups()
-    for _, id in pairs(pickupIds) do
+    for _, id in pairs(PICKUP_IDS) do
         engineRestoreModel(id)
         engineSetModelLODDistance(id, 30)
     end
@@ -41,7 +43,7 @@ end
 local function onResourceStart()
     local txd, dff = false, false
 
-    for modelType, modelId in pairs(pickupIds) do
+    for modelType, modelId in pairs(PICKUP_IDS) do
         txd = engineLoadTXD("files/"..modelType..".txd")
         dff = engineLoadDFF("files/"..modelType..".dff")
 
@@ -50,7 +52,7 @@ local function onResourceStart()
             engineReplaceModel(dff, modelId)
 
             -- increase draw distance for pickups
-            engineSetModelLODDistance(modelId, pickupLODDistance)
+            engineSetModelLODDistance(modelId, PICKUP_LOD_DISTANCE)
         end
     end
 end
@@ -136,13 +138,13 @@ local function alignVehicleWithUp(vehicle)
 end
 
 local function checkVehicleIsHelicopter(vehicle)
-    if (table.find(helicopterIds, tonumber(getElementModel(vehicle)))) then
+    if (table.find(HELICOPTER_IDS, tonumber(getElementModel(vehicle)))) then
         setHelicopterRotorSpeed(vehicle, 0.2)
     end
 end
 
 local function checkModelIsAirplane(model)
-    return table.find(airplaneIds, model)
+    return table.find(AIRPLANE_IDS, model)
 end
 
 local function vehicleChanging(vehicle, isClassicChangeZ, ispreviousVehicleHeight)
@@ -207,10 +209,10 @@ local function onPickupHit(element)
                 setElementHealth(vehicle, health)
             end
 
-            vehicleChanging(vehicle, useClassicChangeZ, previousVehicleHeight)
+            vehicleChanging(vehicle, USE_CLASSIC_CHANGE_Z, previousVehicleHeight)
             triggerServerEvent("Race:onVehicleModelChange", resourceRoot, newModel)
             playSoundFrontEnd(46)
-        end, 140, 1)
+        end, VEHICLE_CHANGE_DELAY_MS, 1)
     end
 end
 
@@ -230,11 +232,11 @@ end
 
 -- exports
 function createPickup(type, posX, posY, posZ, vehicle)
-    if (not pickupIds[type]) then
+    if (not PICKUP_IDS[type]) then
         return
     end
 
-    local pickup = createObject(pickupIds[type], posX, posY, posZ)
+    local pickup = createObject(PICKUP_IDS[type], posX, posY, posZ)
     local colshape = createColSphere(posX, posY, posZ, 3.5)
     local dimension = getElementDimension(localPlayer)
 
