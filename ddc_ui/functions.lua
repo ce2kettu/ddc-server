@@ -1,5 +1,3 @@
-loadstring(exports.ddc_import:load())()
-
 function displayNotification(type, title, description, duration)
     if (not type or not description) then
         return false
@@ -10,15 +8,11 @@ function displayNotification(type, title, description, duration)
     return true
 end
 
-function createElement(x, y, width, height)
-    return DxElement:new(x, y, width, height)
-end
-
-function createComponent(componentType, componentPath)
+function uiRegisterComponent(componentType, componentPath)
     return import(componentPath)
 end
 
-function dxCreateElement(classType, ...)
+function uiCreateElement(classType, ...)
 	if (not _G[classType]) then
 		return false
 	end
@@ -34,15 +28,15 @@ function dxCreateElement(classType, ...)
 	return element
 end
 
-function dxDestroyElement(element, ...)
-	if (dxIsElement(element)) then
+function uiDestroyElement(element, ...)
+	if (uiIsElement(element)) then
 		return element:destroy()
 	end
 	
 	return false
 end
 
-function dxIsElement(element)
+function uiIsElement(element)
 	if (not element) then
 		return false
 	end
@@ -62,12 +56,12 @@ function dxIsElement(element)
 	return true
 end
 
-function dxCallMethod(element, methodName, ...)
+function uiCallMethod(element, methodName, ...)
 	local uid = (type(element) == "table") and element.uid or element
 	
 	element = DxHostedElements[uid]
 	
-	if (not dxIsElement(element)) then
+	if (not uiIsElement(element)) then
 		return false
 	end
 	
