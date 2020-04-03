@@ -1,7 +1,10 @@
 <meta>
 <min_mta_version client="1.3.0-9.04431" />
     <export function="displayNotification" type="client" />
-
+    <export function="createElement" type="client" />
+    <export function="createComponent" type="client" />
+    <export function="dxCreateElement" type="client" />
+    <export function="dxCallMethod" type="client" />
 
 
 <!-- Client -->	

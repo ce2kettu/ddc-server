@@ -46,6 +46,10 @@ function isCursorInBounds(x, y, width, height)
 	return ((cx >= x and cx <= x + width) and (cy >= y and cy <= y + height))
 end
 
+function decimalToRGBA(c)
+	return bitExtract(c, 0, 8), bitExtract(c, 8, 8), bitExtract(c, 16, 8), bitExtract(c, 24, 8)
+end
+
 function textFit(text, size, font, width, padding)
     local fontSize = size
     padding = padding or 10

@@ -21,13 +21,9 @@ local function updateAnimations()
     local tick = getTickCount()
 	local timeDelta = tick - tickCount
     tickCount = tick
-
     local progress
-    
+
     local x, y
-    local width, height
-    local alpha
-    local r, g, b, a
 
     for obj, anim in pairs(moveAnimations) do
         progress = (tickCount - anim.startTime) / anim.duration
@@ -42,6 +38,8 @@ local function updateAnimations()
         end
     end
 
+    local width, height
+
     for obj, anim in pairs(sizeAnimations) do
         progress = (tickCount - anim.startTime) / anim.duration
         width = getAnimationEasingValue(anim.startWidth, anim.endWidth, progress, anim.easingType)
@@ -55,6 +53,8 @@ local function updateAnimations()
         end
     end
 
+    local alpha
+
     for obj, anim in pairs(alphaAnimations) do
         progress = (tickCount - anim.startTime) / anim.duration
         alpha = getAnimationEasingValue(anim.alpha, anim.toAlpha, progress, anim.easingType)
@@ -66,6 +66,8 @@ local function updateAnimations()
             obj._isAlphaAnimating = false
         end
     end
+
+    local r, g, b, a
 
     for obj, anim in pairs(colorAnimations) do
         progress = (tickCount - anim.startTime) / anim.duration

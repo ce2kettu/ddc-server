@@ -7,6 +7,7 @@ function REL(a) return a * RELATIVE_SCALE end
 function FONT_SIZE(a) return a * RELATIVE_FONT_SCALE end
 
 DxElements = {}
+DxHostedElements = {}
 
 local testValues = {
 	["none"] = true,

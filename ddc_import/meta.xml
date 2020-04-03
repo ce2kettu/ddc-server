@@ -1,0 +1,6 @@
+<meta>
+   <script src="shared.lua" type="shared"/>
+
+   <export function="load" type="shared"/>
+   <export function="getFileContents" type="shared"/>
+</meta>
