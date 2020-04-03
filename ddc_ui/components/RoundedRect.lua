@@ -5,11 +5,11 @@ local CORNER_TEXTURE = false
 function DxRoundedRect:constructor(x, y, width, height, cornerSize, backgroundColor)
     self.type = "dx-rounded-rect"
 
-	if (type(cornerSize) ~= "number") then
-		return false
-	end
+    if (type(cornerSize) ~= "number") then
+        return false
+    end
 
-	if (cornerSize > 20) then
+    if (cornerSize > 20) then
         self:destroy()
         outputDebugString("[DxRoundedRect] Corner size can't be more than 20")
         return false

@@ -1,18 +1,19 @@
 <meta>
 <min_mta_version client="1.3.0-9.04431" />
-    <export function="uiLoadFunctions" type="client" />
+    <export function="uiLoadLibrary" type="client" />
     <export function="displayNotification" type="client" />
-    <export function="createElement" type="client" />
-    <export function="createComponent" type="client" />
-    <export function="dxCreateElement" type="client" />
-    <export function="dxCallMethod" type="client" />
+    <export function="uiRegisterComponent" type="client" />
+    <export function="uiCreateElement" type="client" />
+    <export function="uiDestroyElement" type="client" />
+    <export function="uiCallMethod" type="client" />
+    <export function="uiIsElement" type="client" />
 
     <!-- Scripts -->
     <script type="client" src="classlib.lua" />
     <script type="client" src="utils.lua" />
     <script type="client" src="init.lua" />
     <script type="client" src="functions.lua" />
-    <script type="client" src="exports.lua" />
+    <script type="client" src="export_class.lua" />
 
     <script type="client" src="components/Animator.lua" />
     <script type="client" src="components/Element.lua" />
@@ -24,6 +25,8 @@
     <script type="client" src="components/Notification.lua" />
 
     <script type="client" src="test.lua" />
+
+    <file src="meta.xml" />
 
     <!-- Fonts -->
     <file src="files/fonts/font_icon_light.otf" />

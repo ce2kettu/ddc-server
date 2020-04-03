@@ -1,4 +1,5 @@
 <meta>
     <script type="client" src="client.lua" />
     <file src="DxImage2.lua" />
+    <file src="biblethump.png" />
 </meta>

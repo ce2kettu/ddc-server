@@ -19,7 +19,7 @@ end
 
 local function updateAnimations()
     local tick = getTickCount()
-	local timeDelta = tick - tickCount
+    local timeDelta = tick - tickCount
     tickCount = tick
     local progress
 

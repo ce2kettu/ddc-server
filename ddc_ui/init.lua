@@ -11,36 +11,36 @@ DxElements = {}
 DxHostedElements = {}
 
 DxTypes = {
-	"DxElement",
+    "DxElement",
     "DxImage",
     "DxRoundedRect",
     "DxRoundedRectDetail"
 }
 
 local function init()
-	RESOURCE_NAME = getResourceName(getThisResource())
+    RESOURCE_NAME = getResourceName(getThisResource())
 
     -- load import function
     loadstring(exports.ddc_import:load())()
 
-	-- initialize exporter
-	uiInitializeExporter()
+    -- initialize exporter
+    uiInitializeExporter()
 end
 addEventHandler("onClientResourceStart", resourceRoot, init)
 
 local testValues = {
-	["none"] = true,
-	["no_mem"] = true,
-	["low_mem"] = true,
-	["no_shader"] = true
+    ["none"] = true,
+    ["no_mem"] = true,
+    ["low_mem"] = true,
+    ["no_shader"] = true
 }
 
 function testMode(cmd, value)
-	if (testValues[value]) then
-		dxSetTestMode(value)
-		outputChatBox("Test mode set to "..value..".", 220, 175, 20, false)
-	else
-		outputChatBox("Invalid test mode entered.", 245, 20, 20, false)
-	end
+    if (testValues[value]) then
+        dxSetTestMode(value)
+        outputChatBox("Test mode set to "..value..".", 220, 175, 20, false)
+    else
+        outputChatBox("Invalid test mode entered.", 245, 20, 20, false)
+    end
 end
 addCommandHandler("setmode", testMode)

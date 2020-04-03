@@ -35,19 +35,19 @@ function escapePattern(s)
 end
 
 function isCursorInBounds(x, y, width, height)
-	if (not isCursorShowing()) then
-		return false
-	end
+    if (not isCursorShowing()) then
+        return false
+    end
 
-	local sx, sy = guiGetScreenSize()
-	local cx, cy = getCursorPosition()
-	local cx, cy = (cx * sx), (cy * sy)
+    local sx, sy = guiGetScreenSize()
+    local cx, cy = getCursorPosition()
+    local cx, cy = (cx * sx), (cy * sy)
 
-	return ((cx >= x and cx <= x + width) and (cy >= y and cy <= y + height))
+    return ((cx >= x and cx <= x + width) and (cy >= y and cy <= y + height))
 end
 
 function decimalToRGBA(c)
-	return bitExtract(c, 0, 8), bitExtract(c, 8, 8), bitExtract(c, 16, 8), bitExtract(c, 24, 8)
+    return bitExtract(c, 0, 8), bitExtract(c, 8, 8), bitExtract(c, 16, 8), bitExtract(c, 24, 8)
 end
 
 function textFit(text, size, font, width, padding)
@@ -75,4 +75,21 @@ function textOverflow(text, size, font, width, ellipsis, padding)
     end
 
     return text
+end
+
+function getExternalFile(resource, path)
+    if (not path) then
+        return false
+    end
+
+    if (resource) then
+        path = path:gsub("\\", "/")
+
+        if (not path:find(":")) then
+            path = ":"..getResourceName(res).."/"..path
+            path = path:gsub("//", "/") or path
+        end
+    end
+
+    return path
 end

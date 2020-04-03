@@ -1,12 +1,21 @@
-local ui = exports.ddc_ui
+loadstring(exports.ddc_ui:uiLoadLibrary())()
+local uiLib = uiClass
 
-ui:createComponent("DxImage2", "ddc_test/DxImage2.lua")
 
-local img = ui:dxCreateElement("DxImage2", 500, 500, 100, 100, ":ddc_ui/files/images/next_map.png")
+-- ui:createComponent("DxImage2", "ddc_test/DxImage2.lua")
 
-addCommandHandler("test2", function()
-    ui:dxCallMethod(img, "moveTo", 100, 100)
-end)
+-- local img = ui:uiCreateElement("DxImage2", 500, 500, 100, 100, ":ddc_ui/files/images/next_map.png")
+
+-- addCommandHandler("test2", function()
+--     ui:uiCallMethod(img, "moveTo", 100, 100)
+-- end)
+
+exports.ddc_core:var_dump("-v", DxImage)
+
+--uiLib:uiRegisterComponent("DxImage2", "ddc_test/DxImage2.lua")
+
+DxImage:new(500, 500, 100, 100, ":ddc_test/biblethump.png")
+
 -- DxImage2.tt = "het"
 
 -- test = {

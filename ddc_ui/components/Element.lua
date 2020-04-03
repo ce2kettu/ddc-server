@@ -31,13 +31,13 @@ addEventHandler("onClientClick", root, onClientClick)
 -- DxElement = inherit(DxAnimator)
 
 function DxElement:new(...)
-	return new(self, ...)
+    return new(self, ...)
 end
 
 function DxElement:destroy(...)
     -- delete element children
     for i = #self.children, 1, -1 do
-		self.children[i]:destroy()
+        self.children[i]:destroy()
     end
 
     self:setParent(false)
@@ -81,31 +81,31 @@ function DxElement:virtual_constructor(x, y, width, height)
     self.hoverColor = tocolor(0, 0, 0, 255)
 
     self.renderFunctions = {
-		normal = {},
-		preRender = {}
-	}
+        normal = {},
+        preRender = {}
+    }
 
-	self.clickFunctions = {}
+    self.clickFunctions = {}
 
     self.bounds = {
-		min = {
-			x = 0,
-			y = 0
-		},
-		max = {
-			x = 0,
-			y = 0
-		}
+        min = {
+            x = 0,
+            y = 0
+        },
+        max = {
+            x = 0,
+            y = 0
+        }
     }
 
     self.canvas = {
-		state = false
+        state = false
     }
 
     self.mask = {
-		state = false,
-		shader = false,
-		texture = false
+        state = false,
+        shader = false,
+        texture = false
     }
 
     self:addRenderFunction(self.draw)
@@ -127,222 +127,222 @@ function DxElement:render()
     --dxDrawImage(self.x, self.y, self.width, self.height, texture)
     --self:dxDraw()
     for i, func in ipairs(self.renderFunctions.normal) do
-		func()
-	end
+        func()
+    end
 end
 
 function DxElement:draw(allow)
     -- local isRootElement = self:isRootElement()
 
-	-- if (self:isRootElement() and not self:isVisible()) then
-	-- 	return false
+    -- if (self:isRootElement() and not self:isVisible()) then
+    -- 	return false
     -- end
-    
+
     if (self.visible) then
         self:dxDraw()
     end
-	-- if (not self:isCanvasEnabled()) then
-	-- 	if (self:hasParent() and not allow) then
-	-- 		return false
-	-- 	end
+    -- if (not self:isCanvasEnabled()) then
+    -- 	if (self:hasParent() and not allow) then
+    -- 		return false
+    -- 	end
 
-	-- 	if (self:inCanvas()) then
-	-- 		return false
-	-- 	end
+    -- 	if (self:inCanvas()) then
+    -- 		return false
+    -- 	end
 
-	-- 	if (self:isVisible()) then
-	-- 		if (self:isMaskEnabled()) then
-	-- 			self:drawMask()
-	-- 		else
-	-- 			self:dxDraw()
-	-- 		end
+    -- 	if (self:isVisible()) then
+    -- 		if (self:isMaskEnabled()) then
+    -- 			self:drawMask()
+    -- 		else
+    -- 			self:dxDraw()
+    -- 		end
 
-	-- 		for i=#self.children,1,-1 do
-	-- 			local child = self.children[i]
-	-- 			child:draw(true)
-	-- 		end
-	-- 	end
-	-- else
-	-- 	if (isRootElement) then
-	-- 		if (not self:inCanvas()) then
-	-- 			if (self:isVisible()) then
-	-- 				if (self:isMaskEnabled()) then
-	-- 					self:drawMask()
-	-- 				else
-	-- 					self:dxDraw()
-	-- 				end
-	-- 			end
+    -- 		for i=#self.children,1,-1 do
+    -- 			local child = self.children[i]
+    -- 			child:draw(true)
+    -- 		end
+    -- 	end
+    -- else
+    -- 	if (isRootElement) then
+    -- 		if (not self:inCanvas()) then
+    -- 			if (self:isVisible()) then
+    -- 				if (self:isMaskEnabled()) then
+    -- 					self:drawMask()
+    -- 				else
+    -- 					self:dxDraw()
+    -- 				end
+    -- 			end
 
     --             self:generateCanvas()
-	-- 		end
-	-- 	end
-	-- end
+    -- 		end
+    -- 	end
+    -- end
 end
 
 function DxElement:click(button, state, x, y)
     if (state == "up") then
-		for i, func in ipairs(self.clickFunctions) do
-			func(button, state, x, y)
-		end
-	end
+        for i, func in ipairs(self.clickFunctions) do
+            func(button, state, x, y)
+        end
+    end
 
-	if (button == "left" and state == "up") then
-		-- if (DxInfo.draggingElement == self) then
-		-- 	DxInfo.draggingElement = false
-		-- end
-		-- self.dragging = false
-		-- self.dragInitialX, self.dragInitialY = false, false
-	end
+    if (button == "left" and state == "up") then
+        -- if (DxInfo.draggingElement == self) then
+        -- 	DxInfo.draggingElement = false
+        -- end
+        -- self.dragging = false
+        -- self.dragInitialX, self.dragInitialY = false, false
+    end
 
-	if (not self:isMouseOverElement()) then
-		return false
-	end
+    if (not self:isMouseOverElement()) then
+        return false
+    end
 
-	if (self:isObstructed(x, y)) then
-		return false
-	end
+    if (self:isObstructed(x, y)) then
+        return false
+    end
 
-	-- if (button == "left" and state == "down") then
-	-- 	if (self:getProperty("click_ordering")) then
-	-- 		self:bringToFront()
-	-- 	end
-	-- 	if (self:hasParent()) then
-	-- 		if (self.parent:getProperty("child_dragging")) then
-	-- 			if (self:getProperty("allow_drag_x") or self:getProperty("allow_drag_y")) then
-	-- 				if (isCursorInBounds(self.x + self.dragArea.x, self.y + self.dragArea.y, self.dragArea.width, self.dragArea.height)) then
-	-- 					self.dragging = true
-	-- 					DxInfo.draggingElement = self
-	-- 				end
-	-- 			end
-	-- 		end
-	-- 	else
-	-- 		if (self:getProperty("allow_drag_x") or self:getProperty("allow_drag_y")) then
-	-- 			if (isCursorInBounds(self.x + self.dragArea.x, self.y + self.dragArea.y, self.dragArea.width, self.dragArea.height)) then
-	-- 				self.dragging = true
-	-- 				DxInfo.draggingElement = self
-	-- 			end
-	-- 		end
-	-- 	end
-	-- end
+    -- if (button == "left" and state == "down") then
+    -- 	if (self:getProperty("click_ordering")) then
+    -- 		self:bringToFront()
+    -- 	end
+    -- 	if (self:hasParent()) then
+    -- 		if (self.parent:getProperty("child_dragging")) then
+    -- 			if (self:getProperty("allow_drag_x") or self:getProperty("allow_drag_y")) then
+    -- 				if (isCursorInBounds(self.x + self.dragArea.x, self.y + self.dragArea.y, self.dragArea.width, self.dragArea.height)) then
+    -- 					self.dragging = true
+    -- 					DxInfo.draggingElement = self
+    -- 				end
+    -- 			end
+    -- 		end
+    -- 	else
+    -- 		if (self:getProperty("allow_drag_x") or self:getProperty("allow_drag_y")) then
+    -- 			if (isCursorInBounds(self.x + self.dragArea.x, self.y + self.dragArea.y, self.dragArea.width, self.dragArea.height)) then
+    -- 				self.dragging = true
+    -- 				DxInfo.draggingElement = self
+    -- 			end
+    -- 		end
+    -- 	end
+    -- end
 
-	for i, func in ipairs(self.clickFunctions) do
-		func(button, state, x, y)
-	end
+    for i, func in ipairs(self.clickFunctions) do
+        func(button, state, x, y)
+    end
 end
 
 function DxElement:drawInternal(children)
-	for i = #children, 1, -1 do
-		local child = children[i]
-		local x, y = child.baseX, child.baseY
+    for i = #children, 1, -1 do
+        local child = children[i]
+        local x, y = child.baseX, child.baseY
 
-		if (child.parent ~= self) then
-			x, y = child:getInheritedBasePosition()
-		end
+        if (child.parent ~= self) then
+            x, y = child:getInheritedBasePosition()
+        end
 
-		if (child:isVisible()) then
-			if (child:isMaskEnabled()) then
-				child:drawMask(x, y)
-			else
-				child:dxDraw(x, y)
-			end
+        if (child:isVisible()) then
+            if (child:isMaskEnabled()) then
+                child:drawMask(x, y)
+            else
+                child:dxDraw(x, y)
+            end
 
-			self:drawInternal(child:getChildren())
-		end
+            self:drawInternal(child:getChildren())
+        end
     end
 end
 
 function DxElement:cursorMove(relX, relY, absX, absY)
-	if (not self.isHoverEnabled) then
-		return false
-	end
-
-	if (self:isMouseOverElement()) then
-		if (not self:isObstructed(absX, absY)) then
-			if (self.hover) then
-				self.color = self.hoverColor
-				self.hovering = true
-				return true
-			end
-		end
+    if (not self.isHoverEnabled) then
+        return false
     end
 
-	self.hovering = false
-	self.color = self.primaryColor
+    if (self:isMouseOverElement()) then
+        if (not self:isObstructed(absX, absY)) then
+            if (self.hover) then
+                self.color = self.hoverColor
+                self.hovering = true
+                return true
+            end
+        end
+    end
+
+    self.hovering = false
+    self.color = self.primaryColor
 end
 
 function DxElement:createCanvas()
-	if (not self.canvas.texture) then
-		self.canvas.state = true
-		self.canvas.texture = dxCreateRenderTarget(self.width, self.height, true)
-		self.canvas.width, self.canvas.height = self.width, self.height
+    if (not self.canvas.texture) then
+        self.canvas.state = true
+        self.canvas.texture = dxCreateRenderTarget(self.width, self.height, true)
+        self.canvas.width, self.canvas.height = self.width, self.height
     end
 
-	return self.canvas.texture and true or false
+    return self.canvas.texture and true or false
 end
 
 function DxElement:setCanvasState(state)
-	self.canvas.state = state
+    self.canvas.state = state
 end
 
 function DxElement:getCanvas()
-	return self.canvas.texture or false
+    return self.canvas.texture or false
 end
 
 function DxElement:isCanvasEnabled()
-	return self.canvas.state
+    return self.canvas.state
 end
 
 function DxElement:inCanvas(parent)
     local parent = parent or self:getParent()
 
-	if (parent) then
-		if (parent:isCanvasEnabled()) then
-			return true
-		else
-			if (parent:hasParent()) then
-				return self:inCanvas(parent:getParent())
-			end
-		end
-	end
+    if (parent) then
+        if (parent:isCanvasEnabled()) then
+            return true
+        else
+            if (parent:hasParent()) then
+                return self:inCanvas(parent:getParent())
+            end
+        end
+    end
 
-	return false
+    return false
 end
 
 function DxElement:getInheritedBounds()
-	local bounds = {
-		min = {
-			x = 0,
-			y = 0
-		},
-		max = {
-			x = self.width,
-			y = self.height
-		}
-	}
+    local bounds = {
+        min = {
+            x = 0,
+            y = 0
+        },
+        max = {
+            x = self.width,
+            y = self.height
+        }
+    }
 
-	if (not self:isCanvasEnabled()) then
-		for i,element in ipairs(self:getInheritedChildren()) do
-			local x, y = element.x - self.x, element.y - self.y
+    if (not self:isCanvasEnabled()) then
+        for i,element in ipairs(self:getInheritedChildren()) do
+            local x, y = element.x - self.x, element.y - self.y
 
-			if (x < bounds.min.x) then
-				bounds.min.x = x
-			end
+            if (x < bounds.min.x) then
+                bounds.min.x = x
+            end
 
-			if (y < bounds.min.y) then
-				bounds.min.y = y
-			end
+            if (y < bounds.min.y) then
+                bounds.min.y = y
+            end
 
-			if ((x + element.width) > bounds.max.x) then
-				bounds.max.x = (x + element.width)
-			end
+            if ((x + element.width) > bounds.max.x) then
+                bounds.max.x = (x + element.width)
+            end
 
-			if ((y + element.height) > bounds.max.y) then
-				bounds.max.y = (y + element.height)
-			end
-		end
-	end
+            if ((y + element.height) > bounds.max.y) then
+                bounds.max.y = (y + element.height)
+            end
+        end
+    end
 
-	return bounds.min.x, bounds.min.y, bounds.max.x, bounds.max.y
+    return bounds.min.x, bounds.min.y, bounds.max.x, bounds.max.y
 end
 
 function DxElement:getBounds(relative)
@@ -355,18 +355,18 @@ end
 function DxElement:updateInheritedBounds()
     local minX, minY, maxX, maxY = self:getInheritedBounds()
 
-	self.bounds = {
-		min = {
-			x = minX,
-			y = minY
-		},
-		max = {
-			x = maxX,
-			y = maxY
-		}
+    self.bounds = {
+        min = {
+            x = minX,
+            y = minY
+        },
+        max = {
+            x = maxX,
+            y = maxY
+        }
     }
 
-	return true
+    return true
 end
 
 function DxElement:isMouseOverElement()
@@ -426,92 +426,92 @@ function DxElement:isChild(element)
 end
 
 function DxElement:getTopLevelChildren(parent)
-	parent = parent or self:getParent()
+    parent = parent or self:getParent()
 
-	if (not parent) then
-		return self
-	end
+    if (not parent) then
+        return self
+    end
 
-	local elements = {}
+    local elements = {}
 
-	if (not parent:hasParent()) then
-		for _, child in ipairs(parent:getChildren()) do
-			table.insert(elements, element)
-		end
+    if (not parent:hasParent()) then
+        for _, child in ipairs(parent:getChildren()) do
+            table.insert(elements, element)
+        end
 
-		return elements
-	end
+        return elements
+    end
 
-	return self:getTopLevelChildren(parent:getParent())
+    return self:getTopLevelChildren(parent:getParent())
 end
 
 
 function DxElement:getRootElement()
-	if (self:hasParent()) then
-		return self.parent:getRootElement()
+    if (self:hasParent()) then
+        return self.parent:getRootElement()
     end
 
-	return self
+    return self
 end
 
 function DxElement:isRootElement()
-	if (self == self:getRootElement()) then
-		return true
-	end
+    if (self == self:getRootElement()) then
+        return true
+    end
 
-	return false
+    return false
 end
 
 function DxElement:getInheritedChildren()
-	local children = {}
+    local children = {}
 
-	for _, child in ipairs(self.children) do
-		table.insert(children, child)
+    for _, child in ipairs(self.children) do
+        table.insert(children, child)
 
-		for _, grandChild in ipairs(child:getInheritedChildren()) do
-			table.insert(children, grandChild)
-		end
-	end
+        for _, grandChild in ipairs(child:getInheritedChildren()) do
+            table.insert(children, grandChild)
+        end
+    end
 
-	return children
+    return children
 end
 
 function DxElement:isInheritedChild(element)
-	for _, el in pairs(self:getInheritedChildren()) do
-		if (element == e) then
-			return true
-		end
+    for _, el in pairs(self:getInheritedChildren()) do
+        if (element == e) then
+            return true
+        end
     end
 
-	return false
+    return false
 end
 
 function DxElement:getInheritedChildrenByType(elementType)
     local children = {}
 
-	for _, element in ipairs(self:getInheritedChildren()) do
-		if (element.type == elementType) then
-			table.insert(children, element)
-		end
-	end
+    for _, element in ipairs(self:getInheritedChildren()) do
+        if (element.type == elementType) then
+            table.insert(children, element)
+        end
+    end
 
-	return children
+    return children
 end
 
 function DxElement:getChildren()
-	return self.children
+    return self.children
 end
 
 function DxElement:getChildrenByType(elementType)
     local children = {}
 
-	for _, element in ipairs(self:getChildren()) do
-		if (element.type == elementType) then
-			table.insert(children, element)
-		end
-	end
+    for _, element in ipairs(self:getChildren()) do
+        if (element.type == elementType) then
+            table.insert(children, element)
+        end
+    end
 
-	return children
+    return children
 end
 
 function DxElement:getType()
@@ -519,24 +519,24 @@ function DxElement:getType()
 end
 
 function DxElement:setPosition(x, y)
-	x, y = tonumber(x), tonumber(y)
+    x, y = tonumber(x), tonumber(y)
 
     self.baseX = x and x or self.baseX
     self.baseY = y and y or self.baseY
 
-	if (not self:hasParent()) then
-		self.x, self.y = self.baseX, self.baseY
-	end
+    if (not self:hasParent()) then
+        self.x, self.y = self.baseX, self.baseY
+    end
 
-	return true
+    return true
 end
 
 function DxElement:isPositionUpdated()
-	if (self.baseX ~= self.previousBaseX) or (self.baseY ~= self.previousBaseY) then
-		return true
-	end
+    if (self.baseX ~= self.previousBaseX) or (self.baseY ~= self.previousBaseY) then
+        return true
+    end
 
-	return false
+    return false
 end
 
 function DxElement:getPosition()
@@ -555,23 +555,23 @@ function DxElement:getSize(width, height)
 end
 
 function DxElement:isSizeUpdated()
-	if ((self.width ~= self.previousWidth) or (self.height ~= self.previousHeight)) then
-		return true
-	end
+    if ((self.width ~= self.previousWidth) or (self.height ~= self.previousHeight)) then
+        return true
+    end
 
-	return false
+    return false
 end
 
 function DxElement:setIndex(index)
     if (type(index) ~= "number") then
-		return false
+        return false
     end
 
     local tbl = (self.parent and self.parent.children) or DxElements
 
     -- validate index
-	if (index > #tbl) or (index < 1) then
-		return false
+    if (index > #tbl) or (index < 1) then
+        return false
     end
 
     -- update current index
@@ -583,19 +583,19 @@ function DxElement:setIndex(index)
 
     -- shift the indexes of other elements
     for _, element in ipairs(DxElements) do
-		if (element:isRootElement()) then
-			element:refreshIndex()
-			--element:refreshEventHandlers()
+        if (element:isRootElement()) then
+            element:refreshIndex()
+            --element:refreshEventHandlers()
 
-			local children = element:getInheritedChildren()
+            local children = element:getInheritedChildren()
 
-			for i = 1, #children do
-				local child = children[i]
-				child:refreshIndex()
-			   --child:refreshEventHandlers()
-			end
-		end
-	end
+            for i = 1, #children do
+                local child = children[i]
+                child:refreshIndex()
+               --child:refreshEventHandlers()
+            end
+        end
+    end
 
     return true
 end
@@ -603,14 +603,14 @@ end
 function DxElement:refreshIndex()
     local tbl = (self:isRootElement() and DxElements) or self.parent.children
 
-	for i, element in ipairs(tbl) do
-		if (self == element) then
-			self.zIndex = i
-			return true
-		end
+    for i, element in ipairs(tbl) do
+        if (self == element) then
+            self.zIndex = i
+            return true
+        end
     end
 
-	return false
+    return false
 end
 
 function DxElement:getIndex()
@@ -620,226 +620,226 @@ end
 function DxElement:getRootElements()
     local elements = {}
 
-	for _, element in ipairs(DxElements) do
-		if (element:isRootElement()) then
-			table.insert(elements, element)
-		end
+    for _, element in ipairs(DxElements) do
+        if (element:isRootElement()) then
+            table.insert(elements, element)
+        end
     end
 
-	return elements
+    return elements
 end
 
 function DxElement:getNonRootElements()
     local elements = {}
 
-	for _, element in ipairs(DxElements) do
-		if (not element:isRootElement()) then
-			table.insert(elements, element)
-		end
+    for _, element in ipairs(DxElements) do
+        if (not element:isRootElement()) then
+            table.insert(elements, element)
+        end
     end
 
-	return elements
+    return elements
 end
 
 function DxElement:bringToFront()
-	self:setIndex(1)
+    self:setIndex(1)
 
-	if (self:hasParent()) then
-		self.parent:bringToFront()
-	end
+    if (self:hasParent()) then
+        self.parent:bringToFront()
+    end
 end
 
 function DxElement:sendToBack()
-	self:setIndex(#DxElements)
+    self:setIndex(#DxElements)
 end
 
 function DxElement:isFront()
-	return self.zIndex == 1
+    return self.zIndex == 1
 end
 
 function DxElement:setCentered(horizontal, vertical)
     local width = (self:hasParent() and self:getParent().width) or SCREEN_WIDTH
     local height = (self:hasParent() and self:getParent().height) or SCREEN_HEIGHT
 
-	if (horizontal) then
-		local x = (width / 2) - (self.width / 2)
-		self:setPosition(x)
-	end
+    if (horizontal) then
+        local x = (width / 2) - (self.width / 2)
+        self:setPosition(x)
+    end
 
-	if (vertical) then
-		local y = (height / 2) - (self.height / 2)
-		self:setPosition(nil, y)
-	end
+    if (vertical) then
+        local y = (height / 2) - (self.height / 2)
+        self:setPosition(nil, y)
+    end
 end
 
 function DxElement:setVisible(bool)
-	if (type(bool) ~= "boolean") then
-		return false
-	end
+    if (type(bool) ~= "boolean") then
+        return false
+    end
 
-	self.visible = bool
+    self.visible = bool
 
-	return true
+    return true
 end
 
 function DxElement:isVisible()
-	return self.visible
+    return self.visible
 end
 
 function DxElement:setAlpha(alpha)
-	if (not tonumber(alpha)) then
-		return false
-	end
+    if (not tonumber(alpha)) then
+        return false
+    end
 
-	self.alpha = tonumber(alpha)
+    self.alpha = tonumber(alpha)
 
-	return true
+    return true
 end
 
 function DxElement:getAlpha()
-	return self.alpha
+    return self.alpha
 end
 
 function DxElement:getRelativePositionFromAbsolute(x, y)
-	local rootWidth, rootHeight = SCREEN_WIDTH, SCREEN_HEIGHT
+    local rootWidth, rootHeight = SCREEN_WIDTH, SCREEN_HEIGHT
 
-	if (self:hasParent()) then
-		rootWidth, rootHeight = self.parent.width, self.parent.height
-	end
+    if (self:hasParent()) then
+        rootWidth, rootHeight = self.parent.width, self.parent.height
+    end
 
-	return (x / rootWidth), (y / rootHeight)
+    return (x / rootWidth), (y / rootHeight)
 end
 
 function DxElement:getAbsolutePositionFromRelative(x, y)
-	local rootWidth, rootHeight = SCREEN_WIDTH, SCREEN_HEIGHT
+    local rootWidth, rootHeight = SCREEN_WIDTH, SCREEN_HEIGHT
 
-	if (self:hasParent()) then
-		rootWidth, rootHeight = self.parent.width, self.parent.height
-	end
+    if (self:hasParent()) then
+        rootWidth, rootHeight = self.parent.width, self.parent.height
+    end
 
-	return (x * rootWidth), (y * rootHeight)
+    return (x * rootWidth), (y * rootHeight)
 end
 
 function DxElement:getRelativeSizeFromAbsolute(width, height)
-	local rootWidth, rootHeight = SCREEN_WIDTH, SCREEN_HEIGHT
+    local rootWidth, rootHeight = SCREEN_WIDTH, SCREEN_HEIGHT
 
-	if (self:hasParent()) then
-		rootWidth, rootHeight = self.parent.width, self.parent.height
-	end
+    if (self:hasParent()) then
+        rootWidth, rootHeight = self.parent.width, self.parent.height
+    end
 
-	return (width / rootWidth), (height / rootHeight)
+    return (width / rootWidth), (height / rootHeight)
 end
 
 function DxElement:getAbsoluteSizeFromRelative(width, height)
-	local rootWidth, rootHeight = SCREEN_WIDTH, SCREEN_HEIGHT
+    local rootWidth, rootHeight = SCREEN_WIDTH, SCREEN_HEIGHT
 
-	if (self:hasParent()) then
-		rootWidth, rootHeight = self.parent.width, self.parent.height
-	end
+    if (self:hasParent()) then
+        rootWidth, rootHeight = self.parent.width, self.parent.height
+    end
 
-	return (width * rootWidth), (height * rootHeight)
+    return (width * rootWidth), (height * rootHeight)
 end
 
 function DxElement:getInheritedBasePosition(parent, baseX, baseY)
-	baseX, baseY = baseX or self.baseX, baseY or self.baseY
+    baseX, baseY = baseX or self.baseX, baseY or self.baseY
 
-	parent = parent or self:getParent()
+    parent = parent or self:getParent()
 
-	if (parent and not parent:isRootElement()) then
-		baseX, baseY = baseX + parent.baseX, baseY + parent.baseY
+    if (parent and not parent:isRootElement()) then
+        baseX, baseY = baseX + parent.baseX, baseY + parent.baseY
 
-		if (parent:hasParent()) then
-			return self:getInheritedBasePosition(parent:getParent(), baseX, baseY)
-		end
-	end
+        if (parent:hasParent()) then
+            return self:getInheritedBasePosition(parent:getParent(), baseX, baseY)
+        end
+    end
 
-	return baseX, baseY
+    return baseX, baseY
 end
 
 function DxElement:getTexture()
-	if (not self.cachedTexture) then
-		self.cachedTexture = dxCreateRenderTarget(self.width, self.height, true)
-	end
+    if (not self.cachedTexture) then
+        self.cachedTexture = dxCreateRenderTarget(self.width, self.height, true)
+    end
 
-	dxSetRenderTarget(self.cachedTexture, true)
+    dxSetRenderTarget(self.cachedTexture, true)
 
-	self:dxDraw(0, 0)
+    self:dxDraw(0, 0)
 
-	self:drawInternal(self:getChildren())
+    self:drawInternal(self:getChildren())
 
-	dxSetRenderTarget()
+    dxSetRenderTarget()
 
-	return self.cachedTexture
+    return self.cachedTexture
 end
 
 function DxElement:getMaskTexture()
-	if (not self.cachedMaskTexture) then
-		self.cachedMaskTexture = dxCreateRenderTarget(self.width, self.height, true)
-	end
+    if (not self.cachedMaskTexture) then
+        self.cachedMaskTexture = dxCreateRenderTarget(self.width, self.height, true)
+    end
 
-	if (not self.mask.backgroundTexture) then
-		self.mask.backgroundTexture = dxCreateTexture(self.width, self.height)
-		local pixels = dxGetTexturePixels(self.mask.backgroundTexture)
+    if (not self.mask.backgroundTexture) then
+        self.mask.backgroundTexture = dxCreateTexture(self.width, self.height)
+        local pixels = dxGetTexturePixels(self.mask.backgroundTexture)
 
-		for y = 0, self.height - 1 do
-			for x = 0, self.width - 1 do
-				dxSetPixelColor(pixels, x, y, 255, 255, 255, 255)
-			end
-		end
+        for y = 0, self.height - 1 do
+            for x = 0, self.width - 1 do
+                dxSetPixelColor(pixels, x, y, 255, 255, 255, 255)
+            end
+        end
 
-		dxSetTexturePixels(self.mask.backgroundTexture, pixels)
-	end
+        dxSetTexturePixels(self.mask.backgroundTexture, pixels)
+    end
 
-	dxSetRenderTarget(self.cachedMaskTexture, true)
+    dxSetRenderTarget(self.cachedMaskTexture, true)
 
-	dxDrawImage(0, 0, self.width, self.height, self.mask.backgroundTexture)
+    dxDrawImage(0, 0, self.width, self.height, self.mask.backgroundTexture)
 
-	self:dxDraw(0, 0)
+    self:dxDraw(0, 0)
 
-	self:drawInternal(self:getChildren())
+    self:drawInternal(self:getChildren())
 
-	dxSetRenderTarget()
+    dxSetRenderTarget()
 
-	return self.cachedMaskTexture
+    return self.cachedMaskTexture
 end
 
 -- **************************************************************************
 
 function DxElement:applyMask(mask)
-	if (not self.mask.shader) then
-		self.mask.shader = dxCreateShader("assets/shaders/mask.fx")
-	end
+    if (not self.mask.shader) then
+        self.mask.shader = dxCreateShader("assets/shaders/mask.fx")
+    end
 
-	self.mask.texture = mask
+    self.mask.texture = mask
 
-	if (not isElement(self.mask.texture)) then
-		self.mask.texture = dxCreateTexture(self.mask.texture, "argb", true, "clamp")
-	end
+    if (not isElement(self.mask.texture)) then
+        self.mask.texture = dxCreateTexture(self.mask.texture, "argb", true, "clamp")
+    end
 
-	dxSetShaderValue(self.mask.shader, "ScreenTexture", self:getTexture())
-	dxSetShaderValue(self.mask.shader, "MaskTexture", self.mask.texture)
+    dxSetShaderValue(self.mask.shader, "ScreenTexture", self:getTexture())
+    dxSetShaderValue(self.mask.shader, "MaskTexture", self.mask.texture)
 
-	self.mask.state = true
+    self.mask.state = true
 
-	return true
+    return true
 end
 
 function DxElement:isMaskEnabled()
-	return self.mask.state
+    return self.mask.state
 end
 
 function DxElement:setMaskEnabled(state)
-	self.mask.state = state
+    self.mask.state = state
 end
 
 function DxElement:drawMask(x, y)
-	x, y = x or self.x, y or self.y
+    x, y = x or self.x, y or self.y
 
-	if (not self:isMaskEnabled()) then
-		return false
-	end
+    if (not self:isMaskEnabled()) then
+        return false
+    end
 
-	dxDrawImage(x, y, self.width, self.height, self.mask.shader)
+    dxDrawImage(x, y, self.width, self.height, self.mask.shader)
 end
 
 function DxElement:isHovering()
@@ -847,184 +847,184 @@ function DxElement:isHovering()
 end
 
 function DxElement:isObstructed(cursorX, cursorY)
-	return self:getObstructingElement(cursorX, cursorY) and true or false
+    return self:getObstructingElement(cursorX, cursorY) and true or false
 end
 
 function DxElement:isObstructedByElement(cursorX, cursorY, element)
-	if (not element.isObstructable) then
-		return false
-	end
+    if (not element.isObstructable) then
+        return false
+    end
 
-	if (element ~= self) then
-		if (element.visible) then
-			if (cursorX >= element.x and cursorX <= element.x + element.width and cursorY >= element.y and cursorY <= element.y + element.height) then
-				if (self:isChild(element)) then
-					return element
-				elseif (element:getParent() == self:getParent()) then
-					if (element.zIndex < self.zIndex) then
-						return element
-					end
-				else
-					if (self:getRootElement().zIndex > element:getRootElement().zIndex) then
-						return element
-					end
-				end
-			end
-		end
-	end
-	return false
+    if (element ~= self) then
+        if (element.visible) then
+            if (cursorX >= element.x and cursorX <= element.x + element.width and cursorY >= element.y and cursorY <= element.y + element.height) then
+                if (self:isChild(element)) then
+                    return element
+                elseif (element:getParent() == self:getParent()) then
+                    if (element.zIndex < self.zIndex) then
+                        return element
+                    end
+                else
+                    if (self:getRootElement().zIndex > element:getRootElement().zIndex) then
+                        return element
+                    end
+                end
+            end
+        end
+    end
+    return false
 end
 
 function DxElement:getObstructingElement(cursorX, cursorY)
-	for _, element in ipairs(DxElements) do
-		if (self:isObstructedByElement(cursorX, cursorY, element)) then
-			return element
-		end
+    for _, element in ipairs(DxElements) do
+        if (self:isObstructedByElement(cursorX, cursorY, element)) then
+            return element
+        end
     end
 
-	return false
+    return false
 end
 
 function DxElement:generateCanvas()
-	if (not self:isCanvasEnabled()) then
-		self:createCanvas()
-	end
+    if (not self:isCanvasEnabled()) then
+        self:createCanvas()
+    end
 
-	if (self:isSizeUpdated()) then
-		destroyElement(self.canvas.texture)
-		self.canvas.texture = dxCreateRenderTarget(self.width, self.height, true)
-		self.canvas.width, self.canvas.height = self.width, self.height
-	end
+    if (self:isSizeUpdated()) then
+        destroyElement(self.canvas.texture)
+        self.canvas.texture = dxCreateRenderTarget(self.width, self.height, true)
+        self.canvas.width, self.canvas.height = self.width, self.height
+    end
 
-	dxSetRenderTarget(self:getCanvas(), true)
-	-- dxSetBlendMode("add")
+    dxSetRenderTarget(self:getCanvas(), true)
+    -- dxSetBlendMode("add")
 
-	self:drawInternal(self:getChildren())
+    self:drawInternal(self:getChildren())
 
-	-- dxSetBlendMode()
-	dxSetRenderTarget()
+    -- dxSetBlendMode()
+    dxSetRenderTarget()
 end
 
 function DxElement:addRenderFunction(func, preRender)
-	if (type(func) ~= "function") then
-		return false
+    if (type(func) ~= "function") then
+        return false
     end
-    
+
     func = bind(func, self)
 
     local tbl = self.renderFunctions.normal
 
-	if (preRender) then
-		tbl = self.renderFunctions.preRender
-	end
+    if (preRender) then
+        tbl = self.renderFunctions.preRender
+    end
 
-	for _, boundFunc in ipairs(tbl) do
-		if (boundFunc == func) then
-			return false
-		end
-	end
+    for _, boundFunc in ipairs(tbl) do
+        if (boundFunc == func) then
+            return false
+        end
+    end
 
-	table.insert(tbl, func)
-	return true
+    table.insert(tbl, func)
+    return true
 end
 
 function DxElement:removeRenderFunction(func)
-	if (type(func) ~= "function") then
-		return false
+    if (type(func) ~= "function") then
+        return false
     end
 
     local tbl = self.renderFunctions.normal
 
-	for i = #tbl, 1, -1 do
+    for i = #tbl, 1, -1 do
         local f = tbl[i]
 
-		if (f == func) then
-			table.remove(tbl, i)
-			return true
-		end
+        if (f == func) then
+            table.remove(tbl, i)
+            return true
+        end
     end
 
     tbl = self.renderFunctions.preRender
 
-	for i = #tbl, 1, -1 do
+    for i = #tbl, 1, -1 do
         local f = tbl[i]
 
-		if (f == func) then
-			table.remove(tbl, i)
-			return true
-		end
+        if (f == func) then
+            table.remove(tbl, i)
+            return true
+        end
     end
 
-	return false
+    return false
 end
 
 function DxElement:addClickFunction(func)
-	if (type(func) ~= "function") then
-		return false
-	end
+    if (type(func) ~= "function") then
+        return false
+    end
 
-	return table.insert(self.clickFunctions, func)
+    return table.insert(self.clickFunctions, func)
 end
 
 function DxElement:removeClickFunction(func)
-	if (type(func) ~= "function") then
-		return false
+    if (type(func) ~= "function") then
+        return false
     end
-    
-	for i = #self.clickFunctions, 1, -1 do
+
+    for i = #self.clickFunctions, 1, -1 do
         local f = self.clickFunctions[i]
 
-		if (f == func) then
-			return table.remove(self.clickFunctions, i)
-		end
-	end
+        if (f == func) then
+            return table.remove(self.clickFunctions, i)
+        end
+    end
 
-	return false
+    return false
 end
 
 function DxElement:updateCachedTextures()
-	self:getTexture()
-	self:getMaskTexture()
+    self:getTexture()
+    self:getMaskTexture()
 end
 
 function DxElement:updateShaderTexture()
-	if (not self.shader) then
-		return false
-	end
+    if (not self.shader) then
+        return false
+    end
 
-	if (self:isSizeUpdated()) then
-		if (self.shaderTexture) then
-			destroyElement(self.shaderTexture)
-		end
+    if (self:isSizeUpdated()) then
+        if (self.shaderTexture) then
+            destroyElement(self.shaderTexture)
+        end
 
-		self.shaderTexture = dxCreateRenderTarget(self.width, self.height, true)
-	end
+        self.shaderTexture = dxCreateRenderTarget(self.width, self.height, true)
+    end
 
-	dxSetRenderTarget(self.shaderTexture)
-	dxDrawImage(0, 0, self.width, self.height, self.shader, 0, 0, 0, tocolor(255, 255, 255, 255))
-	dxSetRenderTarget()
+    dxSetRenderTarget(self.shaderTexture)
+    dxDrawImage(0, 0, self.width, self.height, self.shader, 0, 0, 0, tocolor(255, 255, 255, 255))
+    dxSetRenderTarget()
 end
 
 function DxElement:updatePreviousDimensions()
-	self.previousX, self.previousY = self.x, self.y
-	self.previousBaseX, self.previousBaseY = self.baseX, self.baseY
-	self.previousWidth, self.previousHeight = self.width, self.height
+    self.previousX, self.previousY = self.x, self.y
+    self.previousBaseX, self.previousBaseY = self.baseX, self.baseY
+    self.previousWidth, self.previousHeight = self.width, self.height
 end
 
 function DxElement:drawCanvas()
-	if (self:isCanvasEnabled()) then
-		if (self:isRootElement()) then
-			dxDrawImage(self.x, self.y, self.canvas.width, self.canvas.height, self:getCanvas())
-		end
-	end
+    if (self:isCanvasEnabled()) then
+        if (self:isRootElement()) then
+            dxDrawImage(self.x, self.y, self.canvas.width, self.canvas.height, self:getCanvas())
+        end
+    end
 end
 
 function DxElement:drawBounds()
-	if (self.drawBounds) then
-		local bounds = self.bounds
-		dxDrawLine(self.x + bounds.min.x, self.y + bounds.min.y, self.x + bounds.max.x, self.y + bounds.min.y, tocolor(0, 255, 0, 150),2)
-		dxDrawLine(self.x + bounds.min.x, self.y + bounds.min.y, self.x + bounds.min.x, self.y + bounds.max.y, tocolor(0, 255, 0, 150),2)
-		dxDrawLine(self.x + bounds.max.x, self.y + bounds.min.y, self.x + bounds.max.x, self.y + bounds.max.y, tocolor(0, 255, 0, 150),2)
-		dxDrawLine(self.x + bounds.min.x, self.y + bounds.max.y, self.x + bounds.max.x, self.y + bounds.max.y, tocolor(0, 255, 0, 150),2)
-	end
+    if (self.drawBounds) then
+        local bounds = self.bounds
+        dxDrawLine(self.x + bounds.min.x, self.y + bounds.min.y, self.x + bounds.max.x, self.y + bounds.min.y, tocolor(0, 255, 0, 150),2)
+        dxDrawLine(self.x + bounds.min.x, self.y + bounds.min.y, self.x + bounds.min.x, self.y + bounds.max.y, tocolor(0, 255, 0, 150),2)
+        dxDrawLine(self.x + bounds.max.x, self.y + bounds.min.y, self.x + bounds.max.x, self.y + bounds.max.y, tocolor(0, 255, 0, 150),2)
+        dxDrawLine(self.x + bounds.min.x, self.y + bounds.max.y, self.x + bounds.max.x, self.y + bounds.max.y, tocolor(0, 255, 0, 150),2)
+    end
 end
