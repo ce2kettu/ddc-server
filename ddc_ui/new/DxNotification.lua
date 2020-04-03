@@ -109,6 +109,7 @@ function DxNotification:createCachedTexture()
     self.cachedTexture = dxCreateRenderTarget(self.width, self.height, true)
 
     dxSetRenderTarget(self.cachedTexture, true)
+    dxSetBlendMode("modulate_add")
 
     -- top left corner
     dxDrawImage(0, 0, CORNER_SIZE, CORNER_SIZE, CORNER_TEXTURE, 0, 0, 0, self._backgroundColor)
@@ -140,15 +141,14 @@ function DxNotification:createCachedTexture()
     local contentSizeX = detailStartX - RECT_PADDING_H
     local contentSizeY = detailStartY - RECT_PADDING_V
 
-    dxSetBlendMode("modulate_add")
     if (self._hasTitle) then
         dxDrawText(self._title, detailStartX, detailStartY, contentSizeX, contentSizeY, self._textColor, 1, font)
         dxDrawText(self._description, detailStartX, detailStartY + FONT_DETAIL_HEIGHT + DETAIL_MARGIN_TOP, contentSizeX, contentSizeY - FONT_DETAIL_HEIGHT - DETAIL_MARGIN_TOP, self._textColor, 1, fontDetail)
     else
         dxDrawText(self._description, detailStartX, detailStartY, contentSizeX, contentSizeY, self._textColor, 1, fontDetail)
     end
-    dxSetBlendMode("blend")
 
+    dxSetBlendMode("blend")
     dxSetRenderTarget()
 end
 
