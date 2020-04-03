@@ -122,11 +122,11 @@ local function alignVehicleWithUp(vehicle)
     end
 
     local matrix, rotZ = getElementMatrix(vehicle), nil
-    local forward = Vector3D:new(matrix[2][1], matrix[2][2], matrix[2][3])
-    local upward = Vector3D:new(matrix[3][1], matrix[3][2], matrix[3][3])
-    local velocity = Vector3D:new(getElementVelocity(vehicle))
+    local forward = Vector3(matrix[2][1], matrix[2][2], matrix[2][3])
+    local upward = Vector3(matrix[3][1], matrix[3][2], matrix[3][3])
+    local velocity = Vector3(getElementVelocity(vehicle))
 
-    if (velocity:Length() > 0.05 and upward.z < 0.001) then
+    if (velocity:getLength() > 0.05 and upward.z < 0.001) then
         rotZ = directionToRotation2D(velocity.x, velocity.y)
     else
         rotZ = directionToRotation2D(forward.x, forward.y)
