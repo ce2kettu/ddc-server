@@ -59,7 +59,6 @@ function Deathmatch:onClientPlayerWasted()
 end
 
 function Deathmatch:onClientRoundStart()
-    triggerEvent("Race:checkSpawnedOnPickup", localPlayer)
 end
 
 function Deathmatch:requestSuicide()

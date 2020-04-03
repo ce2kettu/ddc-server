@@ -188,27 +188,29 @@ local function onPickupHit(element)
             return
         end
 
-        local previousVehicleHeight = getElementDistanceFromCentreOfMassToBaseOfModel(vehicle)
-        local health = nil
+        -- set a small timer so players don't get stuck
+        setTimer(function()
+            local previousVehicleHeight = getElementDistanceFromCentreOfMassToBaseOfModel(vehicle)
+            local health = nil
 
-        alignVehicleWithUp(vehicle)
+            alignVehicleWithUp(vehicle)
 
-        -- Hack fix for Issue #4104
-        if (checkModelIsAirplane(newModel)) then
-            health = getElementHealth(vehicle)
-        end
+            -- Hack fix for Issue #4104
+            if (checkModelIsAirplane(newModel)) then
+                health = getElementHealth(vehicle)
+            end
 
-        setElementModel(vehicle, newModel)
+            setElementModel(vehicle, newModel)
 
-        if (health) then
-            fixVehicle(vehicle)
-            setElementHealth(vehicle, health)
-        end
+            if (health) then
+                fixVehicle(vehicle)
+                setElementHealth(vehicle, health)
+            end
 
-        -- TODO: set a timer if players get stuck?
-        vehicleChanging(vehicle, useClassicChangeZ, previousVehicleHeight)
-        triggerServerEvent("Race:onVehicleModelChange", resourceRoot, newModel)
-        playSoundFrontEnd(46)
+            vehicleChanging(vehicle, useClassicChangeZ, previousVehicleHeight)
+            triggerServerEvent("Race:onVehicleModelChange", resourceRoot, newModel)
+            playSoundFrontEnd(46)
+        end, 140, 1)
     end
 end
 
@@ -223,14 +225,6 @@ local function removeVisiblePickup()
 
     if (pickup) then
         visiblePickups[pickup] = nil
-    end
-end
-
-local function checkSpawnedOnPickup()
-    for colshape, _ in pairs(pickups) do
-        if (isElementWithinColShape(localPlayer, colshape)) then
-            onPickupHit(colshape)
-        end
     end
 end
 
@@ -255,6 +249,13 @@ function createPickup(type, posX, posY, posZ, vehicle)
     end
 
     pickups[colshape] = pickup
+
+    local vehicle = getPedOccupiedVehicle(localPlayer)
+
+    -- check if player spawned on the pickup
+    if (vehicle and isElementWithinColShape(vehicle, colshape)) then
+        onPickupHit(colshape)
+    end
 end
 
 function resetPickups()
@@ -273,9 +274,7 @@ function resetPickups()
 end
 
 addEvent("Race:removeClientPlayerNitro", true)
-addEvent("Race:checkSpawnedOnPickup", true)
 
-addEventHandler("Race:checkSpawnedOnPickup", localPlayer, checkSpawnedOnPickup)
 addEventHandler("Race:removeClientPlayerNitro", localPlayer, removeVehicleNitro)
 addEventHandler("onClientElementStreamIn", resourceRoot, addVisiblePickup)
 addEventHandler("onClientElementStreamOut", resourceRoot, removeVisiblePickup)
