@@ -168,3 +168,7 @@ local function renderNotifications()
     prevTick = newTime
 end
 addEventHandler("onClientRender", root, renderNotifications)
+
+function DxNotificationProvider:destroy()
+    removeEventHandler("onClientRender", root, renderNotifications)
+end

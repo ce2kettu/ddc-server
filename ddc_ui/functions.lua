@@ -1,9 +1,26 @@
 function uiRegisterComponent(componentType, componentPath)
-    return import(componentPath)
+    if (_G[componentType]) then
+        _G[componentType] = nil
+    end
+
+    local result = import(componentPath)
+    collectgarbage()
+    return result
 end
 
-function uiImportScript(path)
-    return import(path)
+function uiImportScript(scriptClass, path)
+    -- If class already exists, destroy it and release memory
+    if (_G[scriptClass]) then
+        if (_G[scriptClass].destroy) then
+            _G[scriptClass]:destroy()
+        end
+
+        _G[scriptClass] = nil
+    end
+
+    local result = import(path)
+    collectgarbage()
+    return result
 end
 
 function uiCreateElement(classType, ...)
