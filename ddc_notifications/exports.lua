@@ -7,7 +7,3 @@ function displayNotification(type, title, description, duration)
 
     return true
 end
-
-function enqueueNotification(notification)
-    DxNotificationProvider:enqueueNotification(notification)
-end

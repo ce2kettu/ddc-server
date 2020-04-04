@@ -1,11 +1,10 @@
 DxNotification = inherit(DxElement)
 
-NOTIFICATION_CURRENT_Y = 0
-
 local CORNER_TEXTURE = false
 local font = dxCreateFont("files/fonts/font_opensans_semibold.ttf", FONT_SIZE(12), false, "cleartype_natural") or "default"
 local fontDetail = dxCreateFont("files/fonts/font_opensans_regular.ttf", FONT_SIZE(12), false, "cleartype_natural") or "default"
 
+local NOTIFICATION_CURRENT_Y = 0
 local RECT_PADDING_H = REL(16)
 local RECT_PADDING_V = REL(8)
 local DETAIL_MARGIN_LEFT = REL(7)
@@ -20,8 +19,6 @@ local RECT_MARGIN_TOP = RECT_MARGIN_RIGHT
 local NOTIFICATION_ALPHA = 215
 
 function DxNotification:new(type, title, description, duration)
-    self = new(self)
-
     self.uid = randomString(6)..getTickCount()
     self.type = "dx-notification"
     self._type = type or "info"
@@ -99,7 +96,6 @@ function DxNotification:new(type, title, description, duration)
     self:createCachedTexture()
 
     DxNotificationProvider:enqueueNotification(self)
-    --exports.ddc_test:enqueueNotification(self)
 
     return self
 end

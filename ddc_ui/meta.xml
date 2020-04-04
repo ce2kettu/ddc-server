@@ -3,7 +3,7 @@
     <export function="uiLoadLibrary" type="client" />
     <export function="displayNotification" type="client" />
     <export function="uiRegisterComponent" type="client" />
-    <export function="uiImportProvider" type="client" />
+    <export function="uiImportScript" type="client" />
     <export function="uiCreateElement" type="client" />
     <export function="uiDestroyElement" type="client" />
     <export function="uiCallMethod" type="client" />
@@ -23,9 +23,6 @@
     <script type="client" src="components/Image.lua" />
     <script type="client" src="components/RoundedRect.lua" />
     <script type="client" src="components/RoundedRectDetail.lua" />
-
-    <!-- <script type="client" src="components/NotificationProvider.lua" />
-    <script type="client" src="components/Notification.lua" /> -->
 
     <script type="client" src="test.lua" />
 

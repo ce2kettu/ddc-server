@@ -17,6 +17,39 @@ DxTypes = {
     "DxRoundedRectDetail"
 }
 
+Palette = {
+    primary = {
+        light = "#6fbf73",
+        main = "#4caf50",
+        dark = "#357a38"
+    },
+    secondary = {
+        light = "#33bfff",
+        main = "#00b0ff",
+        dark = "#007bb2"
+    },
+    error = {
+        light = "#e57373",
+        main = "#f44336",
+        dark = "#d32f2f"
+    },
+    warning = {
+        light = "#ffb74d",
+        main = "#ff9800",
+        dark = "#f57c00"
+    },
+    info = {
+        light = "#64b5f6",
+        main = "#2196f3",
+        dark = "#1976d2"
+    },
+    success = {
+        light = "#81c784",
+        main = "#4caf50",
+        dark = "#388e3c"
+    }
+}
+
 local function init()
     RESOURCE_NAME = getResourceName(getThisResource())
 

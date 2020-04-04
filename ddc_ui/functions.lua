@@ -2,7 +2,7 @@ function uiRegisterComponent(componentType, componentPath)
     return import(componentPath)
 end
 
-function uiImportProvider(path)
+function uiImportScript(path)
     return import(path)
 end
 

@@ -5,7 +5,7 @@ local resources = {
     "ddc_pickups",
     "ddc_import",
     "ddc_ui",
-    "ddc_test",
+    "ddc_notifications",
     "ddc_rooms",
     "ddc_anticheat"
 }

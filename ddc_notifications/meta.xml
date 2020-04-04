@@ -1,0 +1,9 @@
+<meta>
+    <export function="displayNotification" type="client" />
+
+    <script type="client" src="client.lua" />
+    <script type="client" src="exports.lua" />
+
+    <file src="Notification.lua" />
+    <file src="NotificationProvider.lua" />
+</meta>
