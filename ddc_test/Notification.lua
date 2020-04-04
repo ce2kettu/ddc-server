@@ -1,9 +1,8 @@
-DxNotification = inherit(DxAnimator)
+DxNotification = inherit(DxElement)
 
 NOTIFICATION_CURRENT_Y = 0
 
 local CORNER_TEXTURE = false
---local function REL(a) return a * RELATIVE_SCALE end
 local font = dxCreateFont("files/fonts/font_opensans_semibold.ttf", FONT_SIZE(12), false, "cleartype_natural") or "default"
 local fontDetail = dxCreateFont("files/fonts/font_opensans_regular.ttf", FONT_SIZE(12), false, "cleartype_natural") or "default"
 
@@ -23,6 +22,7 @@ local NOTIFICATION_ALPHA = 215
 function DxNotification:new(type, title, description, duration)
     self = new(self)
 
+    self.uid = randomString(6)..getTickCount()
     self.type = "dx-notification"
     self._type = type or "info"
     self._duration = duration or 5000
@@ -99,16 +99,19 @@ function DxNotification:new(type, title, description, duration)
     self:createCachedTexture()
 
     DxNotificationProvider:enqueueNotification(self)
+    --exports.ddc_test:enqueueNotification(self)
+
+    return self
 end
 
 function DxNotification:destructor()
-    destroyElement(self.cachedTexture)
+    destroyElement(self._cachedTexture)
 end
 
 function DxNotification:createCachedTexture()
-    self.cachedTexture = dxCreateRenderTarget(self.width, self.height, true)
+    self._cachedTexture = dxCreateRenderTarget(self.width, self.height, true)
 
-    dxSetRenderTarget(self.cachedTexture, true)
+    dxSetRenderTarget(self._cachedTexture, true)
     dxSetBlendMode("modulate_add")
 
     -- top left corner
@@ -152,47 +155,10 @@ function DxNotification:createCachedTexture()
     dxSetRenderTarget()
 end
 
-function DxNotification:dxDraw()
-    if (self.cachedTexture) then
+function DxNotification:customRenderer()
+    if (self._cachedTexture) then
         dxSetBlendMode("add")
-        dxDrawImage(self.x, self.y, self.width, self.height, self.cachedTexture)
+        dxDrawImage(self.x, self.y, self.width, self.height, self._cachedTexture)
         dxSetBlendMode("blend")
     end
-
-    -- -- top left corner
-    -- dxDrawImage(self.x, self.y, CORNER_SIZE, CORNER_SIZE, CORNER_TEXTURE, 0, 0, 0, self._backgroundColor)
-
-    -- -- top right corner
-    -- dxDrawImage(self.x + self.width - CORNER_SIZE, self.y, CORNER_SIZE, CORNER_SIZE, CORNER_TEXTURE, 90, 0, 0, self._backgroundColor)
-
-    -- -- bottom left corner
-    -- dxDrawImage(self.x, self.y + self.height - CORNER_SIZE, CORNER_SIZE, CORNER_SIZE, CORNER_TEXTURE, -90, 0, 0, self._backgroundColor)
-
-    -- -- bottom right corner
-    -- dxDrawImage(self.x + self.width - CORNER_SIZE, self.y + self.height - CORNER_SIZE, CORNER_SIZE, CORNER_SIZE, CORNER_TEXTURE, 180, 0, 0, self._backgroundColor)
-
-    -- -- fill gap between top corners
-    -- dxDrawRectangle(self.x + CORNER_SIZE, self.y, self.width - 2 * CORNER_SIZE, CORNER_SIZE, self._backgroundColor)
-
-    -- -- fill gap between bottom corners
-    -- dxDrawRectangle(self.x + CORNER_SIZE, self.y + self.height - CORNER_SIZE, self.width - 2 * CORNER_SIZE, CORNER_SIZE, self._backgroundColor)
-
-    -- -- fill middle
-    -- dxDrawRectangle(self.x, self.y + CORNER_SIZE, self.width, self.height - CORNER_SIZE * 2, self._backgroundColor)
-
-    -- local startX = self.x + RECT_PADDING_H
-    -- local startY = self.y + RECT_PADDING_V
-    -- dxDrawImage(startX, startY, ICON_SIZE, ICON_SIZE, "files/images/notification_"..self._type..".png", 0, 0, 0, self._iconColor)
-
-    -- local detailStartX = startX + ICON_SIZE + DETAIL_MARGIN_LEFT
-    -- local detailStartY = startY + REL(1)
-    -- local contentSizeX = detailStartX - RECT_PADDING_H
-    -- local contentSizeY = detailStartY - RECT_PADDING_V
-
-    -- if (self._hasTitle) then
-    --     dxDrawText(self._title, detailStartX, detailStartY, contentSizeX, contentSizeY, self._textColor, 1, font)
-    --     dxDrawText(self._description, detailStartX, detailStartY + FONT_DETAIL_HEIGHT + DETAIL_MARGIN_TOP, contentSizeX, contentSizeY - FONT_DETAIL_HEIGHT - DETAIL_MARGIN_TOP, self._textColor, 1, fontDetail)
-    -- else
-    --     dxDrawText(self._description, detailStartX, detailStartY, contentSizeX, contentSizeY, self._textColor, 1, fontDetail)
-    -- end
 end

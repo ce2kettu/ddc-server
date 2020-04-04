@@ -1,5 +1,14 @@
 <meta>
+    <export function="displayNotification" type="client" />
+    <export function="enqueueNotification" type="client" />
+
+    <script type="client" src="exports.lua" />
     <script type="client" src="client.lua" />
-    <file src="DxImage2.lua" />
+    <!-- <script type="client" src="NotificationProvider.lua" /> -->
+
+    <file src="Image2.lua" />
+    <file src="Notification.lua" />
+    <file src="NotificationProvider2.lua" />
+
     <file src="biblethump.png" />
 </meta>

@@ -1,15 +1,9 @@
-function displayNotification(type, title, description, duration)
-    if (not type or not description) then
-        return false
-    end
-
-    DxNotification:new(type, title, description, duration)
-
-    return true
-end
-
 function uiRegisterComponent(componentType, componentPath)
     return import(componentPath)
+end
+
+function uiImportProvider(path)
+    return import(path)
 end
 
 function uiCreateElement(classType, ...)
@@ -30,7 +24,7 @@ end
 
 function uiDestroyElement(element, ...)
     if (uiIsElement(element)) then
-        return element:destroy()
+        return uiCallMethod(element, "destroy")
     end
 
     return false
@@ -78,4 +72,12 @@ function uiCallMethod(element, methodName, ...)
     end
 
     return element[methodName](element, unpack(args))
+end
+
+function uiSetProperty(element, ...)
+	return uiCallMethod(element, "setProperty", ...)
+end
+
+function uiGetProperty(element, ...)
+	return uiCallMethod(element, "getProperty", ...)
 end

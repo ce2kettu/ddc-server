@@ -159,7 +159,7 @@ local function renderNotifications()
             end, ANIMATION_DURATION, 1)
         end
 
-        item:dxDraw()
+        item:customRenderer()
         item._stackPos = i
         item._oldSize = len
         currentY = currentY + item.height + NOTIFICATION_MARGIN_TOP
