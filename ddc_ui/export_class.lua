@@ -4,7 +4,7 @@ local metaNodes = false
 local funcInjectCode = ""
 
 function uiInitializeExporter()
-    if (metaFile) then
+    if (funcInjectCode ~= "") then
         return false
     end
 
@@ -21,10 +21,12 @@ function uiInitializeExporter()
 
         uiClass.mt = {
             __index = function(obj, key)
-                return function(self, ...)
-                    return call(uiClass.resource, "uiCallMethod", self.uid, key, ...)
-                end
-            end
+                return call(uiClass.resource, "uiGetProperty", obj.uid, key)
+            end,
+            __newindex = function(obj, key, value)
+                return call(uiClass.resource, "uiSetProperty", obj.uid, key, value)
+            end,
+            __metatable = true
         }
 
         uiClass.init = function()
@@ -51,12 +53,13 @@ function uiInitializeExporter()
             _G[class] = {
                 new = function(self, ...)
                     local element = call(uiClass.resource, "uiCreateElement", class, ...)
+                    local returnElement = { uid = element.uid, type = element.type }
 
-                    uiClass.elements[#uiClass.elements + 1] = element
+                    uiClass.elements[#uiClass.elements + 1] = returnElement
 
-                    setmetatable(element, uiClass.mt)
+                    setmetatable(returnElement, uiClass.mt)
 
-                    return element
+                    return returnElement
                 end
             }
         end
@@ -82,12 +85,13 @@ function uiInitializeExporter()
                     funcInjectCode = funcInjectCode..[[
                         function ]]..funcName..[[(...)
                             local element = exports.]]..RESOURCE_NAME..":"..funcName..[[(...)
+                            local returnElement = { uid = element.uid, type = element.type }
 
-                            uiClass.elements[#uiClass.elements + 1] = element
+                            uiClass.elements[#uiClass.elements + 1] = returnElement
 
-                            setmetatable(element, uiClass.mt)
+                            setmetatable(returnElement, uiClass.mt)
 
-                            return element
+                            return returnElement
                         end
                     ]]
                 end
