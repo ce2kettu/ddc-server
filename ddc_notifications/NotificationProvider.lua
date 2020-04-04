@@ -4,8 +4,6 @@ local queue = {}
 local notifications = {}
 local prevTick = getTickCount()
 local MAX_NOTIFICATIONS_AT_ONCE = 3
-local REL_SIZE = SCREEN_HEIGHT / 1080
-local function REL(a) return math.floor(a * REL_SIZE) end
 local START_Y = REL(16)
 local NOTIFICATIONS_MARGIN = REL(16)
 local NOTIFICATION_MARGIN_TOP = REL(10)
