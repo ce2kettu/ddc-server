@@ -45,7 +45,9 @@ function uiDestroyElement(element, ...)
     element = DxHostedElements[uid]
 
     if (uiIsElement(element)) then
-        return uiCallMethod(element, "destroy")
+        uiCallMethod(element, "destroy")
+        DxHostedElements[uid] = nil
+        return true
     end
 
     return false

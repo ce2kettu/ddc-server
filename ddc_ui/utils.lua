@@ -10,8 +10,12 @@ function randomString(length)
         return ""
     end
 
-    math.randomseed(getTickCount() ^ 5)
+    math.randomseed(getTickCount())
     return randomString(length - 1)..charset[math.random(1, #charset)]
+end
+
+function generateId()
+   return randomString(6)..(getTickCount() + (#DxElements + #DxHostedElements))
 end
 
 local matches = {
