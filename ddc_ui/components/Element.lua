@@ -5,7 +5,9 @@ local function onClientRender()
         --v:dxDraw()
         --v:render()
         if (v.visible) then
-            v:dxDraw()
+            if (v.dxDraw) then
+                v:dxDraw()
+            end
            --v:isVisible()
         end
     end
@@ -139,7 +141,9 @@ function DxElement:draw(allow)
     -- end
 
     if (self.visible) then
-        self:dxDraw()
+        if (self.dxDraw) then
+            self:dxDraw()
+        end
     end
     -- if (not self:isCanvasEnabled()) then
     -- 	if (self:hasParent() and not allow) then
@@ -1027,4 +1031,22 @@ function DxElement:drawBounds()
         dxDrawLine(self.x + bounds.max.x, self.y + bounds.min.y, self.x + bounds.max.x, self.y + bounds.max.y, tocolor(0, 255, 0, 150),2)
         dxDrawLine(self.x + bounds.min.x, self.y + bounds.max.y, self.x + bounds.max.x, self.y + bounds.max.y, tocolor(0, 255, 0, 150),2)
     end
+end
+
+function DxElement:setProperty(property, value)
+    if (self[property] == nil) then
+        return false
+    end
+
+    if (type(value) ~= type(self[property])) then
+        return false
+    end
+
+    self[property] = value
+
+    return true
+end
+
+function DxElement:getProperty(property)
+    return self[property]
 end
