@@ -18,8 +18,7 @@ local RECT_MARGIN_RIGHT = REL(16)
 local RECT_MARGIN_TOP = RECT_MARGIN_RIGHT
 local NOTIFICATION_ALPHA = 215
 
-function DxNotification:new(type, title, description, duration)
-    self.uid = randomString(6)..getTickCount()
+function DxNotification:constructor(type, title, description, duration)
     self.type = "dx-notification"
     self._type = type or "info"
     self._duration = duration or 5000
