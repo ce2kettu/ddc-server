@@ -23,6 +23,10 @@ function uiCreateElement(classType, ...)
 end
 
 function uiDestroyElement(element, ...)
+    local uid = (type(element) == "table") and element.uid or element
+
+    element = DxHostedElements[uid]
+
     if (uiIsElement(element)) then
         return uiCallMethod(element, "destroy")
     end

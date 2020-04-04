@@ -42,14 +42,14 @@ function uiInitializeExporter()
 
         uiClass.exit = function()
             if (getResourceFromName(uiClass.resourceName)) then
-                for i, element in ipairs(uiClass.elements) do
+                for _, element in ipairs(uiClass.elements) do
                     call(uiClass.resource, "uiDestroyElement", element.uid)
                 end
             end
         end
         addEventHandler("onClientResourceStop", resourceRoot, uiClass.exit)
 
-        for i, class in ipairs(uiClass.types) do
+        for _, class in ipairs(uiClass.types) do
             _G[class] = {
                 new = function(self, ...)
                     local element = call(uiClass.resource, "uiCreateElement", class, ...)
