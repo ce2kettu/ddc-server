@@ -13,6 +13,7 @@ local UINextMap = DxRoundedRectDetail:new(MAP_INFO_MARGIN, SCREEN_HEIGHT - MAP_I
 
 addCommandHandler("test2", function(c, val)
     --t._text = "kekw"
-    uiCallMethod(t, "moveTo", 400, 200)
+    --uiCallMethod(UICurrentMap, "moveTo", 400, 200)
+    --uiCallMethod(UICurrentMap, )
     --exports.ddc_notifications:displayNotification("info", "Notice", "Map is starting!")
 end)

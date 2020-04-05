@@ -1,4 +1,4 @@
-DxElement = inherit(DxAnimator)
+DxElement = inherit(DxAnimatable)
 
 local function onClientRender()
     for k, v in ipairs(DxElements) do
@@ -30,7 +30,7 @@ addEventHandler("onClientClick", root, onClientClick)
 -- end
 -- addEventHandler("onClientCursorMove", root, onClientCursorMove)
 
--- DxElement = inherit(DxAnimator)
+-- DxElement = inherit(DxAnimatable)
 
 function DxElement:new(...)
     return new(self, ...)

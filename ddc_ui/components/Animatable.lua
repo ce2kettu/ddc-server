@@ -1,5 +1,3 @@
-DxAnimator = {}
-
 local moveAnimations = {}
 local alphaAnimations = {}
 local colorAnimations = {}
@@ -17,6 +15,7 @@ local function getAnimationEasingValue(a, b, progress, easingType)
     end
 end
 
+-- Updates all registered animations
 local function updateAnimations()
     local tick = getTickCount()
     local timeDelta = tick - tickCount
@@ -91,8 +90,11 @@ local function updateAnimations()
 end
 addEventHandler("onClientRender", root, updateAnimations)
 
+-- Actual animatable class method definitions
+DxAnimatable = {}
+
 -- Resets animation variables.
-function DxAnimator:virtual_destructor()
+function DxAnimatable:virtual_destructor()
     moveAnimations[self] = nil
     alphaAnimations[self] = nil
     colorAnimations[self] = nil
@@ -104,7 +106,7 @@ function DxAnimator:virtual_destructor()
     self._isSizeAnimating = false
 end
 
-function DxAnimator:moveTo(x, y, duration, easingType)
+function DxAnimatable:moveTo(x, y, duration, easingType)
     if (not x or not y) then
         return false
     end
@@ -132,7 +134,7 @@ function DxAnimator:moveTo(x, y, duration, easingType)
     self._isMoveAnimating = true
 end
 
-function DxAnimator:alphaTo(alpha, duration, easingType)
+function DxAnimatable:alphaTo(alpha, duration, easingType)
     if (not alpha) then
         return false
     end
@@ -159,7 +161,7 @@ function DxAnimator:alphaTo(alpha, duration, easingType)
     self._isAlphaAnimating = true
 end
 
-function DxAnimator:colorTo(propertyName, r, g, b, a, duration, easingType)
+function DxAnimatable:colorTo(propertyName, r, g, b, a, duration, easingType)
     if (type(propertyName) ~= "string" or not self[propertyName]) then
         return false
     end
@@ -194,7 +196,7 @@ function DxAnimator:colorTo(propertyName, r, g, b, a, duration, easingType)
     self._isColorAnimating = true
 end
 
-function DxAnimator:sizeTo(width, height, duration, easingType)
+function DxAnimatable:sizeTo(width, height, duration, easingType)
     if (not width or not height) then
         return false
     end
@@ -222,7 +224,7 @@ function DxAnimator:sizeTo(width, height, duration, easingType)
     self._isSizeAnimating = true
 end
 
-function DxAnimator:stopMoveAnimation()
+function DxAnimatable:stopMoveAnimation()
     if (self:isMoveAnimating()) then
         moveAnimations[self] = nil
         return true
@@ -231,7 +233,7 @@ function DxAnimator:stopMoveAnimation()
     return false
 end
 
-function DxAnimator:stopAlphaAnimation()
+function DxAnimatable:stopAlphaAnimation()
     if (self:isAlphaAnimating()) then
         alphaAnimations[self] = nil
         return true
@@ -240,7 +242,7 @@ function DxAnimator:stopAlphaAnimation()
     return false
 end
 
-function DxAnimator:stopSizeAnimation()
+function DxAnimatable:stopSizeAnimation()
     if (self:isSizeAnimating()) then
         sizeAnimations[self] = nil
         return true
@@ -249,7 +251,7 @@ function DxAnimator:stopSizeAnimation()
     return false
 end
 
-function DxAnimator:stopColorAnimation()
+function DxAnimatable:stopColorAnimation()
     if (self:isColorAnimating()) then
         colorAnimations[self] = nil
         return true
@@ -258,18 +260,18 @@ function DxAnimator:stopColorAnimation()
     return false
 end
 
-function DxAnimator:isMoveAnimating()
+function DxAnimatable:isMoveAnimating()
     return self._isMoveAnimating
 end
 
-function DxAnimator:isAlphaAnimating()
+function DxAnimatable:isAlphaAnimating()
     return self._isAlphaAnimating
 end
 
-function DxAnimator:isSizeAnimating()
+function DxAnimatable:isSizeAnimating()
     return self._isSizeAnimating
 end
 
-function DxAnimator:isColorAnimating()
+function DxAnimatable:isColorAnimating()
     return self._isColorAnimating
 end
