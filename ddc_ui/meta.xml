@@ -18,7 +18,7 @@
     <script type="client" src="functions.lua" />
     <script type="client" src="export_class.lua" />
 
-    <script type="client" src="components/Animator.lua" />
+    <script type="client" src="components/Animatable.lua" />
     <script type="client" src="components/Element.lua" />
     <script type="client" src="components/Image.lua" />
     <script type="client" src="components/RoundedRect.lua" />
@@ -42,10 +42,6 @@
     <file src="files/images/rounded_corner_16px.png" />
     <file src="files/images/rounded_corner_20px.png" />
 
-    <file src="files/images/notification_info.png" />
-    <file src="files/images/notification_error.png" />
-    <file src="files/images/notification_warning.png" />
-    <file src="files/images/notification_success.png" />
 
     <file src="files/images/current_map.png" />
     <file src="files/images/next_map.png" />
@@ -53,7 +49,4 @@
     <file src="files/images/flags.png" />
 
     <file src="files/images/logo.png" />
-
-    <!-- Sounds -->
-    <file src="files/sounds/notification.mp3" />
 </meta>

@@ -63,6 +63,7 @@ end
 
 -- Set the entered state of the notification with the object.
 function DxNotificationProvider:handleEnteredNotification(item)
+    playSound(":ddc_notifications/files/sounds/notification.mp3")
     item._entered = true
     item._isHandled = true
 end

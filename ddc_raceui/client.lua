@@ -15,5 +15,5 @@ addCommandHandler("test2", function(c, val)
     --t._text = "kekw"
     --uiCallMethod(UICurrentMap, "moveTo", 400, 200)
     --uiCallMethod(UICurrentMap, )
-    --exports.ddc_notifications:displayNotification("info", "Notice", "Map is starting!")
+    exports.ddc_notifications:displayNotification("info", "Notice", "Map is starting!")
 end)

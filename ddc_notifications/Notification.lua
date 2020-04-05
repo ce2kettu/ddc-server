@@ -130,7 +130,7 @@ function DxNotification:createCachedTexture()
 
     local startX = 0 + RECT_PADDING_H
     local startY = 0 + RECT_PADDING_V
-    dxDrawImage(startX, startY, ICON_SIZE, ICON_SIZE, "files/images/notification_"..self._type..".png", 0, 0, 0, self._iconColor)
+    dxDrawImage(startX, startY, ICON_SIZE, ICON_SIZE, ":ddc_notifications/files/images/notification_"..self._type..".png", 0, 0, 0, self._iconColor)
 
     local detailStartX = startX + ICON_SIZE + DETAIL_MARGIN_LEFT
     local detailStartY = startY + REL(1)

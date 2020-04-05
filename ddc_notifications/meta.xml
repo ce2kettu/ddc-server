@@ -6,4 +6,11 @@
 
     <file src="Notification.lua" />
     <file src="NotificationProvider.lua" />
+
+    <file src="files/images/notification_info.png" />
+    <file src="files/images/notification_error.png" />
+    <file src="files/images/notification_warning.png" />
+    <file src="files/images/notification_success.png" />
+
+    <file src="files/sounds/notification.mp3" />
 </meta>
