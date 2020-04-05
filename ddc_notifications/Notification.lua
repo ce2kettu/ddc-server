@@ -4,7 +4,6 @@ local CORNER_TEXTURE = false
 local font = dxCreateFont("files/fonts/font_opensans_semibold.ttf", FONT_SIZE(12), false, "cleartype_natural") or "default"
 local fontDetail = dxCreateFont("files/fonts/font_opensans_regular.ttf", FONT_SIZE(12), false, "cleartype_natural") or "default"
 
-local NOTIFICATION_CURRENT_Y = 0
 local RECT_PADDING_H = REL(16)
 local RECT_PADDING_V = REL(8)
 local DETAIL_MARGIN_LEFT = REL(7)
@@ -56,8 +55,7 @@ function DxNotification:constructor(type, title, description, duration)
     self.width = MIN_WIDTH
     self.height = totalHeight
     self.x = SCREEN_WIDTH - MIN_WIDTH - RECT_MARGIN_RIGHT
-    self.y = NOTIFICATION_CURRENT_Y + RECT_MARGIN_TOP
-    NOTIFICATION_CURRENT_Y = self.y + totalHeight
+    self.y = RECT_MARGIN_TOP
 
     local contentWidth = MIN_WIDTH - (RECT_PADDING_H * 2) - ICON_SIZE - DETAIL_MARGIN_LEFT
 
